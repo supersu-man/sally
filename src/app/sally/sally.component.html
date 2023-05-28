@@ -1,0 +1,54 @@
+<div class="p-2">
+    <p-toolbar>
+        <div class="p-toolbar-group-start text-2xl">
+            {{sally.name}}
+        </div>
+        <div class="p-toolbar-group-end">
+            <p-button icon="pi pi-home" styleClass="p-button-rounded" routerLink="/dashboard"></p-button>
+            <p-selectButton class="mx-3" [options]="options" [(ngModel)]="selected_option" style="font-size: 10px;"></p-selectButton>
+            <p-button icon="pi pi-plus p-0 m-0" styleClass="p-button-rounded" (click)="add_expense = true" ></p-button>
+        </div>
+    </p-toolbar>
+</div>
+ 
+<div class="flex flex-column" *ngIf="selected_option == 'Expenses' && sally.expenses.length > 0">
+    <div class="grid grid-nogutter border-round shadow-2 p-3 m-2" *ngFor="let item of sally.expenses">
+        <label class="col-4">{{item.name}}</label>
+        <label class="col-2">{{item.amount}}</label>
+        <label class="col-6">Desc: {{item.reason}}</label>
+    </div>
+</div>
+
+<div class="flex flex-column" *ngIf="selected_option == 'Stats' && stats_array().length > 0">
+    <div class="grid grid-nogutter border-round shadow-2 p-3 m-2" *ngFor="let item of stats_array()">
+        <label class="col">{{item.name}}</label>
+        <label class="col-2">{{item.amount}}</label>
+        <label class="col-1 text-right mx-3">{{item.amount - (getTotal()/sally.members.length)}} </label>
+        <i class="col-1 pi" [ngClass]="item.amount > getTotal()/sally.members.length ? 'pi-arrow-up': 'pi-arrow-down' "></i>
+    </div>
+    <div class="grid grid-nogutter border-round shadow-2 p-3 m-2">
+        <label class="col">Total</label>
+        <label class="col-2">{{getTotal()}}</label>
+        <label class="col-1 text-right mx-3">{{getTotal()/sally.members.length}}</label>
+        <i class="col-1 pi pi-user"></i>
+    </div>
+</div>
+
+<!-- Add Expense Dialog -->
+<p-dialog header="New Expense" [(visible)]="add_expense" [style]="{ width: '50vw' }">
+    <div class="h-100 d-flex flex-column pt-4" [formGroup]="expense_form">
+        <span class="p-float-label mb-4">
+            <p-dropdown formControlName="name" [options]="sally.members" appendTo="body"></p-dropdown>
+            <label>Name</label>
+        </span>
+        <span class="p-float-label mb-4">
+            <p-inputNumber inputId="integeronly" formControlName="amount"></p-inputNumber>
+            <label>Amount</label>
+        </span>
+        <span class="p-float-label mb-4">
+            <input pInputText formControlName="reason" />
+            <label>Description</label>
+        </span>
+        <p-button class="mx-auto" label="Create" styleClass="p-button-sm" (click)="create_expense()"></p-button>
+    </div>
+</p-dialog>

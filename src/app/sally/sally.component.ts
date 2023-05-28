@@ -1,0 +1,56 @@
+import { Component } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+
+@Component({
+  selector: 'app-sally',
+  templateUrl: './sally.component.html',
+  styleUrls: ['./sally.component.css']
+})
+export class SallyComponent {
+
+  options = ["Expenses", "Stats"]
+  selected_option = "Expenses"
+
+  slug = this.route.snapshot.paramMap.get('sally') || ''
+  data = JSON.parse(localStorage.getItem("data") || "[]")
+  sally = this.data.find((v: any) => { return v.slug == this.slug })
+  add_expense = false
+
+  constructor(private route: ActivatedRoute) {
+    if (!this.sally) alert('Sally do not exist')
+    console.log(this.data)
+  }
+
+  expense_form = new FormGroup({
+    name: new FormControl(this.sally.members[0]),
+    amount: new FormControl(null),
+    reason: new FormControl(null)
+  })
+
+  create_expense() {
+    this.sally.expenses.push(this.expense_form.getRawValue())
+    localStorage.setItem("data", JSON.stringify(this.data))
+    this.add_expense = false
+  }
+
+  
+  stats_array = () => {
+    let obj: Array<any> = [];
+    this.sally.expenses.forEach((expense: any) => {
+      let unq = obj.find(v => { return v.name == expense.name })
+      if(!unq) obj.push({ name: expense.name, amount: expense.amount })
+      else unq.amount += expense.amount
+    })
+    this.sally.members.forEach((name: string) => {
+      let unq = obj.find(v => { return v.name == name})
+      if(!unq) obj.push({ name: name, amount: 0 })
+    })
+    return obj
+  }
+
+  getTotal = () => {
+    return this.sally.expenses.map((item: any) => item.amount).reduce((prev: any, next: any) => prev + next)
+  }
+
+}
