@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 
@@ -27,8 +27,8 @@ export class SallyComponent {
 
   expense_form = new FormGroup({
     name: new FormControl(this.sally.members[0]),
-    amount: new FormControl(null),
-    reason: new FormControl(null)
+    amount: new FormControl(null, Validators.required),
+    reason: new FormControl(null, Validators.required)
   })
 
   create_expense() {
@@ -53,7 +53,7 @@ export class SallyComponent {
   }
 
   getTotal = () => {
-    if (this.sally.expenses) return 0
+    if (this.sally.expenses.length == 0) return 0
     return this.sally.expenses.map((item: any) => item.amount).reduce((prev: any, next: any) => prev + next)
   }
 

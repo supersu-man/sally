@@ -4,8 +4,10 @@
             {{sally.name}}
         </div>
         <div class="p-toolbar-group-end">
-            <button pButton class="mx-1" icon="pi pi-home" routerLink="/dashboard" style="height: 35px; width: 35px;"></button>
-            <button pButton icon="pi pi-plus" (click)="add_expense_popup = true" style="height: 35px; width: 35px;"></button>
+            <button pButton class="mx-1" icon="pi pi-home" routerLink="/dashboard"
+                style="height: 35px; width: 35px;"></button>
+            <button pButton icon="pi pi-plus" (click)="add_expense_popup = true;"
+                style="height: 35px; width: 35px;"></button>
         </div>
     </p-toolbar>
 </div>
@@ -24,32 +26,34 @@
     <div class="grid grid-nogutter border-round shadow-2 p-3 m-2" *ngFor="let item of stats_array()">
         <label class="col">{{item.name}}</label>
         <label class="col-2">{{item.amount}}</label>
-        <label class="col-1 text-right mx-3">{{item.amount - (getTotal()/sally.members.length)}} </label>
-        <i class="col-1 pi" [ngClass]="item.amount > getTotal()/sally.members.length ? 'pi-arrow-up': 'pi-arrow-down' "></i>
+        <label class="col-2 text-right mx-3">{{(item.amount - (getTotal()/sally.members.length)).toFixed()}} </label>
+        <i class="col-1 pi"
+            [ngClass]="item.amount > getTotal()/sally.members.length ? 'pi-arrow-up': 'pi-arrow-down' "></i>
     </div>
     <div class="grid grid-nogutter border-round shadow-2 p-3 m-2">
         <label class="col">Total</label>
         <label class="col-2">{{getTotal()}}</label>
-        <label class="col-1 text-right mx-3">{{getTotal()/sally.members.length}}</label>
+        <label class="col-2 text-right mx-3">{{(getTotal()/sally.members.length).toFixed()}}</label>
         <i class="col-1 pi pi-user"></i>
     </div>
 </div>
 
 <!-- Add Expense Dialog -->
-<p-dialog header="New Expense" [(visible)]="add_expense_popup" [style]="{'width' : '350px'}">
-    <div class="h-100 d-flex flex-column pt-4" [formGroup]="expense_form">
-        <span class="p-float-label mb-4">
-            <p-dropdown formControlName="name" [options]="sally.members" appendTo="body"></p-dropdown>
+<p-dialog header="New Expense" [(visible)]="add_expense_popup" [modal]="true" [style]="{'width' : '350px'}">
+    <div class="flex flex-column gap-3" [formGroup]="expense_form">
+        <div class="flex flex-column gap-1">
             <label>Name</label>
-        </span>
-        <span class="p-float-label mb-4">
-            <p-inputNumber inputId="integeronly" formControlName="amount"></p-inputNumber>
+            <p-dropdown styleClass="w-full" formControlName="name" [options]="sally.members"
+                appendTo="body"></p-dropdown>
+        </div>
+        <div class="flex flex-column gap-1">
             <label>Amount</label>
-        </span>
-        <span class="p-float-label mb-4">
-            <input pInputText formControlName="reason" />
+            <p-inputNumber styleClass="w-full" inputId="integeronly" formControlName="amount"></p-inputNumber>
+        </div>
+        <div class="flex flex-column gap-1">
             <label>Description</label>
-        </span>
-        <p-button class="mx-auto" label="Create" styleClass="p-button-sm" (click)="create_expense()"></p-button>
+            <input pInputText formControlName="reason" />
+        </div>
+        <p-button class="text-center" label="Create" styleClass="py-2 px-3" (click)="create_expense()" [disabled]="!expense_form.valid"></p-button>
     </div>
 </p-dialog>

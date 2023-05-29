@@ -4,7 +4,8 @@
             Dashboard
         </div>
         <div class="p-toolbar-group-end">
-            <button pButton icon="pi pi-plus" style="height: 35px; width: 35px;" (click)="add_sally_popup = true"></button>
+            <button pButton icon="pi pi-plus" style="height: 35px; width: 35px;"
+                (click)="add_sally_popup = true;"></button>
         </div>
     </p-toolbar>
 </div>
@@ -16,26 +17,24 @@
             <label class="text-xl font-semibold pb-2">{{item.name}}</label>
             <label>Members: {{item.members.length}}</label>
             <label>Total: {{total(item.expenses)}}</label>
-            <label>Per Head: {{item.total//item.members.length}}</label>
+            <label>Per Head: {{(total(item.expenses)/item.members.length).toFixed()}}</label>
         </div>
     </div>
 </div>
 
 <!-- Add Sally Dialog -->
-<p-dialog header="New Sally" class="mx-4" [(visible)]="add_sally_popup" [modal]="true" [style]="{'width' : '350px'}">
-    <div class="h-100 d-flex flex-column pt-4" [formGroup]="sally_form">
-        <span class="p-float-label mb-4">
-            <input pInputText formControlName="slug" [value]="slug()" />
-            <label>Slug</label>
-        </span>
-        <span class="p-float-label mb-4">
-            <input pInputText formControlName="name" />
+<p-dialog header="New Sally" [(visible)]="add_sally_popup" [modal]="true" [style]="{'width' : '350px'}">
+    <div class="flex flex-column gap-3" [formGroup]="sally_form">
+        <div class="flex flex-column gap-1">
             <label>Name</label>
-        </span>
-        <span class="p-float-label mb-4">
-            <p-chips class="p-chips-sm" formControlName="members"></p-chips>
+            <input pInputText formControlName="name" />
+        </div>
+        <div class="flex flex-column gap-1 p-fluid">
             <label>Members</label>
-        </span>
-        <p-button class="mx-auto" label="Create" styleClass="p-button-sm" (click)="create_sally()"></p-button>
+            <p-chips formControlName="members" separator=" "></p-chips>
+            <small>Use Space to sperate</small>
+        </div>
+        <p-button class="text-center" label="Create" styleClass="py-2 px-3" (click)="create_sally()"
+            [disabled]="!sally_form.valid"></p-button>
     </div>
 </p-dialog>
