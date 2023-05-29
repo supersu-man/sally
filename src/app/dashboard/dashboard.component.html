@@ -1,10 +1,10 @@
 <div class="p-2">
     <p-toolbar>
-        <div class="p-toolbar-group-start text-3xl">
+        <div class="p-toolbar-group-start text-2xl">
             Dashboard
         </div>
         <div class="p-toolbar-group-end">
-            <p-button label="New Sally" styleClass="p-button-sm" (click)="add_sally = true"></p-button>
+            <button pButton icon="pi pi-plus" style="height: 35px; width: 35px;" (click)="add_sally_popup = true"></button>
         </div>
     </p-toolbar>
 </div>
@@ -15,14 +15,14 @@
             [routerLink]="item.slug">
             <label class="text-xl font-semibold pb-2">{{item.name}}</label>
             <label>Members: {{item.members.length}}</label>
-            <label>Total: {{getTotal(item.expenses)}}</label>
+            <label>Total: {{total(item.expenses)}}</label>
             <label>Per Head: {{item.total//item.members.length}}</label>
         </div>
     </div>
 </div>
 
 <!-- Add Sally Dialog -->
-<p-dialog header="New Sally" [(visible)]="add_sally" [style]="{ width: '50vw' }">
+<p-dialog header="New Sally" class="mx-4" [(visible)]="add_sally_popup" [modal]="true" [style]="{'width' : '350px'}">
     <div class="h-100 d-flex flex-column pt-4" [formGroup]="sally_form">
         <span class="p-float-label mb-4">
             <input pInputText formControlName="slug" [value]="slug()" />

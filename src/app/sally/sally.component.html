@@ -4,14 +4,15 @@
             {{sally.name}}
         </div>
         <div class="p-toolbar-group-end">
-            <p-button icon="pi pi-home" styleClass="p-button-rounded" routerLink="/dashboard"></p-button>
-            <p-selectButton class="mx-3" [options]="options" [(ngModel)]="selected_option" style="font-size: 10px;"></p-selectButton>
-            <p-button icon="pi pi-plus p-0 m-0" styleClass="p-button-rounded" (click)="add_expense = true" ></p-button>
+            <button pButton class="mx-1" icon="pi pi-home" routerLink="/dashboard" style="height: 35px; width: 35px;"></button>
+            <button pButton icon="pi pi-plus" (click)="add_expense_popup = true" style="height: 35px; width: 35px;"></button>
         </div>
     </p-toolbar>
 </div>
- 
-<div class="flex flex-column" *ngIf="selected_option == 'Expenses' && sally.expenses.length > 0">
+
+<p-tabMenu [model]="tab_items" [activeItem]="activeTabItem" (activeItemChange)="activeTabItem = $event;"></p-tabMenu>
+
+<div class="flex flex-column" *ngIf="activeTabItem.label == 'Expenses' && sally.expenses.length > 0">
     <div class="grid grid-nogutter border-round shadow-2 p-3 m-2" *ngFor="let item of sally.expenses">
         <label class="col-4">{{item.name}}</label>
         <label class="col-2">{{item.amount}}</label>
@@ -19,7 +20,7 @@
     </div>
 </div>
 
-<div class="flex flex-column" *ngIf="selected_option == 'Stats' && stats_array().length > 0">
+<div class="flex flex-column" *ngIf="activeTabItem.label == 'Stats' && stats_array().length > 0">
     <div class="grid grid-nogutter border-round shadow-2 p-3 m-2" *ngFor="let item of stats_array()">
         <label class="col">{{item.name}}</label>
         <label class="col-2">{{item.amount}}</label>
@@ -35,7 +36,7 @@
 </div>
 
 <!-- Add Expense Dialog -->
-<p-dialog header="New Expense" [(visible)]="add_expense" [style]="{ width: '50vw' }">
+<p-dialog header="New Expense" [(visible)]="add_expense_popup" [style]="{'width' : '350px'}">
     <div class="h-100 d-flex flex-column pt-4" [formGroup]="expense_form">
         <span class="p-float-label mb-4">
             <p-dropdown formControlName="name" [options]="sally.members" appendTo="body"></p-dropdown>

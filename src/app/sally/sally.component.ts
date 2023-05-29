@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-sally',
@@ -9,17 +10,19 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class SallyComponent {
 
-  options = ["Expenses", "Stats"]
-  selected_option = "Expenses"
-
   slug = this.route.snapshot.paramMap.get('sally') || ''
   data = JSON.parse(localStorage.getItem("data") || "[]")
   sally = this.data.find((v: any) => { return v.slug == this.slug })
-  add_expense = false
+  add_expense_popup = false
+
+  tab_items: MenuItem[] = [
+    { label: 'Expenses', icon: 'pi pi-fw pi-wallet' },
+    { label: 'Stats', icon: 'pi pi-fw pi-calculator' }
+  ]
+  activeTabItem: MenuItem = this.tab_items[0]
 
   constructor(private route: ActivatedRoute) {
     if (!this.sally) alert('Sally do not exist')
-    console.log(this.data)
   }
 
   expense_form = new FormGroup({
@@ -31,7 +34,7 @@ export class SallyComponent {
   create_expense() {
     this.sally.expenses.push(this.expense_form.getRawValue())
     localStorage.setItem("data", JSON.stringify(this.data))
-    this.add_expense = false
+    this.add_expense_popup = false
   }
 
   

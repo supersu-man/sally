@@ -16,8 +16,8 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { SallyComponent } from './sally/sally.component';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { SelectButtonModule } from 'primeng/selectbutton';
-
+import { MenuModule } from 'primeng/menu';
+import { TabMenuModule } from 'primeng/tabmenu';
 
 @NgModule({
   declarations: [
@@ -40,7 +40,8 @@ import { SelectButtonModule } from 'primeng/selectbutton';
     ReactiveFormsModule,
     DropdownModule,
     InputNumberModule,
-    SelectButtonModule
+    MenuModule,
+    TabMenuModule
   ],
   providers: [],
   bootstrap: [AppComponent]

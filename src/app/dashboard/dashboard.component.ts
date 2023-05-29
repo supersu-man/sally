@@ -7,11 +7,12 @@ import { FormControl, FormGroup } from '@angular/forms';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent {
-  add_sally = false
+  add_sally_popup = false
   data = JSON.parse(localStorage.getItem("data") || "[]")
+  current_slug = ''
 
   sally_form = new FormGroup({
-    slug: new FormControl({value: '', disabled: true }),
+    slug: new FormControl({ value: '', disabled: true }),
     name: new FormControl(''),
     members: new FormControl([]),
     expenses: new FormControl([])
@@ -25,17 +26,13 @@ export class DashboardComponent {
     if (duplicates.length) return alert('Sally already exists')
     this.data.push(this.sally_form.getRawValue())
     localStorage.setItem("data", JSON.stringify(this.data))
-    this.add_sally = false
+    this.add_sally_popup = false
     alert('Sally created')
   }
 
-  getTotal(expenses: Array<any>) {
-    if (expenses.length == 0) return 0
-    return expenses.map(item => item.amount).reduce((prev, next) => prev + next)
-  }
+  total = (expenses: Array<any>) => { if (expenses.length != 0) return expenses.map(item => item.amount).reduce((prev, next) => prev + next) }
 
 
-  slug = () => this.sally_form.patchValue({ slug: this.sally_form.get('name')?.value?.toLowerCase().replaceAll(' ', '-')  })
-
+  slug = () => this.sally_form.patchValue({ slug: this.sally_form.get('name')?.value?.toLowerCase().replaceAll(' ', '-') })
 
 }
