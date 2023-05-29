@@ -13,13 +13,14 @@
 <div class="grid grid-nogutter p-1" *ngIf="data.length > 0">
     <div class="col-12 md:col-6 lg:col-3" *ngFor="let item of data">
         <div class="flex flex-column border-round text-center shadow-2 hover:shadow-4 transition-duration-200 py-3 m-2"
-            [routerLink]="item.slug">
+            [routerLink]="item.slug" (contextmenu)="$event.preventDefault();current_slug=item.slug;menu.toggle($event);">
             <label class="text-xl font-semibold pb-2">{{item.name}}</label>
             <label>Members: {{item.members.length}}</label>
             <label>Total: {{total(item.expenses)}}</label>
             <label>Per Head: {{(total(item.expenses)/item.members.length).toFixed()}}</label>
         </div>
     </div>
+    <p-menu #menu [model]="items" [popup]="true"></p-menu>
 </div>
 
 <!-- Add Sally Dialog -->

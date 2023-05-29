@@ -9,7 +9,16 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 export class DashboardComponent {
   add_sally_popup = false
   data = JSON.parse(localStorage.getItem("data") || "[]")
-  current_slug = ''
+  current_slug: string | undefined
+  items = [
+    {
+      label: 'Delete',
+      icon: 'pi pi-fw pi-trash',
+      command: () => {
+        this.delete();
+      }
+    }
+  ]
 
   sally_form = new FormGroup({
     slug: new FormControl(''),
@@ -18,9 +27,7 @@ export class DashboardComponent {
     expenses: new FormControl([])
   })
 
-  constructor() {
-    console.log(this.data)
-   }
+  constructor() { }
 
   create_sally() {
     let duplicates = (this.data as Array<any>).filter((v) => { return v.slug == this.slug(this.sally_form.get('name')?.value) })
@@ -34,6 +41,11 @@ export class DashboardComponent {
 
   total = (expenses: Array<any>) => { if (expenses && expenses.length != 0) return expenses.map(item => item.amount).reduce((prev, next) => prev + next) }
 
+  delete = () => {
+    this.data = this.data.filter((sally: any) => { return this.current_slug && sally.slug != this.current_slug })
+    localStorage.setItem("data", JSON.stringify(this.data))
+    this.current_slug = undefined
+  }
 
   slug = (name: any) => { return (name as string).toLowerCase().replaceAll(' ', '-') }
 
