@@ -53,6 +53,7 @@ export class SallyComponent {
   }
 
   getTotal = () => {
+    if (this.sally.expenses) return 0
     return this.sally.expenses.map((item: any) => item.amount).reduce((prev: any, next: any) => prev + next)
   }
 
