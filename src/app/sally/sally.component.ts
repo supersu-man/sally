@@ -28,7 +28,8 @@ export class SallyComponent {
   expense_form = new FormGroup({
     name: new FormControl(this.sally.members[0]),
     amount: new FormControl(null, Validators.required),
-    reason: new FormControl(null, Validators.required)
+    reason: new FormControl(null, Validators.required),
+    time: new FormControl(new Date())
   })
 
   create_expense() {
