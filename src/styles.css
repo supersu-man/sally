@@ -1,10 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
-@import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
 
+
+@font-face {
+    font-family: 'rubik';
+    src: url('/src/assets/Rubik.ttf');
+}
+
 body, html {
     height: 100%;
-    font-family: var(--font-family);
+    font-family: 'rubik';
     margin: 0px;
 }
