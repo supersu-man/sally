@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { MenuItem } from 'primeng/api';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MenuItem, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-sally',
@@ -21,8 +21,8 @@ export class SallyComponent {
   ]
   activeTabItem: MenuItem = this.tab_items[0]
 
-  constructor(private route: ActivatedRoute) {
-    if (!this.sally) alert('Sally do not exist')
+  constructor(private route: ActivatedRoute, private messageService: MessageService, private router: Router) {
+    if (!this.sally) this.router.navigate(['/dashboard'])
   }
 
   expense_form = new FormGroup({
@@ -36,6 +36,7 @@ export class SallyComponent {
     this.sally.expenses.push(this.expense_form.getRawValue())
     localStorage.setItem("data", JSON.stringify(this.data))
     this.add_expense_popup = false
+    this.messageService.add({ severity: 'success', summary: 'Expense added' })
   }
 
   

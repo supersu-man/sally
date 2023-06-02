@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,16 +28,16 @@ export class DashboardComponent {
     expenses: new FormControl([])
   })
 
-  constructor() { }
+  constructor(private messageService: MessageService) { }
 
   create_sally() {
     let duplicates = (this.data as Array<any>).filter((v) => { return v.slug == this.slug(this.sally_form.get('name')?.value) })
-    if (duplicates.length) return alert('Sally already exists')
+    if (duplicates.length) return this.messageService.add({ severity: 'error', summary: 'Sally already exists' })
     this.sally_form.patchValue({ slug: this.slug(this.sally_form.get('name')?.value) })
     this.data.push(this.sally_form.getRawValue())
     localStorage.setItem("data", JSON.stringify(this.data))
     this.add_sally_popup = false
-    alert('Sally created')
+    this.messageService.add({ severity: 'success', summary: 'Sally created' })
   }
 
   total = (expenses: Array<any>) => { if (expenses && expenses.length != 0) return expenses.map(item => item.amount).reduce((prev, next) => prev + next) }
@@ -45,6 +46,7 @@ export class DashboardComponent {
     this.data = this.data.filter((sally: any) => { return this.current_slug && sally.slug != this.current_slug })
     localStorage.setItem("data", JSON.stringify(this.data))
     this.current_slug = undefined
+    this.messageService.add({ severity: 'success', summary: 'Sally deleted' })
   }
 
   slug = (name: any) => { return (name as string).toLowerCase().replaceAll(' ', '-') }
