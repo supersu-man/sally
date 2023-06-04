@@ -29,10 +29,11 @@ export class SallyComponent {
     name: new FormControl(this.sally.members[0]),
     amount: new FormControl(null, Validators.required),
     reason: new FormControl(null, Validators.required),
-    time: new FormControl(new Date())
+    time: new FormControl()
   })
 
   create_expense() {
+    this.expense_form.patchValue({ time: new Date() })
     this.sally.expenses.push(this.expense_form.getRawValue())
     localStorage.setItem("data", JSON.stringify(this.data))
     this.add_expense_popup = false
