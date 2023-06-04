@@ -32,8 +32,8 @@
         </div>
         <div class="flex flex-column gap-1 p-fluid">
             <label>Members</label>
-            <p-chips formControlName="members" separator=" "></p-chips>
-            <small>Use Space to sperate</small>
+            <p-chips formControlName="members" separator=","></p-chips>
+            <small>Use comma to separate</small>
         </div>
         <p-button class="text-center" label="Create" styleClass="py-2 px-3" (click)="create_sally()"
             [disabled]="!sally_form.valid"></p-button>
