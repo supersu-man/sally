@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MenuItem, MessageService } from 'primeng/api';
+import { CommonService } from '../service/common.service';
 
 @Component({
   selector: 'app-sally',
@@ -21,16 +22,23 @@ export class SallyComponent {
   ]
   activeTabItem: MenuItem = this.tab_items[0]
 
-  constructor(private route: ActivatedRoute, private messageService: MessageService, private router: Router) {
-    if (!this.sally) this.router.navigate(['/dashboard'])
-  }
-
   expense_form = new FormGroup({
     name: new FormControl(this.sally.members[0]),
-    amount: new FormControl(null, Validators.required),
-    reason: new FormControl(null, Validators.required),
+    amount: new FormControl(Validators.required),
+    reason: new FormControl(Validators.required),
     time: new FormControl()
   })
+
+  constructor(private route: ActivatedRoute, private messageService: MessageService, private commonService: CommonService) {
+    if (!this.sally) alert('Sally does not exist')
+    this.commonService.header_subject.next({ title: this.sally.name, add: true , home: true})
+    this.commonService.header_operation.subscribe((val) => {
+      if(val == 'add') {
+        this.expense_form.reset({ name: this.sally.members[0] })
+        this.add_expense_popup = true
+      }
+    })
+  }
 
   create_expense() {
     this.expense_form.patchValue({ time: new Date() })
@@ -39,7 +47,6 @@ export class SallyComponent {
     this.add_expense_popup = false
     this.messageService.add({ severity: 'success', summary: 'Expense added' })
   }
-
   
   stats_array = () => {
     let obj: Array<any> = [];

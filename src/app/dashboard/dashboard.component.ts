@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
+import { CommonService } from '../service/common.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,15 +23,23 @@ export class DashboardComponent {
   ]
 
   sally_form = new FormGroup({
-    slug: new FormControl(''),
-    name: new FormControl('', Validators.required),
+    slug: new FormControl(),
+    name: new FormControl(Validators.required),
     members: new FormControl([]),
     expenses: new FormControl([])
   })
 
-  constructor(private messageService: MessageService) { }
+  constructor(private messageService: MessageService, private commonService: CommonService) {
+    this.commonService.header_subject.next({ title: 'Dashboard', add: true })
+    this.commonService.header_operation.subscribe((val) => {
+      if (val == 'add') {
+        this.sally_form.reset({ members: [], expenses: [] })
+        this.add_sally_popup = true
+      }
+    })
+  }
 
-  create_sally() {
+  create_sally = () => {
     let duplicates = (this.data as Array<any>).filter((v) => { return v.slug == this.slug(this.sally_form.get('name')?.value) })
     if (duplicates.length) return this.messageService.add({ severity: 'error', summary: 'Sally already exists' })
     this.sally_form.patchValue({ slug: this.slug(this.sally_form.get('name')?.value) })

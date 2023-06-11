@@ -1,18 +1,4 @@
-<div class="p-2">
-    <p-toolbar>
-        <div class="p-toolbar-group-start text-2xl">
-            {{sally.name}}
-        </div>
-        <div class="p-toolbar-group-end">
-            <button pButton class="mx-1" icon="pi pi-home" routerLink="/dashboard"
-                style="height: 35px; width: 35px;"></button>
-            <button pButton icon="pi pi-plus" (click)="add_expense_popup = true;"
-                style="height: 35px; width: 35px;"></button>
-        </div>
-    </p-toolbar>
-</div>
-
-<p-tabMenu [model]="tab_items" [activeItem]="activeTabItem" (activeItemChange)="activeTabItem = $event;"></p-tabMenu>
+<p-tabMenu [model]="tab_items" [activeItem]="tab_items[0]" (activeItemChange)="activeTabItem = $event;"></p-tabMenu>
 
 <div class="flex flex-column" *ngIf="activeTabItem.label == 'Expenses' && sally.expenses.length > 0">
     <div class="grid grid-nogutter border-round shadow-2 p-3 m-2" *ngFor="let item of sally.expenses">

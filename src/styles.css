@@ -5,7 +5,7 @@
 
 @font-face {
     font-family: 'rubik';
-    src: url('/src/assets/Rubik.ttf');
+    src: url('/assets/Rubik.ttf');
 }
 
 body, html {
