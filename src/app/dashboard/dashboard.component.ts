@@ -5,8 +5,7 @@ import { CommonService } from '../service/common.service';
 
 @Component({
   selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent {
   add_sally_popup = false

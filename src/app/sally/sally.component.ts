@@ -6,8 +6,7 @@ import { CommonService } from '../service/common.service';
 
 @Component({
   selector: 'app-sally',
-  templateUrl: './sally.component.html',
-  styleUrls: ['./sally.component.css']
+  templateUrl: './sally.component.html'
 })
 export class SallyComponent {
 
