@@ -91,6 +91,9 @@
           "options": {
             "browserTarget": "sally:build"
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy"
         }
       }
     }

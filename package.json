@@ -6,7 +6,10 @@
     "start": "ng serve",
     "build": "ng build --base-href /sally/ && copy docs\\index.html docs\\404.html",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "patch": "npm version patch &&  git push && git push --tags",
+    "minor": "npm version minor && git push && git push --tags",
+    "major": "npm version major && git push && git push --tags"
   },
   "private": true,
   "dependencies": {
@@ -30,6 +33,7 @@
     "@angular/cli": "~16.0.3",
     "@angular/compiler-cli": "^16.0.3",
     "@types/jasmine": "~4.3.0",
+    "angular-cli-ghpages": "^1.0.6",
     "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.1.0",
