@@ -1,0 +1,50 @@
+name: Build
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions-ecosystem/action-regex-match@v2
+        id: regex-match
+        with:
+          text: ${{ github.event.head_commit.message }}
+          regex: '^[0-9]+\.[0-9]+\.[0-9]+$'
+      
+      - name: Test Build
+        if: ${{ steps.regex-match.outputs.match == '' }}
+        run: |
+          npm i
+          npx ng build
+
+      - name: Prepare and deploy
+        if: ${{ steps.regex-match.outputs.match != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm i
+          npx ng deploy --base-href=/test/ --name="Sumanth Perambuduri" --email=sumanthpera444@gmail.com --no-silent
+      
+      - name: Build Changelog
+        if: ${{ steps.regex-match.outputs.match != '' }}
+        id: changelog
+        uses: ardalanamini/auto-changelog@v3
+        with:
+          mention-authors: false
+          mention-new-contributors: false
+          include-compare: false
+          semver: false
+
+      - name: Create Release
+        if: ${{ steps.regex-match.outputs.match != '' }}
+        uses: ncipollo/release-action@v1
+        with:
+          body: ${{ steps.changelog.outputs.changelog }} 
+          tag: v${{ github.event.head_commit.message }}
+          name: Release v${{ github.event.head_commit.message }}
+          token: ${{ secrets.GITHUB_TOKEN }}
