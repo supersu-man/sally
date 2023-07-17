@@ -1,12 +1,14 @@
 <p-toast styleClass="p-2"  [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
 <div class="p-2" *ngIf="header">
     <p-toolbar>
         <div class="p-toolbar-group-start text-2xl">
            {{header.title}}
         </div>
         <div class="p-toolbar-group-end">
-            <button *ngIf="header.home" pButton class="mx-1" icon="pi pi-home" routerLink="/dashboard" style="height: 35px; width: 35px;"></button>
-            <button *ngIf="header.add" pButton icon="pi pi-plus" style="height: 35px; width: 35px;" (click)="commonService.header_operation.next('add')"></button>
+            <button *ngIf="header.home" pButton class="ml-1" icon="pi pi-home" routerLink="/dashboard" style="height: 35px; width: 35px;"></button>
+            <button *ngIf="header.add" pButton class="ml-1" icon="pi pi-plus" style="height: 35px; width: 35px;" (click)="commonService.header_operation.next('add')"></button>
+            <button *ngIf="header.logout" pButton class="ml-1" icon="pi pi-sign-out" style="height: 35px; width: 35px;" (click)="logout();" routerLink="/login"></button>
         </div>
     </p-toolbar>
 </div>

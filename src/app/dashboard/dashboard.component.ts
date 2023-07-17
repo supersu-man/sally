@@ -29,7 +29,7 @@ export class DashboardComponent {
   })
 
   constructor(private messageService: MessageService, private commonService: CommonService) {
-    this.commonService.header_subject.next({ title: 'Dashboard', add: true })
+    this.commonService.header_subject.next({ title: 'Dashboard', add: true, logout: true })
     this.commonService.header_operation.subscribe((val) => {
       if (val == 'add') {
         this.sally_form.reset({ members: [], expenses: [] })
