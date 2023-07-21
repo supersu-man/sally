@@ -18,7 +18,6 @@ export class HomeComponent {
     private httpClient: HttpClient, private messageService: MessageService, private confirmationService: ConfirmationService) {
     this.commonService.header_subject.next(null)
     this.auth.onAuthStateChanged(user => {
-      console.log(user)
       if (user) {
         this.user = user
         this.authenticate()
@@ -29,7 +28,7 @@ export class HomeComponent {
   login = () => { signInWithRedirect(this.auth, this.provider) }
 
   authenticate = () => {
-    this.httpClient.post(environment.endpoint + 'login', { email: this.user?.email }).subscribe({
+    this.httpClient.post(environment.endpoint + '/login', { email: this.user?.email }).subscribe({
       next: (res: any) => {
         localStorage.setItem('user', JSON.stringify(res))
         this.router.navigate(['/dashboard'])
@@ -42,7 +41,7 @@ export class HomeComponent {
   }
 
   register = () => {
-    this.httpClient.post(environment.endpoint + 'register', { email: this.user?.email, name: this.user?.displayName }).subscribe({
+    this.httpClient.post(environment.endpoint + '/register', { email: this.user?.email, name: this.user?.displayName }).subscribe({
       next: (res) => {
         localStorage.setItem('user', JSON.stringify(res))
         this.router.navigate(['/dashboard'])

@@ -2,15 +2,24 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { CommonService } from '../service/common.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
+import { Sally, MyUser } from '../interface/interface';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent {
-  add_sally_popup = false
-  data = JSON.parse(localStorage.getItem("data") || "[]")
-  current_slug: string | undefined
+
+  addSallyPopup = false
+  popupSpinner = false
+
+  sallys: Sally[] = []
+  spinner = false
+
+  selectedSallyId = ''
+  user = JSON.parse(localStorage.getItem('user') as string) as MyUser
   items = [
     {
       label: 'Delete',
@@ -20,43 +29,61 @@ export class DashboardComponent {
       }
     }
   ]
-
   sally_form = new FormGroup({
-    slug: new FormControl(),
-    name: new FormControl(Validators.required),
+    name: new FormControl(null, Validators.required),
     members: new FormControl([]),
-    expenses: new FormControl([])
+    user_id: new FormControl(this.user.id)
   })
 
-  constructor(private messageService: MessageService, private commonService: CommonService) {
+  constructor(private messageService: MessageService, private commonService: CommonService, private httpClient: HttpClient) {
     this.commonService.header_subject.next({ title: 'Dashboard', add: true, logout: true })
     this.commonService.header_operation.subscribe((val) => {
-      if (val == 'add') {
-        this.sally_form.reset({ members: [], expenses: [] })
-        this.add_sally_popup = true
+      if (val == 'add') this.addSallyPopup = true
+    })
+    this.get_data()
+  }
+
+  create_sally = () => {
+    this.popupSpinner = true
+    this.httpClient.post(environment.endpoint+'/create-sally', this.sally_form.getRawValue()).subscribe({
+      next: (res) => {
+        this.messageService.add({ severity: 'success', summary: 'Sally created' })
+        this.get_data()
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error has occured' })
+        console.log(err)
+      },
+      complete: () => {
+        this.popupSpinner = false
+        this.addSallyPopup = false 
       }
     })
   }
 
-  create_sally = () => {
-    let duplicates = (this.data as Array<any>).filter((v) => { return v.slug == this.slug(this.sally_form.get('name')?.value) })
-    if (duplicates.length) return this.messageService.add({ severity: 'error', summary: 'Sally already exists' })
-    this.sally_form.patchValue({ slug: this.slug(this.sally_form.get('name')?.value) })
-    this.data.push(this.sally_form.getRawValue())
-    localStorage.setItem("data", JSON.stringify(this.data))
-    this.add_sally_popup = false
-    this.messageService.add({ severity: 'success', summary: 'Sally created' })
+  get_data = () => {
+    this.spinner = true
+    this.httpClient.post(environment.endpoint+'/get-sallys', { user_id: this.user.id }).subscribe({
+      next: (res) => this.sallys = res as Sally[],
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error has occured' })
+        console.log(err)
+      },
+      complete: () => { this.spinner = false }
+    })
   }
-
-  total = (expenses: Array<any>) => { if (expenses && expenses.length != 0) return expenses.map(item => item.amount).reduce((prev, next) => prev + next) }
 
   delete = () => {
-    this.data = this.data.filter((sally: any) => { return this.current_slug && sally.slug != this.current_slug })
-    localStorage.setItem("data", JSON.stringify(this.data))
-    this.current_slug = undefined
-    this.messageService.add({ severity: 'success', summary: 'Sally deleted' })
+    this.httpClient.post(environment.endpoint+'/delete-sally', { sally_id: this.selectedSallyId, user_id: this.user.id }).subscribe({
+      next: (res) => {
+        this.messageService.add({ severity: 'success', summary: 'Sally deleted' })
+        this.get_data()
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error has occured' })
+        console.log(err)
+      }
+    })
   }
-
-  slug = (name: any) => { return (name as string).toLowerCase().replaceAll(' ', '-') }
 
 }

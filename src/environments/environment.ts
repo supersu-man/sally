@@ -7,5 +7,5 @@ export const environment = {
     authDomain: 'sally-1b258.firebaseapp.com',
     messagingSenderId: '88502658106',
   },
-  endpoint: "http://localhost:3000/"
+  endpoint: "http://localhost:3000"
 };

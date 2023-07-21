@@ -3,6 +3,9 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router';
 import { MenuItem, MessageService } from 'primeng/api';
 import { CommonService } from '../service/common.service';
+import { Expense, MyUser, Sally, Stat } from '../interface/interface';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-sally',
@@ -10,10 +13,14 @@ import { CommonService } from '../service/common.service';
 })
 export class SallyComponent {
 
-  slug = this.route.snapshot.paramMap.get('sally') || ''
-  data = JSON.parse(localStorage.getItem("data") || "[]")
-  sally = this.data.find((v: any) => { return v.slug == this.slug })
-  add_expense_popup = false
+  sally_id = this.route.snapshot.paramMap.get('sally_id')
+  user = JSON.parse(localStorage.getItem('user') as string) as MyUser
+
+  sally: Sally | undefined
+  expenses: Expense[] = []
+  stats: any[] = []
+  totalAmount = 0
+  spinner = false
 
   tab_items: MenuItem[] = [
     { label: 'Expenses', icon: 'pi pi-fw pi-wallet' },
@@ -21,49 +28,71 @@ export class SallyComponent {
   ]
   activeTabItem: MenuItem = this.tab_items[0]
 
+  addExpensePopup = false
+  popupSpinner = false
   expense_form = new FormGroup({
-    name: new FormControl(this.sally.members[0]),
-    amount: new FormControl(Validators.required),
-    reason: new FormControl(Validators.required),
-    time: new FormControl()
+    member: new FormControl(null, Validators.required),
+    amount: new FormControl(null, Validators.required),
+    desc: new FormControl(null, Validators.required),
   })
 
-  constructor(private route: ActivatedRoute, private messageService: MessageService, private commonService: CommonService) {
-    if (!this.sally) alert('Sally does not exist')
-    this.commonService.header_subject.next({ title: this.sally.name, add: true , home: true})
+  constructor(private route: ActivatedRoute, private messageService: MessageService, private commonService: CommonService, private httpClient: HttpClient) {
+    this.commonService.header_subject.next(null)
     this.commonService.header_operation.subscribe((val) => {
-      if(val == 'add') {
-        this.expense_form.reset({ name: this.sally.members[0] })
-        this.add_expense_popup = true
-      }
+      if (val == 'add') this.addExpensePopup = true
+    })
+    this.getData()
+  }
+
+  getData() {
+    this.spinner = true
+    this.httpClient.post(environment.endpoint + '/get-expenses', { sally_id: this.sally_id, user_id: this.user.id }).subscribe({
+      next: (res: any) => {
+        this.sally = res.sally
+        this.expenses = res.expenses
+        this.commonService.header_subject.next({ title: this.sally?.name, add: true, home: true })
+        this.makeStats()
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error has occured' })
+        console.log(err)
+      },
+      complete: () => { this.spinner = false }
+    })
+  }
+
+  makeStats() {
+    this.stats = []
+    this.totalAmount = 0
+    this.expenses.forEach((expense: Expense) => {
+      this.totalAmount += expense.amount
+      let unq = this.stats.find(stat => { return stat.member == expense.member })
+      if(unq) unq.amount += expense.amount
+      else this.stats.push({ member: expense.member, amount: expense.amount })
+    })
+    this.sally?.members.forEach((member: string) => {
+      let unq = this.stats.find(stat => { return stat.member == member})
+      if(!unq) this.stats.push({ member, amount: 0 })
     })
   }
 
   create_expense() {
-    this.expense_form.patchValue({ time: new Date() })
-    this.sally.expenses.push(this.expense_form.getRawValue())
-    localStorage.setItem("data", JSON.stringify(this.data))
-    this.add_expense_popup = false
-    this.messageService.add({ severity: 'success', summary: 'Expense added' })
-  }
-  
-  stats_array = () => {
-    let obj: Array<any> = [];
-    this.sally.expenses.forEach((expense: any) => {
-      let unq = obj.find(v => { return v.name == expense.name })
-      if(!unq) obj.push({ name: expense.name, amount: expense.amount })
-      else unq.amount += expense.amount
+    this.popupSpinner = true
+    this.httpClient.post(environment.endpoint + '/create-expense', { ...this.expense_form.getRawValue(), sally_id: this.sally_id, user_id: this.user.id }).subscribe({
+      next: (res) => {
+        this.messageService.add({ severity: 'success', summary: 'Expense added' })
+        this.getData()
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error has occured' })
+        console.log(err)
+      },
+      complete: () => { 
+        this.popupSpinner = false
+        this.addExpensePopup = false
+      }
     })
-    this.sally.members.forEach((name: string) => {
-      let unq = obj.find(v => { return v.name == name})
-      if(!unq) obj.push({ name: name, amount: 0 })
-    })
-    return obj
   }
 
-  getTotal = () => {
-    if (this.sally.expenses.length == 0) return 0
-    return this.sally.expenses.map((item: any) => item.amount).reduce((prev: any, next: any) => prev + next)
-  }
 
 }

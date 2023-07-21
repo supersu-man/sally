@@ -11,8 +11,6 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChipsModule } from 'primeng/chips';
-import { CardModule } from 'primeng/card';
-import { ToolbarModule } from 'primeng/toolbar';
 import { SallyComponent } from './sally/sally.component';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -24,7 +22,7 @@ import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
 import { environment } from '../environments/environment';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 
 @NgModule({
@@ -43,8 +41,6 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     InputTextModule,
     FormsModule,
     ChipsModule,
-    CardModule,
-    ToolbarModule,
     ReactiveFormsModule,
     DropdownModule,
     InputNumberModule,
@@ -53,6 +49,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     ToastModule,
     HttpClientModule,
     ConfirmDialogModule,
+    ProgressSpinnerModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth())
   ],
