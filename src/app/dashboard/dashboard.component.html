@@ -28,6 +28,7 @@
             <small>Use enter to add member</small>
         </div>
         <p-button class="text-center" label="Create" styleClass="py-2 px-3" (click)="create_sally()"
-            [disabled]="!sally_form.valid"></p-button>
+            [disabled]="!sally_form.valid" [loading]="popupSpinner">
+        </p-button>
     </div>
 </p-dialog>

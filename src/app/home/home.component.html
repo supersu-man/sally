@@ -6,9 +6,6 @@
         Your personal trip finance calculator
     </div>
     <div>
-        <button pButton class="border-round-3xl" (click)="login()">
-            <div class="font-semibold pb-1">Login with Google</div>
-            <i class="pi pi-angle-right"></i>
-        </button>
+        <p-button styleClass="p-button-rounded" (click)="login()" label="Login with Google" [loading]="spinner"></p-button>
     </div>
 </div>

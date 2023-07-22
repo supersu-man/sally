@@ -13,11 +13,14 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 export class HomeComponent {
   user: User | null = null
   provider = new GoogleAuthProvider()
+  spinner = false
 
   constructor(private commonService: CommonService, private router: Router, private auth: Auth,
     private httpClient: HttpClient, private messageService: MessageService, private confirmationService: ConfirmationService) {
+    this.spinner = true
     this.commonService.header_subject.next(null)
     this.auth.onAuthStateChanged(user => {
+      this.spinner = false
       if (user) {
         this.user = user
         this.authenticate()
@@ -25,9 +28,13 @@ export class HomeComponent {
     })
   }
 
-  login = () => { signInWithRedirect(this.auth, this.provider) }
+  login = () => { 
+    this.spinner = true
+    signInWithRedirect(this.auth, this.provider) 
+  }
 
   authenticate = () => {
+    this.spinner = true
     this.httpClient.post(environment.endpoint + '/login', { email: this.user?.email }).subscribe({
       next: (res: any) => {
         localStorage.setItem('user', JSON.stringify(res))
@@ -36,11 +43,13 @@ export class HomeComponent {
       error: (error) => {
         if (error.status == 404) this.registrationDialog()
         else this.messageService.add({ severity: 'error', summary: error.statusText })
-      }
+      },
+      complete: () => { this.spinner = false }
     })
   }
 
   register = () => {
+    this.spinner = true
     this.httpClient.post(environment.endpoint + '/register', { email: this.user?.email, name: this.user?.displayName }).subscribe({
       next: (res) => {
         localStorage.setItem('user', JSON.stringify(res))
@@ -49,7 +58,8 @@ export class HomeComponent {
       error: (error) => {
         this.messageService.add({ severity: 'error', summary: error.error || error.statusText })
         console.log(error)
-      }
+      },
+      complete: () => { this.spinner = false }
     })
   }
 

@@ -7,7 +7,7 @@
         <div class="ml-auto">
             <button *ngIf="header?.home" pButton class="ml-1" icon="pi pi-home" routerLink="/dashboard" style="height: 35px; width: 35px;"></button>
             <button *ngIf="header?.add" pButton class="ml-1" icon="pi pi-plus" style="height: 35px; width: 35px;" (click)="commonService.header_operation.next('add')"></button>
-            <button *ngIf="header?.logout" pButton class="ml-1" icon="pi pi-sign-out" style="height: 35px; width: 35px;" (click)="logout();" routerLink="/"></button>
+            <button *ngIf="header?.logout" pButton class="ml-1 p-button-danger" icon="pi pi-sign-out"  style="height: 35px; width: 35px;" (click)="logout();"></button>
         </div>
     </div>
     <div class="flex-grow-1">
