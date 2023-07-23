@@ -28,7 +28,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm i
-          npx ng deploy --base-href=/sally/ --name="Sumanth Perambuduri" --email=35676632+supersu-man@users.noreply.github.com --no-silent
+          npx ng deploy --name="Sumanth Perambuduri" --email=35676632+supersu-man@users.noreply.github.com --no-silent
       
       - name: Build Changelog
         if: ${{ steps.regex-match.outputs.match != '' }}

@@ -4,8 +4,6 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --base-href /sally/ && copy docs\\index.html docs\\404.html",
-    "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "patch": "npm version patch &&  git push && git push --tags",
     "minor": "npm version minor && git push && git push --tags",
