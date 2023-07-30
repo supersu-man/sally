@@ -12,23 +12,21 @@ import { Sally, MyUser } from '../interface/interface';
 })
 export class DashboardComponent {
 
-  addSallyPopup = false
-  popupSpinner = false
+  user = JSON.parse(localStorage.getItem('user') as string) as MyUser
 
   sallys: Sally[] = []
   spinner = false
 
-  selectedSallyId = ''
-  user = JSON.parse(localStorage.getItem('user') as string) as MyUser
-  items = [
-    {
-      label: 'Delete',
-      icon: 'pi pi-fw pi-trash',
-      command: () => {
-        this.delete();
-      }
-    }
-  ]
+  addSallyPopup = false
+  popupSpinner = false
+
+  items = [{
+    label: 'Delete',
+    icon: 'pi pi-fw pi-trash',
+    command: () => this.delete()
+  }]
+  selectedSally: Sally | undefined
+
   sally_form = new FormGroup({
     name: new FormControl(null, Validators.required),
     members: new FormControl([]),
@@ -45,7 +43,7 @@ export class DashboardComponent {
 
   create_sally = () => {
     this.popupSpinner = true
-    this.httpClient.post(environment.endpoint+'/create-sally', this.sally_form.getRawValue()).subscribe({
+    this.httpClient.post(environment.endpoint + '/create-sally', this.sally_form.getRawValue()).subscribe({
       next: (res) => {
         this.messageService.add({ severity: 'success', summary: 'Sally created' })
         this.get_data()
@@ -56,14 +54,14 @@ export class DashboardComponent {
       },
       complete: () => {
         this.popupSpinner = false
-        this.addSallyPopup = false 
+        this.addSallyPopup = false
       }
     })
   }
 
   get_data = () => {
     this.spinner = true
-    this.httpClient.post(environment.endpoint+'/get-sallys', { user_id: this.user.id }).subscribe({
+    this.httpClient.post(environment.endpoint + '/get-sallys', { user_id: this.user.id }).subscribe({
       next: (res) => this.sallys = res as Sally[],
       error: (err) => {
         this.messageService.add({ severity: 'error', summary: 'Error has occured' })
@@ -74,7 +72,7 @@ export class DashboardComponent {
   }
 
   delete = () => {
-    this.httpClient.post(environment.endpoint+'/delete-sally', { sally_id: this.selectedSallyId, user_id: this.user.id }).subscribe({
+    this.httpClient.post(environment.endpoint + '/delete-sally', { sally_id: this.selectedSally?.id, user_id: this.user.id }).subscribe({
       next: (res) => {
         this.messageService.add({ severity: 'success', summary: 'Sally deleted' })
         this.get_data()

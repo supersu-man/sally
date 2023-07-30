@@ -14,7 +14,6 @@ import { ChipsModule } from 'primeng/chips';
 import { SallyComponent } from './sally/sally.component';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { MenuModule } from 'primeng/menu';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
@@ -23,6 +22,7 @@ import { environment } from '../environments/environment';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ContextMenuModule } from 'primeng/contextmenu';
 
 
 @NgModule({
@@ -44,7 +44,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     ReactiveFormsModule,
     DropdownModule,
     InputNumberModule,
-    MenuModule,
+    ContextMenuModule,
     TabMenuModule,
     ToastModule,
     HttpClientModule,

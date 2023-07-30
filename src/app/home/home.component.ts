@@ -26,6 +26,11 @@ export class HomeComponent {
         this.authenticate()
       }
     })
+
+    this.httpClient.get(environment.endpoint).subscribe({
+      next: (res) => { console.log(res) } 
+    })
+
   }
 
   login = () => { 

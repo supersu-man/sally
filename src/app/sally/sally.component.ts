@@ -18,9 +18,18 @@ export class SallyComponent {
 
   sally: Sally | undefined
   expenses: Expense[] = []
-  stats: any[] = []
+
+  stats: Stat[] = []
   totalAmount = 0
+
   spinner = false
+
+  items = [{
+    label: 'Delete',
+    icon: 'pi pi-fw pi-trash',
+    command: () => { this.deleteExpense() }
+  }]
+  selectedExpense: Expense | undefined
 
   tab_items: MenuItem[] = [
     { label: 'Expenses', icon: 'pi pi-fw pi-wallet' },
@@ -67,12 +76,12 @@ export class SallyComponent {
     this.expenses.forEach((expense: Expense) => {
       this.totalAmount += expense.amount
       let unq = this.stats.find(stat => { return stat.member == expense.member })
-      if(unq) unq.amount += expense.amount
+      if (unq) unq.amount += expense.amount
       else this.stats.push({ member: expense.member, amount: expense.amount })
     })
     this.sally?.members.forEach((member: string) => {
-      let unq = this.stats.find(stat => { return stat.member == member})
-      if(!unq) this.stats.push({ member, amount: 0 })
+      let unq = this.stats.find(stat => { return stat.member == member })
+      if (!unq) this.stats.push({ member, amount: 0 })
     })
   }
 
@@ -87,8 +96,26 @@ export class SallyComponent {
         this.messageService.add({ severity: 'error', summary: 'Error has occured' })
         console.log(err)
       },
-      complete: () => { 
+      complete: () => {
         this.popupSpinner = false
+        this.addExpensePopup = false
+      }
+    })
+  }
+
+  deleteExpense() {
+    this.spinner = true
+    this.httpClient.post(environment.endpoint + '/delete-expense', { expense_id: this.selectedExpense?.id, user_id: this.user.id }).subscribe({
+      next: (res) => {
+        this.messageService.add({ severity: 'success', summary: 'Expense deleted' })
+        this.getData()
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error has occured' })
+        console.log(err)
+      },
+      complete: () => {
+        this.spinner = false
         this.addExpensePopup = false
       }
     })

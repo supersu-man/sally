@@ -4,14 +4,13 @@
 
 <div class="grid grid-nogutter p-1" *ngIf="!spinner && sallys.length > 0">
     <div class="col-12 md:col-6 lg:col-3" *ngFor="let sally of sallys">
-        <div class="flex flex-column border-round text-center shadow-2 hover:shadow-4 transition-duration-200 py-3 m-2"
-            [routerLink]="sally.id"
-            (contextmenu)="$event.preventDefault();selectedSallyId=sally.id;menu.toggle($event);">
+        <div #sall class="flex flex-column border-round text-center shadow-2 hover:shadow-4 transition-duration-200 py-3 m-2"
+            [routerLink]="sally.id">
             <label class="text-xl font-semibold pb-2">{{sally.name}}</label>
             <label>Members: {{sally.members.length}}</label>
         </div>
+        <p-contextMenu [target]="sall" (onShow)="selectedSally=sally" [model]="items"></p-contextMenu>
     </div>
-    <p-menu #menu [model]="items" [popup]="true"></p-menu>
 </div>
 
 <!-- Add Sally Dialog -->
