@@ -73,9 +73,8 @@ export class SallyComponent {
       error: (err) => {
         this.messageService.add({ severity: 'error', summary: 'Error has occured' })
         console.log(err)
-      },
-      complete: () => { this.spinner = false }
-    })
+      }
+    }).add(() => this.spinner = false)
   }
 
   makeStats() {
@@ -93,22 +92,20 @@ export class SallyComponent {
     })
   }
 
-  create_expense() {
+  createExpense() {
     this.popupSpinner = true
     this.httpClient.post(environment.endpoint + '/create-expense', { ...this.expense_form.getRawValue(), sally_id: this.sally_id, user_id: this.user.id }).subscribe({
-      next: (res) => {
+      next: (expense) => {
         this.messageService.add({ severity: 'success', summary: 'Expense added' })
-        this.getData()
+        this.expenses.push(expense as Expense)
+        this.makeStats()
+        this.addExpensePopup = false
       },
       error: (err) => {
         this.messageService.add({ severity: 'error', summary: 'Error has occured' })
         console.log(err)
-      },
-      complete: () => {
-        this.popupSpinner = false
-        this.addExpensePopup = false
       }
-    })
+    }).add(() => this.popupSpinner = false)
   }
 
   deleteExpense() {
@@ -116,34 +113,31 @@ export class SallyComponent {
     this.httpClient.post(environment.endpoint + '/delete-expense', { expense_id: this.selectedExpense?.id, user_id: this.user.id }).subscribe({
       next: (res) => {
         this.messageService.add({ severity: 'success', summary: 'Expense deleted' })
-        this.getData()
+        this.expenses = this.expenses.filter(expense => { return expense.id != this.selectedExpense?.id })
+        this.makeStats()
+        this.addExpensePopup = false
       },
       error: (err) => {
         this.messageService.add({ severity: 'error', summary: 'Error has occured' })
         console.log(err)
-      },
-      complete: () => {
-        this.spinner = false
-        this.addExpensePopup = false
       }
-    })
+    }).add(() => this.spinner = false)
   }
 
   updateMembers() {
     this.popupSpinner = true
     this.httpClient.post(environment.endpoint+'/update-members', {...this.member_form.getRawValue(), sally_id: this.sally_id, user_id: this.user.id }).subscribe({
       next: (sally) => {
-        console.log(sally)
         this.sally = sally as Sally
-        this.popupSpinner = false
-        this.addMemberPopup = false
         this.activeTabItem = this.tab_items[2]
+        this.makeStats()
+        this.addMemberPopup = false
       },
       error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error has occured' })
         console.log(err)
-        this.popupSpinner = false
       }
-    })
+    }).add(() => this.popupSpinner = false)
   }
 
 

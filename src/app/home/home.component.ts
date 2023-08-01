@@ -48,9 +48,8 @@ export class HomeComponent {
       error: (error) => {
         if (error.status == 404) this.registrationDialog()
         else this.messageService.add({ severity: 'error', summary: error.statusText })
-      },
-      complete: () => { this.spinner = false }
-    })
+      }
+    }).add(() => this.spinner = false)
   }
 
   register = () => {
@@ -63,15 +62,14 @@ export class HomeComponent {
       error: (error) => {
         this.messageService.add({ severity: 'error', summary: error.error || error.statusText })
         console.log(error)
-      },
-      complete: () => { this.spinner = false }
-    })
+      }
+    }).add(() => this.spinner = false)
   }
 
   registrationDialog = () => {
     this.confirmationService.confirm({
       message: 'Account not found with this email, create an account?',
-      header: 'Register',
+      header: 'Register?',
       icon: 'pi pi-exclamation-triangle',
       accept: () => { this.register() },
       reject: () => {

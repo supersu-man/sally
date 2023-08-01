@@ -23,7 +23,7 @@ export class DashboardComponent {
   items = [{
     label: 'Delete',
     icon: 'pi pi-fw pi-trash',
-    command: () => this.delete()
+    command: () => this.deleteSally()
   }]
   selectedSally: Sally | undefined
 
@@ -37,50 +37,47 @@ export class DashboardComponent {
     this.commonService.header_operation.subscribe((val) => {
       if (val == 'addSally') this.addSallyPopup = true
     })
-    this.get_data()
+    this.getData()
   }
 
-  create_sally = () => {
+  createSally = () => {
     this.popupSpinner = true
     this.httpClient.post(environment.endpoint + '/create-sally', this.sally_form.getRawValue()).subscribe({
-      next: (res) => {
+      next: (sally) => {
         this.messageService.add({ severity: 'success', summary: 'Sally created' })
-        this.get_data()
+        this.sallys.push(sally as Sally)
+        this.addSallyPopup = false
       },
       error: (err) => {
         this.messageService.add({ severity: 'error', summary: 'Error has occured' })
         console.log(err)
       },
-      complete: () => {
-        this.popupSpinner = false
-        this.addSallyPopup = false
-      }
-    })
+    }).add(() => this.popupSpinner = false )
   }
 
-  get_data = () => {
+  getData = () => {
     this.spinner = true
     this.httpClient.post(environment.endpoint + '/get-sallys', { user_id: this.user.id }).subscribe({
       next: (res) => this.sallys = res as Sally[],
       error: (err) => {
         this.messageService.add({ severity: 'error', summary: 'Error has occured' })
         console.log(err)
-      },
-      complete: () => { this.spinner = false }
-    })
+      }
+    }).add(() => this.spinner = false)
   }
 
-  delete = () => {
+  deleteSally = () => {
+    this.spinner = true
     this.httpClient.post(environment.endpoint + '/delete-sally', { sally_id: this.selectedSally?.id, user_id: this.user.id }).subscribe({
       next: (res) => {
         this.messageService.add({ severity: 'success', summary: 'Sally deleted' })
-        this.get_data()
+        this.sallys = this.sallys.filter(sally => { return sally.id != this.selectedSally?.id })
       },
       error: (err) => {
         this.messageService.add({ severity: 'error', summary: 'Error has occured' })
         console.log(err)
       }
-    })
+    }).add(() => this.spinner = false)
   }
 
 }

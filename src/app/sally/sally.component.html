@@ -50,7 +50,7 @@
             <label>Description</label>
             <input pInputText formControlName="desc" />
         </div>
-        <p-button class="text-center" label="Create" styleClass="py-2 px-3" (click)="create_expense()" [disabled]="!expense_form.valid" [loading]="popupSpinner"></p-button>
+        <p-button class="text-center" label="Create" styleClass="py-2 px-3" (click)="createExpense()" [disabled]="!expense_form.valid" [loading]="popupSpinner"></p-button>
     </div>
 </p-dialog>
 
