@@ -29,14 +29,13 @@ export class DashboardComponent {
 
   sally_form = new FormGroup({
     name: new FormControl(null, Validators.required),
-    members: new FormControl([]),
     user_id: new FormControl(this.user.id)
   })
 
   constructor(private messageService: MessageService, private commonService: CommonService, private httpClient: HttpClient) {
-    this.commonService.header_subject.next({ title: 'Dashboard', add: true, logout: true })
+    this.commonService.header_subject.next({ title: 'Dashboard', addSally: true, logout: true })
     this.commonService.header_operation.subscribe((val) => {
-      if (val == 'add') this.addSallyPopup = true
+      if (val == 'addSally') this.addSallyPopup = true
     })
     this.get_data()
   }

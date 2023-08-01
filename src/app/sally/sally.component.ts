@@ -33,7 +33,8 @@ export class SallyComponent {
 
   tab_items: MenuItem[] = [
     { label: 'Expenses', icon: 'pi pi-fw pi-wallet' },
-    { label: 'Stats', icon: 'pi pi-fw pi-calculator' }
+    { label: 'Stats', icon: 'pi pi-fw pi-calculator' },
+    { label: 'Members', icon: 'pi pi-fw pi-user' }
   ]
   activeTabItem: MenuItem = this.tab_items[0]
 
@@ -45,10 +46,16 @@ export class SallyComponent {
     desc: new FormControl(null, Validators.required),
   })
 
+  addMemberPopup = false
+  member_form = new FormGroup({
+    members : new FormControl()
+  })
+
   constructor(private route: ActivatedRoute, private messageService: MessageService, private commonService: CommonService, private httpClient: HttpClient) {
     this.commonService.header_subject.next(null)
     this.commonService.header_operation.subscribe((val) => {
-      if (val == 'add') this.addExpensePopup = true
+      if (val == 'addExpense') this.addExpensePopup = true
+      if (val == 'addMember') this.addMemberPopup = true
     })
     this.getData()
   }
@@ -59,7 +66,8 @@ export class SallyComponent {
       next: (res: any) => {
         this.sally = res.sally
         this.expenses = res.expenses
-        this.commonService.header_subject.next({ title: this.sally?.name, add: true, home: true })
+        this.member_form.patchValue({ members: this.sally?.members })
+        this.commonService.header_subject.next({ title: this.sally?.name, addExpense: true, addMember:true, home: true })
         this.makeStats()
       },
       error: (err) => {
@@ -117,6 +125,23 @@ export class SallyComponent {
       complete: () => {
         this.spinner = false
         this.addExpensePopup = false
+      }
+    })
+  }
+
+  updateMembers() {
+    this.popupSpinner = true
+    this.httpClient.post(environment.endpoint+'/update-members', {...this.member_form.getRawValue(), sally_id: this.sally_id, user_id: this.user.id }).subscribe({
+      next: (sally) => {
+        console.log(sally)
+        this.sally = sally as Sally
+        this.popupSpinner = false
+        this.addMemberPopup = false
+        this.activeTabItem = this.tab_items[2]
+      },
+      error: (err) => {
+        console.log(err)
+        this.popupSpinner = false
       }
     })
   }

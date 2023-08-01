@@ -15,16 +15,11 @@
 
 <!-- Add Sally Dialog -->
 <p-dialog header="New Sally" [(visible)]="addSallyPopup" [modal]="true" [style]="{'width' : '350px'}"
-    (onHide)="sally_form.patchValue({ name: null, members: [] })">
+    (onHide)="sally_form.patchValue({ name: null })">
     <div class="flex flex-column gap-3" [formGroup]="sally_form">
         <div class="flex flex-column gap-1">
             <label>Name</label>
             <input pInputText formControlName="name" />
-        </div>
-        <div class="flex flex-column gap-1 p-fluid">
-            <label>Members</label>
-            <p-chips formControlName="members"></p-chips>
-            <small>Use enter to add member</small>
         </div>
         <p-button class="text-center" label="Create" styleClass="py-2 px-3" (click)="create_sally()"
             [disabled]="!sally_form.valid" [loading]="popupSpinner">

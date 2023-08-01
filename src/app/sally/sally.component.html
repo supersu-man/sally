@@ -2,7 +2,7 @@
     <p-progressSpinner class="m-auto" styleClass="w-3rem h-3rem" strokeWidth="5"></p-progressSpinner>
 </div>
 
-<p-tabMenu *ngIf="!spinner" [model]="tab_items" [activeItem]="tab_items[0]" (activeItemChange)="activeTabItem = $event;"></p-tabMenu>
+<p-tabMenu *ngIf="!spinner" [model]="tab_items" [activeItem]="activeTabItem" (activeItemChange)="activeTabItem = $event;"></p-tabMenu>
 
 <div class="flex flex-column" *ngIf="!spinner && activeTabItem.label == 'Expenses' ">
     <div #exp class="grid grid-nogutter border-round shadow-2 p-3 m-2" *ngFor="let item of expenses" (contextMenu)="$event.preventDefault();">
@@ -29,6 +29,12 @@
     </div>
 </div>
 
+<div class="flex flex-column" *ngIf="!spinner && activeTabItem.label == 'Members'">
+    <div class="grid grid-nogutter border-round shadow-2 p-3 m-2" *ngFor="let member of sally?.members">
+        <label class="col">{{member}}</label>
+    </div>
+</div>
+
 <!-- Add Expense Dialog -->
 <p-dialog header="New Expense" [(visible)]="addExpensePopup" [modal]="true" [style]="{'width' : '350px'}" (onHide)="expense_form.reset()">
     <div class="flex flex-column gap-3" [formGroup]="expense_form">
@@ -44,7 +50,16 @@
             <label>Description</label>
             <input pInputText formControlName="desc" />
         </div>
-        <p-button class="text-center" label="Create" styleClass="py-2 px-3" 
-        (click)="create_expense()" [disabled]="!expense_form.valid" [loading]="popupSpinner"></p-button>
+        <p-button class="text-center" label="Create" styleClass="py-2 px-3" (click)="create_expense()" [disabled]="!expense_form.valid" [loading]="popupSpinner"></p-button>
+    </div>
+</p-dialog>
+
+<!-- Add Member Dialog -->
+<p-dialog header="Update Members" [(visible)]="addMemberPopup" [modal]="true" [style]="{'width' : '350px'}">
+    <div class="flex flex-column gap-3" [formGroup]="member_form">
+        <label>Members</label>
+        <p-chips formControlName="members"></p-chips>
+        <small>Use enter to add member</small>
+        <p-button class="text-center" label="Update" styleClass="py-2 px-3" (click)="updateMembers()" [loading]="popupSpinner"></p-button>
     </div>
 </p-dialog>
