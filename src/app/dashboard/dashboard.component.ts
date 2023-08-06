@@ -49,7 +49,7 @@ export class DashboardComponent {
         this.addSallyPopup = false
       },
       error: (err) => {
-        this.messageService.add({ severity: 'error', summary: 'Error has occured' })
+        this.messageService.add({ severity: 'error', summary: err.statusText })
         console.log(err)
       },
     }).add(() => this.popupSpinner = false )

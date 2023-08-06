@@ -45,9 +45,9 @@ export class HomeComponent {
         localStorage.setItem('user', JSON.stringify(res))
         this.router.navigate(['/dashboard'])
       },
-      error: (error) => {
-        if (error.status == 404) this.registrationDialog()
-        else this.messageService.add({ severity: 'error', summary: error.statusText })
+      error: (err) => {
+        if (err.status == 404) this.registrationDialog()
+        else this.messageService.add({ severity: 'error', summary: err.statusText })
       }
     }).add(() => this.spinner = false)
   }
@@ -59,9 +59,9 @@ export class HomeComponent {
         localStorage.setItem('user', JSON.stringify(res))
         this.router.navigate(['/dashboard'])
       },
-      error: (error) => {
-        this.messageService.add({ severity: 'error', summary: error.error || error.statusText })
-        console.log(error)
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: err.statusText })
+        console.log(err)
       }
     }).add(() => this.spinner = false)
   }
