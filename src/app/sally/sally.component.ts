@@ -62,11 +62,11 @@ export class SallyComponent {
 
   getSally() {
     this.spinner = true
-    this.httpClient.post(environment.endpoint + '/get-sally', { sally_id: this.sally_id, user_id: this.user.id }).subscribe({
+    this.httpClient.post(environment.endpoint + '/get-sally', { sally_id: this.sally_id, user_id: this.user?.id || null}).subscribe({
       next: (sally) => {
         this.sally = sally as Sally
         this.member_form.patchValue({ members: this.sally.members })
-        if (this.sally.user_id == this.user.id) {
+        if (this.user && this.sally.user_id == this.user.id) {
           this.commonService.header_subject.next({ title: this.sally.name, addExpense: true, addMember: true, home: true, togglePrivacy: { private: this.sally.private } })
           if(window.location.pathname.includes('sallys')) window.location.pathname = '/dashboard/' + this.sally.id
         } else {
