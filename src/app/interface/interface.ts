@@ -9,6 +9,8 @@ export interface Sally {
     name: string
     members: string[]
     user_id: string
+    private: boolean
+    expenses: Expense[]
 }
 
 export interface Expense {

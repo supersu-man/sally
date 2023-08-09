@@ -8,7 +8,8 @@ import { commonGuard } from './guard/common.guard';
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [commonGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [commonGuard] },
-  { path: 'dashboard/:sally_id', component: SallyComponent, canActivate: [commonGuard] }
+  { path: 'dashboard/:sally_id', component: SallyComponent, canActivate: [commonGuard] },
+  { path: 'sallys/:sally_id', component: SallyComponent }
 ];
 
 @NgModule({

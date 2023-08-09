@@ -9,6 +9,7 @@
             <button *ngIf="header?.addSally" pButton class="ml-1" icon="pi pi-plus" style="height: 35px; width: 35px;" (click)="commonService.header_operation.next('addSally')"></button>
             <button *ngIf="header?.addExpense" pButton class="ml-1" icon="pi pi-dollar" style="height: 35px; width: 35px;" (click)="commonService.header_operation.next('addExpense')"></button>
             <button *ngIf="header?.addMember" pButton class="ml-1" icon="pi pi-user-plus"  style="height: 35px; width: 35px;" (click)="commonService.header_operation.next('addMember')"></button>
+            <button *ngIf="header?.togglePrivacy" pButton class="ml-1" [icon]="header.togglePrivacy.private ? 'pi pi-eye-slash': 'pi pi-eye'"  style="height: 35px; width: 35px;" (click)="commonService.header_operation.next('togglePrivacy')"></button>
             <button *ngIf="header?.logout" pButton class="ml-1 p-button-danger" icon="pi pi-sign-out"  style="height: 35px; width: 35px;" (click)="logout();"></button>
         </div>
     </div>

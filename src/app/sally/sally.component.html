@@ -5,7 +5,7 @@
 <p-tabMenu *ngIf="!spinner" [model]="tab_items" [activeItem]="activeTabItem" (activeItemChange)="activeTabItem = $event;"></p-tabMenu>
 
 <div class="flex flex-column" *ngIf="!spinner && activeTabItem.label == 'Expenses' ">
-    <div #exp class="grid grid-nogutter border-round shadow-2 p-3 m-2" *ngFor="let item of expenses" (contextMenu)="$event.preventDefault();">
+    <div #exp class="grid grid-nogutter border-round shadow-2 p-3 m-2" *ngFor="let item of sally?.expenses" (contextMenu)="$event.preventDefault();">
         <label class="col-3">{{item.member}}</label>
         <label class="col-2">{{item.amount}}</label>
         <label class="col-4">{{item.desc}}</label>

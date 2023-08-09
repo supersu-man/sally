@@ -17,7 +17,6 @@ export class SallyComponent {
   user = JSON.parse(localStorage.getItem('user') as string) as MyUser
 
   sally: Sally | undefined
-  expenses: Expense[] = []
 
   stats: Stat[] = []
   totalAmount = 0
@@ -48,7 +47,7 @@ export class SallyComponent {
 
   addMemberPopup = false
   member_form = new FormGroup({
-    members : new FormControl()
+    members: new FormControl()
   })
 
   constructor(private route: ActivatedRoute, private messageService: MessageService, private commonService: CommonService, private httpClient: HttpClient) {
@@ -56,19 +55,40 @@ export class SallyComponent {
     this.commonService.header_operation.subscribe((val) => {
       if (val == 'addExpense') this.addExpensePopup = true
       if (val == 'addMember') this.addMemberPopup = true
+      if (val == 'togglePrivacy') this.togglePrivacy()
     })
-    this.getData()
+    this.getSally()
   }
 
-  getData() {
+  getSally() {
     this.spinner = true
-    this.httpClient.post(environment.endpoint + '/get-expenses', { sally_id: this.sally_id, user_id: this.user.id }).subscribe({
-      next: (res: any) => {
-        this.sally = res.sally
-        this.expenses = res.expenses
-        this.member_form.patchValue({ members: this.sally?.members })
-        this.commonService.header_subject.next({ title: this.sally?.name, addExpense: true, addMember:true, home: true })
+    this.httpClient.post(environment.endpoint + '/get-sally', { sally_id: this.sally_id, user_id: this.user.id }).subscribe({
+      next: (sally) => {
+        this.sally = sally as Sally
+        this.member_form.patchValue({ members: this.sally.members })
+        if (this.sally.user_id == this.user.id) {
+          this.commonService.header_subject.next({ title: this.sally.name, addExpense: true, addMember: true, home: true, togglePrivacy: { private: this.sally.private } })
+          if(window.location.pathname.includes('sallys')) window.location.pathname = '/dashboard/' + this.sally.id
+        } else {
+          this.commonService.header_subject.next({ title: this.sally.name })
+        }
         this.makeStats()
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error has occured' })
+        console.log(err)
+      }
+    }).add(() => this.spinner = false)
+  }
+
+  togglePrivacy() {
+    this.spinner = true
+    this.httpClient.post(environment.endpoint + '/toggle-privacy', { sally_id: this.sally_id, user_id: this.user.id, private: !this.sally?.private }).subscribe({
+      next: (sally: any) => {
+        if (this.sally) this.sally.private = sally.private
+        this.commonService.header_subject.next({ title: this.sally?.name, addExpense: true, addMember: true, home: true, togglePrivacy: { private: sally.private } })
+        this.messageService.add({ severity: 'success', summary: sally.private ? 'Sharing disabled' : 'Sharing enabled and Link copied' })
+        if (!sally.private) { navigator.clipboard.writeText(window.location.origin + '/sallys/' + this.sally?.id) }
       },
       error: (err) => {
         this.messageService.add({ severity: 'error', summary: 'Error has occured' })
@@ -80,7 +100,7 @@ export class SallyComponent {
   makeStats() {
     this.stats = []
     this.totalAmount = 0
-    this.expenses.forEach((expense: Expense) => {
+    this.sally?.expenses?.forEach((expense: Expense) => {
       this.totalAmount += expense.amount
       let unq = this.stats.find(stat => { return stat.member == expense.member })
       if (unq) unq.amount += expense.amount
@@ -97,7 +117,8 @@ export class SallyComponent {
     this.httpClient.post(environment.endpoint + '/create-expense', { ...this.expense_form.getRawValue(), sally_id: this.sally_id, user_id: this.user.id }).subscribe({
       next: (expense) => {
         this.messageService.add({ severity: 'success', summary: 'Expense added' })
-        this.expenses.push(expense as Expense)
+        if (this.sally && !this.sally.expenses) this.sally.expenses = []
+        this.sally?.expenses.push(expense as Expense)
         this.makeStats()
         this.addExpensePopup = false
       },
@@ -113,7 +134,7 @@ export class SallyComponent {
     this.httpClient.post(environment.endpoint + '/delete-expense', { expense_id: this.selectedExpense?.id, user_id: this.user.id }).subscribe({
       next: (res) => {
         this.messageService.add({ severity: 'success', summary: 'Expense deleted' })
-        this.expenses = this.expenses.filter(expense => { return expense.id != this.selectedExpense?.id })
+        if (this.sally?.expenses) this.sally.expenses = this.sally?.expenses.filter(expense => { return expense.id != this.selectedExpense?.id })
         this.makeStats()
         this.addExpensePopup = false
       },
@@ -126,7 +147,7 @@ export class SallyComponent {
 
   updateMembers() {
     this.popupSpinner = true
-    this.httpClient.post(environment.endpoint+'/update-members', {...this.member_form.getRawValue(), sally_id: this.sally_id, user_id: this.user.id }).subscribe({
+    this.httpClient.post(environment.endpoint + '/update-members', { ...this.member_form.getRawValue(), sally_id: this.sally_id, user_id: this.user.id }).subscribe({
       next: (sally) => {
         this.sally = sally as Sally
         this.activeTabItem = this.tab_items[2]
