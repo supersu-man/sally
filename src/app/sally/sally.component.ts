@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MenuItem, MessageService } from 'primeng/api';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { CommonService } from '../service/common.service';
 import { Expense, MyUser, Sally, Stat } from '../interface/interface';
 import { HttpClient } from '@angular/common/http';
@@ -50,12 +50,12 @@ export class SallyComponent {
     members: new FormControl()
   })
 
-  constructor(private route: ActivatedRoute, private messageService: MessageService, private commonService: CommonService, private httpClient: HttpClient) {
+  constructor(private route: ActivatedRoute, private messageService: MessageService, private commonService: CommonService, private httpClient: HttpClient, private confirmationService: ConfirmationService) {
     this.commonService.header_subject.next(null)
     this.commonService.header_operation.subscribe((val) => {
       if (val == 'addExpense') this.addExpensePopup = true
       if (val == 'addMember') this.addMemberPopup = true
-      if (val == 'togglePrivacy') this.togglePrivacy()
+      if (val == 'togglePrivacy') this.privacyConfirmation()
     })
     this.getSally()
   }
@@ -159,6 +159,16 @@ export class SallyComponent {
         console.log(err)
       }
     }).add(() => this.popupSpinner = false)
+  }
+
+  privacyConfirmation() {
+    this.confirmationService.confirm({
+      message: `Are you sure you want to change it to ${this.sally?.private ? 'PUBLIC' : 'PRIVATE'} sally?`,
+      header: 'Toggle privacy',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => { this.togglePrivacy() },
+      reject: () => { }
+    })
   }
 
 
