@@ -149,7 +149,7 @@ export class SallyComponent {
     this.popupSpinner = true
     this.httpClient.post(environment.endpoint + '/update-members', { ...this.member_form.getRawValue(), sally_id: this.sally_id, user_id: this.user.id }).subscribe({
       next: (sally) => {
-        this.sally = sally as Sally
+        if(this.sally) this.sally.members = (sally as Sally).members
         this.activeTabItem = this.tab_items[2]
         this.makeStats()
         this.addMemberPopup = false
