@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions-ecosystem/action-regex-match@v2
+      - uses: actions-ecosystem/action-regex-match@v2.0.2
         id: regex-match
         with:
           text: ${{ github.event.head_commit.message }}
