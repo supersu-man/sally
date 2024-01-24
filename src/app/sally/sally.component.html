@@ -1,19 +1,15 @@
-<div class="h-full flex" *ngIf="spinner">
-    <p-progressSpinner class="m-auto" styleClass="w-3rem h-3rem" strokeWidth="5"></p-progressSpinner>
-</div>
-
-<div class="flex flex-column h-full">
-    <p-tabMenu *ngIf="!spinner" [model]="tab_items" [activeItem]="activeTabItem" (activeItemChange)="activeTabItem = $event;"></p-tabMenu>
+<div class="flex flex-column h-full" *ngIf="!commonService.spinner">
+    <p-tabMenu  [model]="tab_items" [activeItem]="activeTabItem" (activeItemChange)="activeTabItem = $event;"></p-tabMenu>
     
-    <div class="flex h-full" *ngIf="!spinner && sally?.members?.length==0">
+    <div class="flex h-full" *ngIf="sally?.members?.length==0">
         <div class="m-auto">Add members to get started</div>
     </div>
 
-    <div class="flex h-full" *ngIf="!spinner && sally?.expenses?.length==0  && sally?.members?.length!=0 && activeTabItem.label == 'Expenses'">
+    <div class="flex h-full" *ngIf="sally?.expenses?.length==0  && sally?.members?.length!=0 && activeTabItem.label == 'Expenses'">
         <div class="m-auto">No expenses yet. Add them.</div>
     </div>
     
-    <div class="flex flex-column" *ngIf="!spinner && activeTabItem.label == 'Expenses'">
+    <div class="flex flex-column" *ngIf="activeTabItem.label == 'Expenses'">
         <div #exp class="grid grid-nogutter border-round shadow-2 p-3 m-2" *ngFor="let item of sally?.expenses" (contextMenu)="$event.preventDefault();">
             <label class="col-3">{{item.member}}</label>
             <label class="col-2">{{item.amount}}</label>
@@ -23,7 +19,7 @@
         </div>
     </div>
     
-    <div class="flex flex-column" *ngIf="!spinner && activeTabItem.label == 'Stats' && stats.length">
+    <div class="flex flex-column" *ngIf="activeTabItem.label == 'Stats' && stats.length">
         <div class="grid grid-nogutter border-round shadow-2 p-3 m-2" *ngFor="let stat of stats">
             <label class="col">{{stat.member}}</label>
             <label class="col-2">{{stat.amount}}</label>
@@ -38,7 +34,7 @@
         </div>
     </div>
     
-    <div class="flex flex-column" *ngIf="!spinner && activeTabItem.label == 'Members'">
+    <div class="flex flex-column" *ngIf="activeTabItem.label == 'Members'">
         <div class="grid grid-nogutter border-round shadow-2 p-3 m-2" *ngFor="let member of sally?.members">
             <label class="col">{{member}}</label>
         </div>
@@ -46,7 +42,7 @@
 </div>
     
 <!-- Add Expense Dialog -->
-<p-dialog header="New Expense" [(visible)]="addExpensePopup" [modal]="true" [style]="{'width' : '350px'}" (onHide)="expense_form.reset()">
+<p-dialog header="New Expense" [(visible)]="commonService.addExpensePopop" [modal]="true" [style]="{'width' : '350px'}" (onHide)="expense_form.reset()">
     <div class="flex flex-column gap-3" [formGroup]="expense_form">
         <div class="flex flex-column gap-1">
             <label>Name</label>
@@ -65,7 +61,7 @@
 </p-dialog>
 
 <!-- Add Member Dialog -->
-<p-dialog header="Update Members" [(visible)]="addMemberPopup" [modal]="true" [style]="{'width' : '350px'}">
+<p-dialog header="Update Members" [(visible)]="commonService.addMemeberPopup" [modal]="true" [style]="{'width' : '350px'}">
     <div class="flex flex-column gap-3" [formGroup]="member_form">
         <label>Members</label>
         <p-chips formControlName="members"></p-chips>

@@ -1,62 +1,40 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../service/common.service';
 import { Router } from '@angular/router';
-import { Auth, GoogleAuthProvider, User, signInWithRedirect } from '@angular/fire/auth';
 import { environment } from 'src/environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { SupabaseService } from '../service/supabase.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
 })
-export class HomeComponent {
-  user: User | null = null
-  provider = new GoogleAuthProvider()
+export class HomeComponent implements OnInit {
   spinner = false
 
-  constructor(private commonService: CommonService, private router: Router, private auth: Auth,
+  constructor(public commonService: CommonService, private router: Router, private supabaseService: SupabaseService,
     private httpClient: HttpClient, private messageService: MessageService, private confirmationService: ConfirmationService) {
-    this.spinner = true
-    this.commonService.header_subject.next(null)
-    this.auth.onAuthStateChanged(user => {
-      this.spinner = false
-      if (user) {
-        this.user = user
-        this.authenticate()
-      }
-    })
-
-    this.httpClient.get(environment.endpoint).subscribe({
-      next: (res) => { console.log(res) } 
-    })
-
   }
 
-  login = () => { 
-    this.spinner = true
-    signInWithRedirect(this.auth, this.provider) 
+  ngOnInit(): void {
+    if(this.commonService.userNotfound) {
+      this.registrationDialog()
+    }
   }
 
-  authenticate = () => {
+  login = () => {
     this.spinner = true
-    this.httpClient.post(environment.endpoint + '/login', { email: this.user?.email }).subscribe({
-      next: (res: any) => {
-        localStorage.setItem('user', JSON.stringify(res))
-        this.router.navigate(['/dashboard'])
-      },
-      error: (err) => {
-        if (err.status == 404) this.registrationDialog()
-        else this.messageService.add({ severity: 'error', summary: err.statusText })
-      }
-    }).add(() => this.spinner = false)
+    this.supabaseService.signIn()
   }
 
   register = () => {
     this.spinner = true
-    this.httpClient.post(environment.endpoint + '/register', { email: this.user?.email, name: this.user?.displayName }).subscribe({
-      next: (res) => {
-        localStorage.setItem('user', JSON.stringify(res))
+    console.log(this.commonService.accessToken)
+    const headers = new HttpHeaders({ 'Authorization': this.commonService.accessToken as string })
+    this.httpClient.post(environment.endpoint + '/user', {}, { headers }).subscribe({
+      next: (res: any) => {
+        this.commonService.user = res
         this.router.navigate(['/dashboard'])
       },
       error: (err) => {
@@ -72,10 +50,7 @@ export class HomeComponent {
       header: 'Register?',
       icon: 'pi pi-exclamation-triangle',
       accept: () => { this.register() },
-      reject: () => {
-        this.auth.signOut()
-        this.router.navigate(['/'])
-      }
+      reject: () => { this.supabaseService.signOut() }
     })
   }
 }

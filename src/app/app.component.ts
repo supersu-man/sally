@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { CommonService } from './service/common.service';
-import { Auth } from '@angular/fire/auth';
 import { ConfirmationService } from 'primeng/api';
 import { Router } from '@angular/router';
+import { SupabaseService } from './service/supabase.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -10,15 +12,19 @@ import { Router } from '@angular/router';
 })
 export class AppComponent {
   title = 'sally';
-  header: any
-  constructor(public commonService: CommonService, private auth: Auth, private router: Router) {
-    this.commonService.header_subject.subscribe((header) => { this.header = header })
+  constructor(public commonService: CommonService, public router: Router, public supabaseService: SupabaseService, private httpClient: HttpClient) {
+    console.log(this.router.url)
   }
 
-  logout = () => {
-    localStorage.removeItem('user')
-    this.auth.signOut().then(() => {
-      this.router.navigate(['/'])
+  deleteUser() {
+    const headers = new HttpHeaders({ 'Authorization': this.commonService.accessToken })
+    this.httpClient.delete(environment.endpoint + '/user', { headers }).subscribe({
+      next: (value) => {
+        console.log("deleted")
+      }, 
+      error: (err) => {
+        console.log(err)
+      }
     })
   }
 

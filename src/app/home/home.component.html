@@ -9,6 +9,7 @@
         Your personal trip finance calculator
     </div>
     <div>
-        <p-button styleClass="p-button-rounded" (click)="login()" label="Login with Google" [loading]="spinner"></p-button>
+        <p-button *ngIf="!commonService.accessToken" styleClass="p-button-rounded" (click)="login()" label="Login with Google" [loading]="spinner"></p-button>
+        <p-button *ngIf="commonService.accessToken" styleClass="p-button-rounded" routerLink="/dashboard" label="Dashboard" [loading]="spinner"></p-button>
     </div>
 </div>

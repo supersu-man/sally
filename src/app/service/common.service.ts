@@ -6,8 +6,18 @@ import { Subject } from 'rxjs';
 })
 export class CommonService {
 
-  header_subject = new Subject<any>
-  header_operation = new Subject<string>
+  accessToken = ""
+  user: { id: string } | undefined
+  userNotfound = false
 
-  constructor() { }
+  addSallyPopup = false
+  addExpensePopop = false
+  addMemeberPopup = false
+
+  togglePrivacy = () => {}
+  disableOperations = false
+
+  heading = ""
+
+  spinner = false
 }

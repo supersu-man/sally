@@ -1,11 +1,5 @@
 export const environment = {
-  firebase: {
-    projectId: 'sally-1b258',
-    appId: '1:88502658106:web:a91add24d8681cfd70c103',
-    storageBucket: 'sally-1b258.appspot.com',
-    apiKey: 'AIzaSyB9imOmlM6Nxey1xjiESWjrNVy_eL2ZpWo',
-    authDomain: 'sally-1b258.firebaseapp.com',
-    messagingSenderId: '88502658106',
-  },
+  url: "https://scjhaqhrieionmfstdfz.supabase.co",
+  key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjamhhcWhyaWVpb25tZnN0ZGZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDQ0MDM4MDEsImV4cCI6MjAxOTk3OTgwMX0.QWy--eouUGI6DzNuEUP1JLsm7iTlBSQxvQuOEF8NokI",
   endpoint: "https://backend.sally.sumanth.dev"
 };

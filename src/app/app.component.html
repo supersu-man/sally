@@ -1,19 +1,23 @@
 <p-toast styleClass="p-2" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
 <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
 
-<div class="h-full flex flex-column">
-    <div class="flex p-3" *ngIf="header">
-        <div class="my-auto text-2xl">{{header?.title}}</div>
-        <div class="ml-auto">
-            <button *ngIf="header?.home" pButton class="ml-1" icon="pi pi-home" routerLink="/dashboard" style="height: 35px; width: 35px;"></button>
-            <button *ngIf="header?.addSally" pButton class="ml-1" icon="pi pi-plus" style="height: 35px; width: 35px;" (click)="commonService.header_operation.next('addSally')"></button>
-            <button *ngIf="header?.addExpense" pButton class="ml-1" icon="pi pi-dollar" style="height: 35px; width: 35px;" (click)="commonService.header_operation.next('addExpense')"></button>
-            <button *ngIf="header?.addMember" pButton class="ml-1" icon="pi pi-user-plus"  style="height: 35px; width: 35px;" (click)="commonService.header_operation.next('addMember')"></button>
-            <button *ngIf="header?.togglePrivacy" pButton class="ml-1" [icon]="header.togglePrivacy.private ? 'pi pi-eye-slash': 'pi pi-eye'"  style="height: 35px; width: 35px;" (click)="commonService.header_operation.next('togglePrivacy')"></button>
-            <button *ngIf="header?.logout" pButton class="ml-1 p-button-danger" icon="pi pi-sign-out"  style="height: 35px; width: 35px;" (click)="logout();"></button>
+<div class="h-full flex flex-column" *ngIf="!commonService.spinner">
+    <div *ngIf="router.url != '/'" class="flex p-3 bg-gray-900">
+        <div class="my-auto text-2xl text-white">{{ router.url == '/dashboard' ? 'Dashboard' : commonService.heading }}</div>
+        <div *ngIf="!router.url.includes('sallys')" class="ml-auto">
+            <button *ngIf="router.url != '/dashboard'" pButton class="ml-1" icon="pi pi-home" routerLink="/dashboard" style="height: 35px; width: 35px;"></button>
+            <button *ngIf="router.url == '/dashboard'" pButton class="ml-1" icon="pi pi-plus" style="height: 35px; width: 35px;" (click)="commonService.addSallyPopup=true"></button>
+            <button *ngIf="router.url.includes('dashboard/')" pButton class="ml-1" icon="pi pi-dollar" style="height: 35px; width: 35px;" (click)="commonService.addExpensePopop=true"></button>
+            <button *ngIf="router.url.includes('dashboard/')" pButton class="ml-1" icon="pi pi-user-plus"  style="height: 35px; width: 35px;" (click)="commonService.addMemeberPopup=true"></button>
+            <button *ngIf="router.url.includes('dashboard/')" pButton class="ml-1" [icon]="true ? 'pi pi-eye-slash': 'pi pi-eye'"  style="height: 35px; width: 35px;" (click)="commonService.togglePrivacy()"></button>
+            <button pButton class="ml-1 p-button-danger" icon="pi pi-sign-out"  style="height: 35px; width: 35px;" (click)="deleteUser()"></button>
         </div>
     </div>
     <div class="flex-grow-1">
         <router-outlet></router-outlet>
     </div>
+</div>
+
+<div class="grid h-full" *ngIf="commonService.spinner">
+ <!-- spinner to be implemented -->
 </div>

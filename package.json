@@ -15,11 +15,11 @@
     "@angular/common": "^16.0.3",
     "@angular/compiler": "^16.0.3",
     "@angular/core": "^16.0.3",
-    "@angular/fire": "^7.6.1",
     "@angular/forms": "^16.0.3",
     "@angular/platform-browser": "^16.0.3",
     "@angular/platform-browser-dynamic": "^16.0.3",
     "@angular/router": "^16.0.3",
+    "@supabase/supabase-js": "^2.39.3",
     "primeflex": "^3.3.0",
     "primeicons": "^6.0.1",
     "primeng": "^16.0.0-rc.2",
@@ -33,5 +33,10 @@
     "@angular/compiler-cli": "^16.0.3",
     "angular-cli-ghpages": "^1.0.6",
     "typescript": "~4.9.4"
+  },
+  "overrides": {
+    "@supabase/supabase-js": {
+      "@supabase/gotrue-js": "2.61.0"
+    }
   }
 }

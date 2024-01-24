@@ -17,9 +17,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
 import { environment } from '../environments/environment';
-import { provideAuth,getAuth } from '@angular/fire/auth';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ContextMenuModule } from 'primeng/contextmenu';
@@ -50,8 +48,6 @@ import { ContextMenuModule } from 'primeng/contextmenu';
     HttpClientModule,
     ConfirmDialogModule,
     ProgressSpinnerModule,
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideAuth(() => getAuth())
   ],
   providers: [MessageService, ConfirmationService],
   bootstrap: [AppComponent]
