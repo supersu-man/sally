@@ -16,16 +16,4 @@ export class AppComponent {
     console.log(this.router.url)
   }
 
-  deleteUser() {
-    const headers = new HttpHeaders({ 'Authorization': this.commonService.accessToken })
-    this.httpClient.delete(environment.endpoint + '/user', { headers }).subscribe({
-      next: (value) => {
-        console.log("deleted")
-      }, 
-      error: (err) => {
-        console.log(err)
-      }
-    })
-  }
-
 }
