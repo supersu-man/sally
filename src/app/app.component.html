@@ -18,6 +18,6 @@
     </div>
 </div>
 
-<div class="grid h-full" *ngIf="commonService.spinner">
- <!-- spinner to be implemented -->
+<div class="h-full flex h-full" *ngIf="commonService.spinner">
+    <p-progressSpinner class="m-auto" styleClass="w-3rem h-3rem" strokeWidth="7" fill="var(--surface-ground)" animationDuration=".9s"></p-progressSpinner>
 </div>

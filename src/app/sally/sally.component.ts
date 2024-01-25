@@ -16,6 +16,7 @@ export class SallyComponent {
   sally_id = this.route.snapshot.paramMap.get('sally_id')
 
   sally: Sally | undefined
+  spinner = false
 
   stats: Stat[] = []
   totalAmount = 0
@@ -55,6 +56,7 @@ export class SallyComponent {
   }
 
   getSally() {
+    this.spinner = true
     const headers = new HttpHeaders({ 'Authorization': this.commonService.accessToken as string })
     this.httpClient.get(environment.endpoint + '/sally/' + this.sally_id, { headers }).subscribe({
       next: (sally) => {
@@ -68,7 +70,7 @@ export class SallyComponent {
         this.messageService.add({ severity: 'error', summary: 'Error has occured' })
         console.log(err)
       }
-    })
+    }).add(() => { this.spinner = false})
   }
 
   togglePrivacy() {

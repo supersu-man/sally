@@ -13,6 +13,7 @@ import { Sally } from '../interface/interface';
 export class DashboardComponent {
 
   sallys: Sally[] = []
+  spinner = false
 
   popupSpinner = false
 
@@ -48,6 +49,7 @@ export class DashboardComponent {
   }
 
   getData = () => {
+    this.spinner = true
     const headers = new HttpHeaders({ 'Authorization': this.commonService.accessToken as string })
     this.httpClient.get(environment.endpoint + '/sallys', { headers }).subscribe({
       next: (res) => this.sallys = res as Sally[],
@@ -55,7 +57,7 @@ export class DashboardComponent {
         this.messageService.add({ severity: 'error', summary: 'Error has occured' })
         console.log(err)
       }
-    })
+    }).add(() => { this.spinner = false })
   }
 
   deleteSally = () => {
