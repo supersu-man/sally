@@ -21,6 +21,7 @@ import { environment } from '../environments/environment';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ContextMenuModule } from 'primeng/contextmenu';
+import { TermsComponent } from './terms/terms.component';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { ContextMenuModule } from 'primeng/contextmenu';
     AppComponent,
     HomeComponent,
     DashboardComponent,
-    SallyComponent
+    SallyComponent,
+    TermsComponent
   ],
   imports: [
     BrowserModule,
