@@ -6,9 +6,6 @@
         <div class="my-auto text-2xl text-white">{{ router.url == '/dashboard' ? 'Dashboard' : commonService.heading }}</div>
         <div *ngIf="!router.url.includes('sallys')" class="ml-auto">
             <button *ngIf="router.url != '/dashboard'" pButton class="ml-1" icon="pi pi-home" routerLink="/dashboard" style="height: 35px; width: 35px;"></button>
-            <button *ngIf="router.url == '/dashboard'" pButton class="ml-1" icon="pi pi-plus" style="height: 35px; width: 35px;" (click)="commonService.addSallyPopup=true"></button>
-            <button *ngIf="router.url.includes('dashboard/')" pButton class="ml-1" icon="pi pi-dollar" style="height: 35px; width: 35px;" (click)="commonService.addExpensePopop=true"></button>
-            <button *ngIf="router.url.includes('dashboard/')" pButton class="ml-1" icon="pi pi-user-plus"  style="height: 35px; width: 35px;" (click)="commonService.addMemeberPopup=true"></button>
             <button *ngIf="router.url.includes('dashboard/')" pButton class="ml-1" [icon]="true ? 'pi pi-eye-slash': 'pi pi-eye'"  style="height: 35px; width: 35px;" (click)="commonService.togglePrivacy()"></button>
             <button *ngIf="!router.url.includes('policy')" pButton class="ml-1 p-button-danger" icon="pi pi-sign-out"  style="height: 35px; width: 35px;" (click)="supabaseService.signOut()"></button>
         </div>

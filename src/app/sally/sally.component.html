@@ -1,13 +1,5 @@
-<div class="flex flex-column h-full" *ngIf="!spinner">
+<div class="relative h-full" *ngIf="!spinner">
     <p-tabMenu  [model]="tab_items" [activeItem]="activeTabItem" (activeItemChange)="activeTabItem = $event;"></p-tabMenu>
-    
-    <div class="flex h-full" *ngIf="sally?.members?.length==0">
-        <div class="m-auto">Add members to get started</div>
-    </div>
-
-    <div class="flex h-full" *ngIf="sally?.expenses?.length==0  && sally?.members?.length!=0 && activeTabItem.label == 'Expenses'">
-        <div class="m-auto">No expenses yet. Add them.</div>
-    </div>
     
     <div class="flex flex-column" *ngIf="activeTabItem.label == 'Expenses'">
         <div #exp class="grid grid-nogutter border-round shadow-2 p-3 m-2" *ngFor="let item of sally?.expenses" (contextMenu)="$event.preventDefault();">
@@ -17,6 +9,10 @@
             <label class="col-3">{{item.created_at | date :'short'}}</label>
             <p-contextMenu [target]="exp" (onShow)="selectedExpense=item" [model]="items"></p-contextMenu>
         </div>
+    </div>
+    <p-button *ngIf="activeTabItem.label == 'Expenses'" styleClass="p-button-rounded py-2 px-3" class="absolute right-0 bottom-0 m-3" (click)="commonService.addExpensePopop=true" icon="pi pi-plus" label="Add Expense"></p-button>
+    <div class="flex h-full" *ngIf="sally?.expenses?.length==0 && sally?.members?.length!=0 && activeTabItem.label == 'Expenses'">
+        <div class="m-auto">No expenses yet. Add them.</div>
     </div>
     
     <div class="flex flex-column" *ngIf="activeTabItem.label == 'Stats' && stats.length">
@@ -38,6 +34,10 @@
         <div class="grid grid-nogutter border-round shadow-2 p-3 m-2" *ngFor="let member of sally?.members">
             <label class="col">{{member}}</label>
         </div>
+    </div>
+    <p-button *ngIf="activeTabItem.label == 'Members'" styleClass="p-button-rounded py-2 px-3" class="absolute right-0 bottom-0 m-3" (click)="commonService.addMemeberPopup=true" icon="pi pi-plus" label="Add Member"></p-button>
+    <div class="flex h-full" *ngIf="sally?.members?.length==0">
+        <div class="m-auto">Add members to get started</div>
     </div>
 </div>
 
