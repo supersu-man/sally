@@ -22,6 +22,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { TermsComponent } from './terms/terms.component';
+import { AboutComponent } from './about/about.component';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { TermsComponent } from './terms/terms.component';
     HomeComponent,
     DashboardComponent,
     SallyComponent,
-    TermsComponent
+    TermsComponent,
+    AboutComponent
   ],
   imports: [
     BrowserModule,
