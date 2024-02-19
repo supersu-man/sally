@@ -84,10 +84,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "sally:build:production"
+              "buildTarget": "sally:build:production"
             },
             "development": {
-              "browserTarget": "sally:build:development"
+              "buildTarget": "sally:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -95,7 +95,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "sally:build"
+            "buildTarget": "sally:build"
           }
         },
         "deploy": {
