@@ -9,8 +9,11 @@
         Your personal trip finance calculator
     </div>
     <div class="text-center">
-        <p-button *ngIf="!commonService.accessToken" styleClass="p-button-rounded" (click)="login()" label="Login with Google" [loading]="spinner"></p-button>
-        <p-button *ngIf="commonService.accessToken" styleClass="p-button-rounded" routerLink="/dashboard" label="Dashboard" [loading]="spinner"></p-button>
+        @if (isAccessToken()) {
+            <p-button styleClass="p-button-rounded" routerLink="/dashboard" label="Dashboard" [loading]="spinner"></p-button>
+        } @else { 
+            <p-button styleClass="p-button-rounded" (click)="login()" label="Login with Google" [loading]="spinner"></p-button>
+        }
     </div>
     <div class="mt-auto ml-auto p-3">
         <a class="text-black-alpha-90 mr-3" routerLink="/policy">Privacy</a>

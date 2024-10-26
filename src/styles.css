@@ -12,12 +12,16 @@ body, html {
     height: 100%;
     font-family: 'rubik';
     margin: 0px;
-}
-
-.p-toast-detail {
-    margin: 0px !important;
+    font-size: 12px;
 }
 
 .p-toast-message-content {
     align-items: center !important;
+}
+
+.centered-axis-xy {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
 }

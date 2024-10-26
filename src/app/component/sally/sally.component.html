@@ -1,0 +1,94 @@
+<div class="p-2">
+    <p-toolbar>
+        <button pButton class="ml-1 p-button" icon="pi pi-angle-left" routerLink="/dashboard"></button>
+        <div class="my-auto text-2xl">Sally: {{sally?.name}}</div>
+        <button pButton class="ml-1" [icon]="sally?.private ? 'pi pi-eye-slash': 'pi pi-eye'" (click)="this.privacyConfirmation()"></button>
+    </p-toolbar>
+    <p-tabMenu  [model]="tab_items" [activeItem]="activeTabItem" (activeItemChange)="activeTabItem = $event;"></p-tabMenu>
+</div>
+
+@if (activeTabItem.label == 'Expenses' && !spinner) {
+    @for (item of sally?.expenses; track $index) {
+        <div #exp class="grid grid-nogutter border-round shadow-2 p-3 m-2" (contextMenu)="$event.preventDefault();">
+            <label class="col-3">{{item.member}}</label>
+            <label class="col-2">{{item.amount}}</label>
+            <label class="col-4">{{item.desc}}</label>
+            <label class="col-3">{{item.created_at | date :'short'}}</label>
+        </div>
+        <p-contextMenu [target]="exp" (onShow)="selectedExpense=item" [model]="context_items"></p-contextMenu>
+    }
+}
+
+@if (activeTabItem.label == 'Stats' && !spinner) {
+    @for (stat of stats; track $index) {
+        <div class="grid grid-nogutter border-round shadow-2 p-3 m-2">
+            <label class="col">{{stat.member}}</label>
+            <label class="col-2">{{stat.amount}}</label>
+            <label class="col-2 text-right mx-3">{{stat.amount - totalAmount/(sally?.members?.length || 1)}}</label>
+            <i class="col-1 pi" [ngClass]="stat.amount > totalAmount/(sally?.members?.length || 1) ? 'pi-arrow-up': 'pi-arrow-down'"></i>
+        </div>
+    }
+    <div class="grid grid-nogutter border-round shadow-2 p-3 m-2">
+        <label class="col">Total</label>
+        <label class="col-2">{{totalAmount}}</label>
+        <label class="col-2 text-right mx-3">{{totalAmount/(sally?.members?.length || 1)}}</label>
+        <i class="col-1 pi pi-user"></i>
+    </div>
+}
+
+@if (activeTabItem.label == 'Members' && !spinner) {
+    @for (member of sally?.members; track $index) {
+    <div class="grid grid-nogutter border-round shadow-2 p-3 m-2">
+            <label class="col">{{member}}</label>
+    </div>
+    }
+}
+
+@if (activeTabItem.label == 'Expenses') {
+    <p-button styleClass="p-button-rounded" class="fixed right-0 bottom-0 m-3" (click)="addExpensePopop=true" icon="pi pi-plus" label="Add Expense"></p-button>
+
+} @else if (activeTabItem.label == 'Members') {
+    <p-button styleClass="p-button-rounded" class="fixed right-0 bottom-0 m-3" (click)="addMemeberPopup=true" icon="pi pi-plus" label="Add Member"></p-button>
+
+}
+
+@if (!sally?.members?.length && !spinner) {
+    <div class="centered-axis-xy">Add members to get started</div>
+} @else if(!sally?.expenses?.length && activeTabItem.label == 'Expenses' && !spinner) {
+    <div class="centered-axis-xy">No expenses yet. Add them.</div>
+}
+
+
+
+@if (spinner) {
+    <p-progressSpinner styleClass="w-4rem h-4rem" class="centered-axis-xy" strokeWidth="4" animationDuration=".9s"></p-progressSpinner>
+}
+ 
+<!-- Add Expense Dialog -->
+<p-dialog header="New Expense" [(visible)]="addExpensePopop" [modal]="true" [style]="{'width' : '350px'}" (onHide)="expense_form.reset()">
+    <div class="flex flex-column gap-3" [formGroup]="expense_form">
+        <div class="flex flex-column gap-1">
+            <label>Name</label>
+            <p-dropdown styleClass="w-full" formControlName="member" [options]="sally?.members" appendTo="body"></p-dropdown>
+        </div>
+        <div class="flex flex-column gap-1">
+            <label>Amount</label>
+            <p-inputNumber styleClass="w-full" inputId="integeronly" formControlName="amount"></p-inputNumber>
+        </div>
+        <div class="flex flex-column gap-1">
+            <label>Description</label>
+            <input pInputText formControlName="desc" />
+        </div>
+        <p-button class="text-center" label="Create" styleClass="py-2 px-3" (click)="createExpense()" [disabled]="!expense_form.valid" [loading]="popupSpinner"></p-button>
+    </div>
+</p-dialog>
+
+<!-- Add Member Dialog -->
+<p-dialog header="Update Members" [(visible)]="addMemeberPopup" [modal]="true" [style]="{'width' : '350px'}">
+    <div class="flex flex-column gap-3" [formGroup]="member_form">
+        <label>Members</label>
+        <p-chips formControlName="members"></p-chips>
+        <small>Use enter to add member</small>
+        <p-button class="text-center" label="Update" styleClass="py-2 px-3" (click)="updateMembers()" [loading]="popupSpinner"></p-button>
+    </div>
+</p-dialog>
