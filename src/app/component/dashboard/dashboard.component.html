@@ -19,6 +19,10 @@
     </div>
 }
 
+@if (!spinner && !sallys.length) {
+    <div class="centered-axis-xy">Add sallys to get started</div>
+}
+
 <p-button styleClass="p-button-rounded" class="absolute right-0 bottom-0 m-3" (click)="addSallyPopup=true" icon="pi pi-plus" label="Create"></p-button>
 
 @if (spinner) {
