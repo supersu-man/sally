@@ -61,7 +61,7 @@ export class SallyComponent {
     members: new FormControl()
   })
 
-  constructor(private router: Router, private route: ActivatedRoute, private messageService: MessageService, public apiService: ApiService, private httpClient: HttpClient, private confirmationService: ConfirmationService) {
+  constructor(private route: ActivatedRoute, private messageService: MessageService, public apiService: ApiService, private httpClient: HttpClient, private confirmationService: ConfirmationService) {
     this.getSally()
   }
 
@@ -150,7 +150,7 @@ export class SallyComponent {
         this.getSally()
       }
       this.addMemeberPopup = false
-      this.popupSpinner = true
+      this.popupSpinner = false
     })
   }
 
