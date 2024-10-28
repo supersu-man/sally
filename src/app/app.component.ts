@@ -1,27 +1,25 @@
 import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { SupabaseService } from './service/supabase.service';
-import { HttpClient } from '@angular/common/http';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [ ToastModule, ConfirmDialogModule, RouterModule ],
+  imports: [ ToastModule, ConfirmDialogModule, RouterOutlet ],
   templateUrl: './app.component.html'
 })
 export class AppComponent {
   title = 'sally';
-  constructor(public router: Router, public supabaseService: SupabaseService, private httpClient: HttpClient) {
+  constructor(public supabaseService: SupabaseService) {
+
     this.supabaseService.supabaseClient.auth.onAuthStateChange((event, session) => {
       if (event == 'TOKEN_REFRESHED') {
         localStorage.setItem('accessToken', session?.access_token as string)
       }
-      if (event == 'INITIAL_SESSION' && session?.access_token) {
-        localStorage.setItem('accessToken', session?.access_token as string)
-      }
     })
+    
   }
 
 }

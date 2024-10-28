@@ -21,8 +21,7 @@ export class SupabaseService {
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
-        },
-        redirectTo: window.location.origin
+        }
       }
     })
   }
