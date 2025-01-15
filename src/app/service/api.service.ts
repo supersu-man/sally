@@ -30,14 +30,8 @@ export class ApiService {
     })
   }
 
-  createSally = (name: string, callback: (err: HttpErrorResponse | null) => void) => {
-    this.httpClient.post(environment.endpoint + '/sally', { name }, { headers: this.headers() }).subscribe({
-      next: () => callback(null),
-      error: (err) => {
-        console.log(err)
-        callback(err)
-      },
-    })
+  createSally = (name: string) => {
+    return this.httpClient.post(environment.endpoint + '/sally', { name }, { headers: this.headers() })
   }
 
   getSallys = (callback: (res: Sally[], err: HttpErrorResponse | null) => void) => {
