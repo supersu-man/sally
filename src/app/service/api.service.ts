@@ -11,7 +11,7 @@ export class ApiService {
   constructor(private httpClient: HttpClient) { }
 
   headers = () => {
-    return new HttpHeaders({ Authorization: localStorage.getItem('accessToken') as string })
+    return new HttpHeaders({ Authorization: "bruh!! get a life" })
   }
 
   checkUser = (callback: (err: HttpErrorResponse | null) => void) => {
@@ -34,6 +34,14 @@ export class ApiService {
     return this.httpClient.post(environment.endpoint + '/sally', { name }, { headers: this.headers() })
   }
 
+  getSally = (id: string) => {
+    return this.httpClient.get(environment.endpoint + '/sally', { params: { id }, headers: this.headers() })
+  }
+
+  addMember = (name: string, sally_id: string) => {
+    return this.httpClient.post(environment.endpoint + '/member', { name, sally_id }, { headers: this.headers() })
+  }
+
   getSallys = (callback: (res: Sally[], err: HttpErrorResponse | null) => void) => {
     this.httpClient.get(environment.endpoint + '/sallys', { headers: this.headers() }).subscribe({
       next: (res) => callback(res as Sally[], null),
@@ -41,12 +49,7 @@ export class ApiService {
     })
   }
 
-  getSally = (id: string, callback: (res: Sally | null, err: HttpErrorResponse | null) => void) => {
-    this.httpClient.get(environment.endpoint + '/sally', { params: { id }, headers: this.headers() }).subscribe({
-      next: (res) => callback(res as Sally, null),
-      error: (err) => callback(null, err)
-    })
-  }
+  
 
 
   deleteSally = (id: string, callback: (err: HttpErrorResponse | null) => void) => {

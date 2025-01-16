@@ -4,12 +4,11 @@ import { ContextMenuModule } from 'primeng/contextmenu';
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogModule } from 'primeng/dialog';
-import { ChipsModule } from 'primeng/chips';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MenuItem, MessageService, ConfirmationService } from 'primeng/api';
-import { Sally, Stat, Expense } from 'src/app/interface/interface';
+import { Sally, Expense } from 'src/app/interface/interface';
 import { ApiService } from 'src/app/service/api.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { CommonModule } from '@angular/common';
@@ -20,7 +19,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 @Component({
   selector: 'app-sally',
   standalone: true,
-  imports: [ ToolbarModule, DropdownModule, CommonModule, TabMenuModule, InputNumberModule, ContextMenuModule, ButtonModule, ProgressSpinnerModule, DialogModule, ChipsModule, ReactiveFormsModule, InputTextModule ],
+  imports: [ ToolbarModule, DropdownModule, CommonModule, TabMenuModule, InputNumberModule, ContextMenuModule, ButtonModule, ProgressSpinnerModule, DialogModule, ReactiveFormsModule, InputTextModule ],
   templateUrl: './sally.component.html',
   styles: ``
 })
@@ -30,7 +29,7 @@ export class SallyComponent {
   sally: Sally | undefined
   spinner = false
 
-  stats: Stat[] = []
+  stats = []
   totalAmount = 0
 
   selectedExpense: Expense | undefined
@@ -67,45 +66,45 @@ export class SallyComponent {
 
   getSally() {
     this.spinner = true
-    this.apiService.getSally(this.sally_id as string, (sally, err) => {
-      if(err) {
-        this.messageService.add({ severity: 'error', summary: 'Error has occured' })
-      } else {
-        this.sally = sally as Sally
-        this.member_form.patchValue({ members: this.sally.members })
-        this.makeStats()
-      }
-      this.spinner = false
-    })
+    // this.apiService.getSally(this.sally_id as string, (sally, err) => {
+    //   if(err) {
+    //     this.messageService.add({ severity: 'error', summary: 'Error has occured' })
+    //   } else {
+    //     this.sally = sally as Sally
+    //     this.member_form.patchValue({ members: this.sally.members })
+    //     this.makeStats()
+    //   }
+    //   this.spinner = false
+    // })
   }
 
   togglePrivacy() {
     this.spinner = true
-    this.apiService.togglePrivacy(this.sally_id as string, !this.sally?.private, (sally, err) => {
-      this.spinner = false
-      if(err) {
-        this.messageService.add({ severity: 'error', summary: 'Error has occured' })
-      } else {
-        (this.sally as Sally).private = !this.sally?.private
-        this.messageService.add({ severity: 'success', summary: this.sally?.private ? 'Sharing disabled' : 'Sharing enabled and Link copied' })
-        if (!sally?.private) { navigator.clipboard.writeText(window.location.host + '/' + this.sally?.id) }
-      }
-    })
+    // this.apiService.togglePrivacy(this.sally_id as string, !this.sally?.private, (sally, err) => {
+    //   this.spinner = false
+    //   if(err) {
+    //     this.messageService.add({ severity: 'error', summary: 'Error has occured' })
+    //   } else {
+    //     (this.sally as Sally).private = !this.sally?.private
+    //     this.messageService.add({ severity: 'success', summary: this.sally?.private ? 'Sharing disabled' : 'Sharing enabled and Link copied' })
+    //     if (!sally?.private) { navigator.clipboard.writeText(window.location.host + '/' + this.sally?.id) }
+    //   }
+    // })
   }
 
   makeStats() {
     this.stats = []
     this.totalAmount = 0
-    this.sally?.expenses?.forEach((expense: Expense) => {
-      this.totalAmount += expense.amount
-      let unq = this.stats.find(stat => { return stat.member == expense.member })
-      if (unq) unq.amount += expense.amount
-      else this.stats.push({ member: expense.member, amount: expense.amount })
-    })
-    this.sally?.members.forEach((member: string) => {
-      let unq = this.stats.find(stat => { return stat.member == member })
-      if (!unq) this.stats.push({ member, amount: 0 })
-    })
+    // this.sally?.expenses?.forEach((expense: Expense) => {
+    //   this.totalAmount += expense.amount
+    //   let unq = this.stats.find(stat => { return stat.member == expense.member })
+    //   if (unq) unq.amount += expense.amount
+    //   else this.stats.push({ member: expense.member, amount: expense.amount })
+    // })
+    // this.sally?.members.forEach((member: string) => {
+    //   let unq = this.stats.find(stat => { return stat.member == member })
+    //   if (!unq) this.stats.push({ member, amount: 0 })
+    // })
   }
 
   createExpense() {
@@ -155,13 +154,13 @@ export class SallyComponent {
   }
 
   privacyConfirmation() {
-    this.confirmationService.confirm({
-      message: `Are you sure you want to change it to ${this.sally?.private ? 'PUBLIC' : 'PRIVATE'} sally?`,
-      header: 'Toggle privacy',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => { this.togglePrivacy() },
-      reject: () => { }
-    })
+    // this.confirmationService.confirm({
+    //   message: `Are you sure you want to change it to ${this.sally?.private ? 'PUBLIC' : 'PRIVATE'} sally?`,
+    //   header: 'Toggle privacy',
+    //   icon: 'pi pi-exclamation-triangle',
+    //   accept: () => { this.togglePrivacy() },
+    //   reject: () => { }
+    // })
   }
 
 }

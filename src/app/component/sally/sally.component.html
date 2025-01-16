@@ -2,18 +2,18 @@
     <p-toolbar>
         <button pButton class="ml-1 p-button" icon="pi pi-angle-left" routerLink="/dashboard"></button>
         <div class="my-auto text-2xl">Sally: {{sally?.name}}</div>
-        <button pButton class="ml-1" [icon]="sally?.private ? 'pi pi-eye-slash': 'pi pi-eye'" (click)="this.privacyConfirmation()"></button>
+        <button pButton class="ml-1" [icon]="sally ? 'pi pi-eye-slash': 'pi pi-eye'" (click)="this.privacyConfirmation()"></button>
     </p-toolbar>
     <p-tabMenu  [model]="tab_items" [activeItem]="activeTabItem" (activeItemChange)="activeTabItem = $event;"></p-tabMenu>
 </div>
 
 @if (activeTabItem.label == 'Expenses' && !spinner) {
-    @for (item of sally?.expenses; track $index) {
+    @for (item of stats; track $index) {
         <div #exp class="grid grid-nogutter border-round shadow-2 p-3 m-2" (contextMenu)="$event.preventDefault();">
-            <label class="col-3">{{item.member}}</label>
-            <label class="col-2">{{item.amount}}</label>
-            <label class="col-4">{{item.desc}}</label>
-            <label class="col-3">{{item.created_at | date :'short'}}</label>
+            <label class="col-3">{{item}}</label>
+            <label class="col-2">{{item}}</label>
+            <label class="col-4">{{item}}</label>
+            <label class="col-3">{{item | date :'short'}}</label>
         </div>
         <p-contextMenu [target]="exp" (onShow)="selectedExpense=item" [model]="context_items"></p-contextMenu>
     }
@@ -22,10 +22,10 @@
 @if (activeTabItem.label == 'Stats' && !spinner) {
     @for (stat of stats; track $index) {
         <div class="grid grid-nogutter border-round shadow-2 p-3 m-2">
-            <label class="col">{{stat.member}}</label>
-            <label class="col-2">{{stat.amount}}</label>
-            <label class="col-2 text-right mx-3">{{stat.amount - totalAmount/(sally?.members?.length || 1)}}</label>
-            <i class="col-1 pi" [ngClass]="stat.amount > totalAmount/(sally?.members?.length || 1) ? 'pi-arrow-up': 'pi-arrow-down'"></i>
+            <label class="col">{{stat}}</label>
+            <label class="col-2">{{stat}}</label>
+            <label class="col-2 text-right mx-3">{{stat - totalAmount/(sally?.members?.length || 1)}}</label>
+            <i class="col-1 pi" [ngClass]="stat > totalAmount/(sally?.members?.length || 1) ? 'pi-arrow-up': 'pi-arrow-down'"></i>
         </div>
     }
     <div class="grid grid-nogutter border-round shadow-2 p-3 m-2">
@@ -54,7 +54,7 @@
 
 @if (!sally?.members?.length && !spinner) {
     <div class="centered-axis-xy">Add members to get started</div>
-} @else if(!sally?.expenses?.length && activeTabItem.label == 'Expenses' && !spinner) {
+} @else if(!sally && activeTabItem.label == 'Expenses' && !spinner) {
     <div class="centered-axis-xy">No expenses yet. Add them.</div>
 }
 

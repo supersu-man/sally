@@ -1,26 +1,17 @@
-export interface User {
-    id: string
-}
-
 export interface Sally {
     id: string
     name: string
-    members: string[]
-    user_id: string
-    private: boolean
+    members: Member[]
+}
+
+export interface Member {
+    id: string
+    name: string
     expenses: Expense[]
 }
 
 export interface Expense {
     id: string
-    member: string
     amount: number
-    desc: string
-    created_at: Date
-    sally_id: string
-}
-
-export interface Stat {
-    member: string
-    amount: number
+    name: string
 }

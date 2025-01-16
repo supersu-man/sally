@@ -7,10 +7,12 @@ import { SallyComponent } from './component/sally/sally.component';
 import { TermsComponent } from './component/terms/terms.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent, canActivate: [authGuard] },
+  { path: '', component: HomeComponent },
+  { path: ':sally_id', component: DashboardComponent },
+  
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'dashboard/:sally_id', component: SallyComponent, canActivate: [authGuard] },
   { path: 'sallys/:sally_id', component: SallyComponent },
   { path: 'policy', component: TermsComponent },
-  { path: 'about', component: AboutComponent}
+  { path: 'about', component: AboutComponent }
 ];

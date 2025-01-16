@@ -5,10 +5,12 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Sally } from 'src/app/interface/interface';
 
 
 @Component({
     selector: 'app-home',
+    standalone: true,
     imports: [ButtonModule, RouterModule, InputTextModule, ReactiveFormsModule],
     templateUrl: './home.component.html',
     styles: ``
@@ -16,7 +18,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class HomeComponent {
 
   spinner = false
-
   sallyForm = new FormGroup({
     title: new FormControl<string|null>(null)
   })
@@ -32,9 +33,8 @@ export class HomeComponent {
     this.spinner = true
     this.apiService.createSally(name).subscribe({
       next: (res: any) => {
-        console.log(res)
         this.spinner = false
-        this.router.navigate(['/dashboard', res.id])
+        this.router.navigate([res[0].id])
       },
       error: (err: HttpErrorResponse) => {
         console.log(err)

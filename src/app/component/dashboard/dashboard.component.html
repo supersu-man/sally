@@ -1,43 +1,49 @@
-<div class="p-2">
-    <p-toolbar>
-        <div class="my-auto text-2xl">Dashboard</div>
-        <button pButton class="ml-1 p-button-danger" icon="pi pi-sign-out" (click)="signout()"></button>
-    </p-toolbar>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <p-toolbar>
+                <div class="my-auto text-2xl">{{sally?.name || 'Dashboard'}} </div>
+                <p-button icon="pi pi-pencil" (click)="editName()"></p-button>
+            </p-toolbar>
+        </div>
+    </div>
 </div>
 
-@if (!spinner) {
-    <div class="grid grid-nogutter">
-        @for (sally of sallys; track $index) {
-            <div class="col-12 md:col-6 lg:col-3">
-                <div #sall class="flex flex-column border-round text-center shadow-2 hover:shadow-4 transition-duration-200 py-3 m-2" [routerLink]="sally.id">
-                    <label class="text-xl font-semibold pb-2">{{sally.name}}</label>
-                    <label>Members: {{sally.members.length}}</label>
+@if (!spinner && sally && sally.members) {
+    <div class="container">
+        @for (member of sally.members; track $index) {
+            <div class="row">
+                <div class="col">
+                    <p-card>
+                        <input type="text" pInputText [value]="member.name"/>
+                        <p-button class="mx-2" label="Save" variant="text" />
+                        <p-button class="mx-2" label="Cancel" variant="text" severity="danger" />
+                    </p-card>
                 </div>
-                <p-contextMenu [target]="sall" (onShow)="selectedSally=sally" [model]="items"></p-contextMenu>
             </div>
         }
     </div>
 }
 
-@if (!spinner && !sallys.length) {
-    <div class="centered-axis-xy">Add sallys to get started</div>
+@if (!spinner && !sally?.members) {
+    <div class="centered-axis-xy">Add Members to get started</div>
 }
 
-<p-button styleClass="p-button-rounded" class="absolute right-0 bottom-0 m-3" (click)="addSallyPopup=true" icon="pi pi-plus" label="Create"></p-button>
+<p-button styleClass="p-button-rounded" class="absolute right-0 bottom-0 m-3" (click)="addMember()" icon="pi pi-plus" label="Add person"></p-button>
 
 @if (spinner) {
     <p-progressSpinner styleClass="w-4rem h-4rem" class="centered-axis-xy" strokeWidth="4" animationDuration=".9s"></p-progressSpinner>
 }
 
 <!-- Add Sally Dialog -->
-<p-dialog header="New Sally" [(visible)]="addSallyPopup" [modal]="true" [style]="{'width' : '350px'}"
+<p-dialog header="New Sally" [(visible)]="editSallyPopup" [modal]="true" [style]="{'width' : '350px'}"
     (onHide)="sally_form.patchValue({ name: null })">
     <div class="flex flex-column gap-3" [formGroup]="sally_form">
         <div class="flex flex-column gap-1">
             <label>Name</label>
             <input pInputText formControlName="name" />
         </div>
-        <p-button class="text-center" label="Create" styleClass="py-2 px-3" (click)="createSally()"
+        <p-button class="text-center" label="Create" styleClass="py-2 px-3" (click)="editName()"
             [disabled]="!sally_form.valid" [loading]="popupSpinner">
         </p-button>
     </div>

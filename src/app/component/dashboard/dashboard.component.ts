@@ -8,82 +8,63 @@ import { ContextMenuModule } from 'primeng/contextmenu';
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogModule } from 'primeng/dialog';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
 import { SupabaseService } from 'src/app/service/supabase.service';
 import { ToolbarModule } from 'primeng/toolbar';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ ToolbarModule, ContextMenuModule, ButtonModule, ProgressSpinnerModule, DialogModule, ReactiveFormsModule, RouterModule, InputTextModule ],
+  imports: [ ToolbarModule, ContextMenuModule, ButtonModule, ProgressSpinnerModule, DialogModule, ReactiveFormsModule, RouterModule, InputTextModule, CardModule ],
   templateUrl: './dashboard.component.html',
   styles: ``
 })
 export class DashboardComponent {
 
-  sallys: Sally[] = []
+  sally_id = this.route.snapshot.paramMap.get('sally_id') as string
+  sally: Sally | undefined
+
   spinner = false
 
-  addSallyPopup = false
+  editSallyPopup = false
   popupSpinner = false
-
-  items = [{
-    label: 'Delete',
-    icon: 'pi pi-fw pi-trash',
-    command: () => this.deleteSally()
-  }]
-  selectedSally: Sally | undefined
 
   sally_form = new FormGroup({
     name: new FormControl<string | null>(null, Validators.required)
   })
 
-  constructor(private messageService: MessageService, private apiService: ApiService, private supabaseService: SupabaseService) {
+  constructor(private route: ActivatedRoute, private messageService: MessageService, private apiService: ApiService, private supabaseService: SupabaseService) {
     this.getData()
-  }
-
-  createSally = () => {
-    this.popupSpinner = true
-    this.apiService.createSally(this.sally_form.getRawValue().name as string, (err) => {
-      if(err) {
-        this.messageService.add({ severity: 'error', summary: err.statusText })
-      } else {
-        this.messageService.add({ severity: 'success', summary: 'Sally created' })
-        this.addSallyPopup = false
-        this.getData()
-      }
-      this.popupSpinner = false
-    })
-
   }
 
   getData = () => {
     this.spinner = true
-    this.apiService.getSallys((res: Sally[], err: HttpErrorResponse | null) => {
-      if(err) {
-        this.messageService.add({ severity: 'error', summary: 'Error has occured' })
-      } else {
-        this.sallys = res
+    this.apiService.getSally(this.sally_id).subscribe({
+      next: (res: any) => {
+        console.log(res)
+        this.sally = res
+        this.spinner = false
+      },
+      error: (err: HttpErrorResponse) => {
+        this.spinner = false
       }
-      this.spinner = false
     })
   }
 
-  deleteSally = () => {
-    this.spinner = true
-    this.apiService.deleteSally(this.selectedSally?.id as string, (err) => {
-      if(err) {
-        this.messageService.add({ severity: 'error', summary: 'Error has occured' })
-      } else {
-        this.messageService.add({ severity: 'success', summary: 'Sally deleted' })
+  addMember = () => {
+    this.apiService.addMember("Person Name", this.sally_id).subscribe({
+      next: (res) => {
         this.getData()
-      }
-      
+      },
+       error: (err: HttpErrorResponse) => {
+
+       }
     })
   }
 
-  signout = () => {
+  editName = () => {
     this.supabaseService.signOut()
   }
 
