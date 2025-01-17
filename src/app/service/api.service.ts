@@ -80,11 +80,8 @@ export class ApiService {
     })
   }
 
-  addExpense = (data: { member: string, amount: number, desc: string, sally_id: string }, callback: (err: HttpErrorResponse | null) => void) => {
-    this.httpClient.post(environment.endpoint + '/expense', data, { headers: this.headers() }).subscribe({
-      next: (res) => callback(null),
-      error: (err) => callback(err)
-    })
+  addExpense = (member_id: string, sally_id: string, name: string, amount: number ) => {
+    return this.httpClient.post(environment.endpoint + '/expense', { member_id, sally_id, name, amount }, { headers: this.headers() })
   }
 
   deleteExpense = (id: string, callback: (err: HttpErrorResponse | null) => void) => {

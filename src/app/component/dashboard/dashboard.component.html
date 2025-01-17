@@ -10,14 +10,34 @@
 </div>
 
 @if (!spinner && sally && sally.members) {
-    <div class="container">
-        @for (member of sally.members; track $index) {
-            <div class="row">
+    <div class="container" [formGroup]="sallyForm.controls.members">
+        @for (member of sallyForm.controls.members.controls; track $index) {
+            <div class="row" [formGroupName]="$index">
                 <div class="col">
                     <p-card>
-                        <input type="text" pInputText [value]="member.name"/>
-                        <p-button class="mx-2" label="Save" variant="text" />
-                        <p-button class="mx-2" label="Cancel" variant="text" severity="danger" />
+                        <div class="mb-3">
+                            <input type="text" pInputText formControlName="name" />
+                            @if (member.value.name != sally.members[$index].name) {
+                                <p-button class="mx-2" label="Save" variant="text" (click)="saveName(member.value.id, member.value.name)"/>
+                                <p-button class="mx-2" label="Cancel" variant="text" severity="danger" (click)="member.controls['name'].setValue(sally.members[$index].name)"/>
+                            }
+                        </div>
+                        <div [formGroup]="member.controls.expenses">
+                            @for (expense of member.controls.expenses.controls; track $index) {
+                                <div class="mb-3" [formGroupName]="$index">
+                                    <input class="mr-3" type="text" pInputText placeholder="What ?" formControlName="name"/>
+                                    <input type="number" pInputText placeholder="How much ?" formControlName="amount"/>
+                                </div>
+                            }
+                        </div>
+                       
+                        <div class="mb-3">
+                            <input class="mr-3" type="text" pInputText placeholder="What ?" formControlName="expense_name"/>
+                            <input type="number" pInputText placeholder="How much ?" formControlName="expense_amount"/>
+                        </div>
+                        <div>
+                            <p-button class="mx-2" label="Add Expense" (click)="addExpense(member.value)" [disabled]="!member.value.expense_name || !member.value.expense_amount"/>
+                        </div>
                     </p-card>
                 </div>
             </div>
@@ -36,7 +56,7 @@
 }
 
 <!-- Add Sally Dialog -->
-<p-dialog header="New Sally" [(visible)]="editSallyPopup" [modal]="true" [style]="{'width' : '350px'}"
+<!-- <p-dialog header="New Sally" [(visible)]="editSallyPopup" [modal]="true" [style]="{'width' : '350px'}"
     (onHide)="sally_form.patchValue({ name: null })">
     <div class="flex flex-column gap-3" [formGroup]="sally_form">
         <div class="flex flex-column gap-1">
@@ -47,4 +67,4 @@
             [disabled]="!sally_form.valid" [loading]="popupSpinner">
         </p-button>
     </div>
-</p-dialog>
+</p-dialog> -->
