@@ -14,20 +14,12 @@ export class ApiService {
     return new HttpHeaders({ Authorization: "bruh!! get a life" })
   }
 
-  checkUser = (callback: (err: HttpErrorResponse | null) => void) => {
-    this.httpClient.get(environment.endpoint + '/user', { headers: this.headers() }).subscribe({
-      next: (value) => callback(null),
-      error: (err: HttpErrorResponse) => callback(err)
-    })
+  saveName = (sally_id: string, id: string, name: string) => {
+    return this.httpClient.patch(environment.endpoint + '/member', { id, name, sally_id }, { headers: this.headers() })
   }
 
-  register = (callback: (err: HttpErrorResponse | null) => void) => {
-    this.httpClient.post(environment.endpoint + '/user', {}, { headers: this.headers() }).subscribe({
-      next: (res: any) => {
-        callback(null)
-      },
-      error: (err) => {callback(err)}
-    })
+  deleteMember = (sally_id: string, id: string) => {
+    return this.httpClient.delete(environment.endpoint + '/member', { body: { sally_id, id }, headers: this.headers() })
   }
 
   createSally = (name: string) => {
@@ -42,53 +34,12 @@ export class ApiService {
     return this.httpClient.post(environment.endpoint + '/member', { name, sally_id }, { headers: this.headers() })
   }
 
-  getSallys = (callback: (res: Sally[], err: HttpErrorResponse | null) => void) => {
-    this.httpClient.get(environment.endpoint + '/sallys', { headers: this.headers() }).subscribe({
-      next: (res) => callback(res as Sally[], null),
-      error: (err) => callback([], err)
-    })
+  addExpense = (expenses: Expense[]) => {
+    return this.httpClient.post(environment.endpoint + '/expense', expenses, { headers: this.headers() })
   }
 
-  
-
-
-  deleteSally = (id: string, callback: (err: HttpErrorResponse | null) => void) => {
-    this.httpClient.delete(environment.endpoint + '/sally', { body: { id }, headers: this.headers() }).subscribe({
-      next: (res) => callback(null),
-      error: (err) => callback(err)
-    })
-  }
-
-  togglePrivacy = (id: string, privatee: boolean, callback: (sally: Sally | null, err: HttpErrorResponse | null) => void) => {
-    this.httpClient.patch(environment.endpoint + '/sally/privacy', { id, private: privatee }, { headers: this.headers() }).subscribe({
-      next: (res) => callback(res as Sally, null),
-      error: (err) => callback(null, err)
-    })
-  }
-
-  updateMembers = (id: string, members: string[], callback: (err: HttpErrorResponse | null) => void) => {
-    this.httpClient.patch(environment.endpoint + '/sally/members', { id, members }, { headers: this.headers() }).subscribe({
-      next: () => callback(null),
-      error: (err) => callback(err)
-    })
-  }
-
-  getExpenses = (id: string, callback: (expenses: Expense[], err: HttpErrorResponse | null) => void) => {
-    this.httpClient.get(environment.endpoint + '/expense', { params: { id }, headers: this.headers() }).subscribe({
-      next: (res) => callback(res as Expense[], null),
-      error: (err) => callback([], err)
-    })
-  }
-
-  addExpense = (member_id: string, sally_id: string, name: string, amount: number ) => {
-    return this.httpClient.post(environment.endpoint + '/expense', { member_id, sally_id, name, amount }, { headers: this.headers() })
-  }
-
-  deleteExpense = (id: string, callback: (err: HttpErrorResponse | null) => void) => {
-    this.httpClient.delete(environment.endpoint + '/expense', { body: { id }, headers: this.headers() }).subscribe({
-      next: (res) => callback(null),
-      error: (err) => callback(err)
-    })
+  deleteExpense = (sally_id: string, member_id: string, id: string) => {
+    return this.httpClient.delete(environment.endpoint + '/expense', { body: { sally_id, member_id, id }, headers: this.headers() })
   }
 
 

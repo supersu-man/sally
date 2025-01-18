@@ -9,35 +9,39 @@
     </div>
 </div>
 
-@if (!spinner && sally && sally.members) {
-    <div class="container" [formGroup]="sallyForm.controls.members">
-        @for (member of sallyForm.controls.members.controls; track $index) {
-            <div class="row" [formGroupName]="$index">
-                <div class="col">
-                    <p-card>
-                        <div class="mb-3">
-                            <input type="text" pInputText formControlName="name" />
-                            @if (member.value.name != sally.members[$index].name) {
-                                <p-button class="mx-2" label="Save" variant="text" (click)="saveName(member.value.id, member.value.name)"/>
-                                <p-button class="mx-2" label="Cancel" variant="text" severity="danger" (click)="member.controls['name'].setValue(sally.members[$index].name)"/>
+@if (!spinner && sally_form && sally) {
+    <div class="container">
+        @for (member of sally_form.members; track member; let i = $index) {
+            <div class="row justify-content-center">
+                <div class="col" style="max-width: 550px;">
+                    <p-card styleClass="shadow-2">
+                        <div class="flex mb-3">
+                            <input type="text" pInputText [(ngModel)]="member.name" />
+                            @if (sally.members[$index].name != member.name) {
+                                <p-button class="ml-2" label="Save name" variant="text" (click)="saveName(member, sally.members[$index])"/>
+                                <p-button class="ml-2" label="Cancel" variant="text" severity="danger" (click)="member.name = sally.members[$index].name"/>
+                            }@else {
+                                <p-button class="ml-auto" variant="text" severity="danger" icon="pi pi-trash" label="Delete person" (click)="deleteMember(member.id)"/>
                             }
                         </div>
-                        <div [formGroup]="member.controls.expenses">
-                            @for (expense of member.controls.expenses.controls; track $index) {
-                                <div class="mb-3" [formGroupName]="$index">
-                                    <input class="mr-3" type="text" pInputText placeholder="What ?" formControlName="name"/>
-                                    <input type="number" pInputText placeholder="How much ?" formControlName="amount"/>
-                                </div>
-                            }
-                        </div>
-                       
-                        <div class="mb-3">
-                            <input class="mr-3" type="text" pInputText placeholder="What ?" formControlName="expense_name"/>
-                            <input type="number" pInputText placeholder="How much ?" formControlName="expense_amount"/>
-                        </div>
+                        @for (expense of member.expenses; track expense; let j = $index) {
+                            <div class="mb-3">
+                                <input class="mr-3" type="text" pInputText placeholder="What ?" [(ngModel)]="expense.name" (ngModelChange)="modelChange(member, sally.members[i])"/>
+                                <input class="mr-3" type="number" pInputText placeholder="How much ?" [(ngModel)]="expense.amount" (ngModelChange)="modelChange(member, sally.members[i])"/>
+                                @if (expense.id) {
+                                    <p-button variant="text" severity="danger" icon="pi pi-trash" (click)="deleteExpense(member, expense)"/>
+                                }
+                            </div>
+                        }
                         <div>
-                            <p-button class="mx-2" label="Add Expense" (click)="addExpense(member.value)" [disabled]="!member.value.expense_name || !member.value.expense_amount"/>
+                            <p-button styleClass="w-full" label="Add Expense" (click)="addExpense(member)"/>
                         </div>
+                        @if (newExpenses[member.id]) {
+                            <div class="mt-3 gap-3 w-full">
+                                <p-button styleClass="w-6" label="Save" (click)="saveExpense(member, sally.members[$index])"/>
+                                <p-button styleClass="w-6" severity="danger" label="Cancel" (click)="saveExpense(member, sally.members[$index])"/>
+                            </div>
+                        }
                     </p-card>
                 </div>
             </div>
@@ -54,17 +58,3 @@
 @if (spinner) {
     <p-progressSpinner styleClass="w-4rem h-4rem" class="centered-axis-xy" strokeWidth="4" animationDuration=".9s"></p-progressSpinner>
 }
-
-<!-- Add Sally Dialog -->
-<!-- <p-dialog header="New Sally" [(visible)]="editSallyPopup" [modal]="true" [style]="{'width' : '350px'}"
-    (onHide)="sally_form.patchValue({ name: null })">
-    <div class="flex flex-column gap-3" [formGroup]="sally_form">
-        <div class="flex flex-column gap-1">
-            <label>Name</label>
-            <input pInputText formControlName="name" />
-        </div>
-        <p-button class="text-center" label="Create" styleClass="py-2 px-3" (click)="editName()"
-            [disabled]="!sally_form.valid" [loading]="popupSpinner">
-        </p-button>
-    </div>
-</p-dialog> -->

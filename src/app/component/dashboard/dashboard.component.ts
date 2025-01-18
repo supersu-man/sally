@@ -17,7 +17,7 @@ import { CardModule } from 'primeng/card';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ ToolbarModule, ContextMenuModule, ButtonModule, ProgressSpinnerModule, DialogModule, ReactiveFormsModule, RouterModule, InputTextModule, CardModule ],
+  imports: [ ToolbarModule, ContextMenuModule, ButtonModule, ProgressSpinnerModule, DialogModule, FormsModule, RouterModule, InputTextModule, CardModule ],
   templateUrl: './dashboard.component.html',
   styles: ``
 })
@@ -25,7 +25,8 @@ export class DashboardComponent implements OnInit  {
 
   sally_id = this.route.snapshot.paramMap.get('sally_id') as string
   sally: Sally | undefined
-  sallyForm: any
+  sally_form: Sally | undefined
+  newExpenses: any = {}
 
   spinner = false
 
@@ -44,8 +45,10 @@ export class DashboardComponent implements OnInit  {
     this.spinner = true
     this.apiService.getSally(this.sally_id).subscribe({
       next: (res: any) => {
+        console.log(res)
         this.sally = res
-        this.dataToForm()
+        this.sally_form = structuredClone(res)
+
         this.spinner = false
       },
       error: (err: HttpErrorResponse) => {
@@ -54,46 +57,7 @@ export class DashboardComponent implements OnInit  {
     })
   }
 
-  dataToForm = () => {
-    const members: any[] = []
-    this.sally?.members.forEach(member => {
-      const expenses: any[] = []
-      member.expenses.forEach(expense => {
-        expenses.push(this.getExpenseForm(expense))
-      })
-      members.push(this.getMemberForm(member, expenses))
-    })
-    this.sallyForm = this.getSallyForm(this.sally as Sally, members)
 
-    console.log(this.sallyForm.controls.members.controls[0])
-    
-  }
-
-  getExpenseForm = (expense: Expense) => {
-    return new FormGroup({
-      id: new FormControl<string>(expense.id, Validators.required),
-      name: new FormControl<string>(expense.name, Validators.required),
-      amount: new FormControl<number>(expense.amount, Validators.required),
-    })
-  }
-
-  getMemberForm = (member: Member, expenses: any[]) => {
-    return new FormGroup({
-      id: new FormControl<string>(member.id, Validators.required),
-      name: new FormControl<string>(member.name, Validators.required),
-      expense_name: new FormControl<string|null>(null, Validators.required),
-      expense_amount: new FormControl<number|null>(null, Validators.required),
-      expenses: new FormArray(expenses)
-    })
-  }
-
-  getSallyForm = (sally: Sally, members: any[]) => {
-    return new FormGroup({
-      id: new FormControl<string>(sally.id, Validators.required),
-      name: new FormControl<string>(sally.name, Validators.required),
-      members: new FormArray(members)
-    })
-  }
 
   addMember = () => {
     this.apiService.addMember("Person Name", this.sally_id).subscribe({
@@ -106,24 +70,76 @@ export class DashboardComponent implements OnInit  {
     })
   }
 
-  addExpense = (member: any) => {
-    const member_id = member.id
-    const amount = member.expense_amount
-    const name = member.expense_name
-    const sally_id = this.sally_id
-    console.log(member)
-    this.apiService.addExpense(member_id, sally_id, name, amount).subscribe({
-      next: (res) => {
-        this.getData()
-      }, 
+  addExpense = (member: Member) => {
+    member.expenses.push({ id: undefined, name: undefined, amount: undefined, member_id: member.id, sally_id: this.sally_id })
+
+  }
+
+  modelChange = (member: Member, oldMember: Member) => {
+    const expenses: Expense[] = []
+    member.expenses.forEach(element => {
+      if(element.name && element.amount) expenses.push(element)
+    });
+    const oldExpenses = oldMember.expenses || []
+    console.log(expenses)
+    if(expenses.length != oldExpenses.length) { 
+      return this.newExpenses[member.id] = expenses
+    }
+    for (let index = 0; index < expenses.length; index++) {
+      if(expenses[index].name != oldExpenses[index].name || expenses[index].amount != oldExpenses[index].amount){
+        return this.newExpenses[member.id] = expenses
+      }
+    }
+    return delete this.newExpenses[member.id]
+  }
+
+  saveExpense = (member: Member, newMember: Member) => {
+    this.apiService.addExpense(this.newExpenses[member.id]).subscribe({
+      next: (res: any) => {
+        this.newExpenses = []
+        member.expenses = res
+      },
       error: (err: HttpErrorResponse) => {
         console.log(err)
       }
     })
   }
 
-  saveName = (id: string, name: string) => {
-    console.log(id, name)
+  deleteExpense = (member: Member, expense: Expense) => {
+    if(!expense.id || !expense.sally_id || !expense.member_id) return
+    this.apiService.deleteExpense(expense.sally_id, expense.member_id, expense.id).subscribe({
+      next: (res) => {
+        member.expenses = member.expenses.filter((exp) => { return exp.id != expense.id })
+        console.log(res)
+      },
+      error: (err: HttpErrorResponse) => {
+        console.log(err)
+      }
+    })
+  }
+
+  saveName = (member: Member, oldMember: Member) => {
+    const sally_id = this.sally_id
+    this.apiService.saveName(sally_id, member.id, member.name).subscribe({
+      next: (res: any) => {
+        oldMember.name = member.name
+      },
+      error: (err) => {
+        console.log(err)
+      }
+    })
+  }
+
+  deleteMember = (id: string) => {
+    this.apiService.deleteMember(this.sally_id, id).subscribe({
+      next: () => {
+        this.getData()
+        console.log("Deleted")
+      },
+      error: (err: HttpErrorResponse) => {
+        console.log(err)
+      }
+    })
   }
 
   editName = () => {
