@@ -8,7 +8,7 @@ export interface Member {
     id: string
     name: string
     expenses: Expense[]
-    sally_id: string | undefined
+    sally_id: string
 }
 
 export interface Expense {

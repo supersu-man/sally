@@ -1,15 +1,18 @@
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <p-toolbar>
-                <div class="my-auto text-2xl">{{sally?.name || 'Dashboard'}} </div>
-                <p-button icon="pi pi-pencil" (click)="editName()"></p-button>
-            </p-toolbar>
+@if (!spinner && sally_form && sally) {
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <p-toolbar>
+                    <input class="mr-auto" type="text" pInputText [(ngModel)]="sally_form.name" />
+                    @if (sally_form.name != sally.name) {
+                        <p-button class="ml-2" label="Save name" variant="text" (click)="updateSallyName(sally_form.name)" [disabled]="sally_form.name==''"/>
+                        <p-button class="ml-2" label="Cancel" variant="text" severity="danger" (click)="sally_form.name = sally.name"/>
+                    }
+                </p-toolbar>
+            </div>
         </div>
     </div>
-</div>
 
-@if (!spinner && sally_form && sally) {
     <div class="container">
         @for (member of sally_form.members; track member; let i = $index) {
             <div class="row justify-content-center">
@@ -20,7 +23,7 @@
                             @if (sally.members[$index].name != member.name) {
                                 <p-button class="ml-2" label="Save name" variant="text" (click)="saveName(member, sally.members[$index])"/>
                                 <p-button class="ml-2" label="Cancel" variant="text" severity="danger" (click)="member.name = sally.members[$index].name"/>
-                            }@else {
+                            } @else {
                                 <p-button class="ml-auto" variant="text" severity="danger" icon="pi pi-trash" label="Delete person" (click)="deleteMember(member.id)"/>
                             }
                         </div>
@@ -28,9 +31,7 @@
                             <div class="mb-3">
                                 <input class="mr-3" type="text" pInputText placeholder="What ?" [(ngModel)]="expense.name" (ngModelChange)="modelChange(member, sally.members[i])"/>
                                 <input class="mr-3" type="number" pInputText placeholder="How much ?" [(ngModel)]="expense.amount" (ngModelChange)="modelChange(member, sally.members[i])"/>
-                                @if (expense.id) {
-                                    <p-button variant="text" severity="danger" icon="pi pi-trash" (click)="deleteExpense(member, expense)"/>
-                                }
+                                <p-button variant="text" severity="danger" icon="pi pi-trash" (click)="deleteExpense(member, sally.members[i], j)"/>
                             </div>
                         }
                         <div>
@@ -46,14 +47,32 @@
                 </div>
             </div>
         }
+
+        <div class="row justify-content-center">
+            <div class="col" style="max-width: 550px;">
+                <p-card styleClass="shadow-2">
+                    <div>
+                        Total Expenses - {{totalExpenses}}
+                    </div>
+
+                    <div>
+                        Average per head - {{totalExpenses/sally.members.length}}
+                    </div>
+
+                </p-card>
+            </div>
+        </div>
     </div>
+
+
+
 }
 
 @if (!spinner && !sally?.members) {
     <div class="centered-axis-xy">Add Members to get started</div>
 }
 
-<p-button styleClass="p-button-rounded" class="absolute right-0 bottom-0 m-3" (click)="addMember()" icon="pi pi-plus" label="Add person"></p-button>
+<p-button styleClass="p-button-rounded" class="fixed right-0 bottom-0 m-3" (click)="addMember()" icon="pi pi-plus" label="Add person"></p-button>
 
 @if (spinner) {
     <p-progressSpinner styleClass="w-4rem h-4rem" class="centered-axis-xy" strokeWidth="4" animationDuration=".9s"></p-progressSpinner>
