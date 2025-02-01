@@ -46,4 +46,8 @@ export class ApiService {
     return this.httpClient.delete(environment.endpoint + '/expense', { body: { sally_id, member_id, id }, headers: this.headers() })
   }
 
+  exludeMembers = (excluded_members: any, expense_id: string) => {
+    return this.httpClient.post(environment.endpoint + '/exclude-members', { excluded_members, expense_id }, { headers: this.headers() })
+  }
+
 }

@@ -1,8 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MessageService } from 'primeng/api';
-import { Expense, Member, Sally } from 'src/app/interface/interface';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { Excluded, Expense, Member, Sally } from 'src/app/interface/interface';
 import { ApiService } from 'src/app/service/api.service';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { ButtonModule } from 'primeng/button';
@@ -12,15 +12,17 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToolbarModule } from 'primeng/toolbar';
 import { CardModule } from 'primeng/card';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { CheckboxModule } from 'primeng/checkbox';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ ToolbarModule, ContextMenuModule, ButtonModule, ProgressSpinnerModule, DialogModule, FormsModule, RouterModule, InputTextModule, CardModule ],
+  imports: [ToolbarModule, ContextMenuModule, ButtonModule, ProgressSpinnerModule, DialogModule, FormsModule, RouterModule, InputTextModule, CardModule, ConfirmPopupModule, CheckboxModule],
   templateUrl: './dashboard.component.html',
   styles: ``
 })
-export class DashboardComponent implements OnInit  {
+export class DashboardComponent implements OnInit {
 
   sally_id = this.route.snapshot.paramMap.get('sally_id') as string
   sally: Sally | undefined
@@ -36,7 +38,7 @@ export class DashboardComponent implements OnInit  {
   totalExpenses = 0
 
 
-  constructor(private route: ActivatedRoute, private messageService: MessageService, private apiService: ApiService) {}
+  constructor(private route: ActivatedRoute, private messageService: MessageService, private apiService: ApiService, private confirmationService: ConfirmationService) { }
 
   ngOnInit(): void {
     this.getData()
@@ -73,20 +75,20 @@ export class DashboardComponent implements OnInit  {
   }
 
   addExpense = (member: Member) => {
-    member.expenses.push({ id: undefined, name: undefined, amount: undefined, member_id: member.id, sally_id: this.sally_id })
+    member.expenses.push({ id: undefined, name: undefined, amount: undefined, member_id: member.id, sally_id: this.sally_id, excluded: [] })
   }
 
   modelChange = (member: Member, oldMember: Member) => {
     const expenses: Expense[] = []
     member.expenses.forEach(element => {
-      if(element.name && element.amount) expenses.push(element)
+      if (element.name && element.amount) expenses.push(element)
     });
     const oldExpenses = oldMember.expenses
-    if(expenses.length != oldExpenses.length) {
+    if (expenses.length != oldExpenses.length) {
       return this.newExpenses[member.id] = expenses
     }
     for (let index = 0; index < expenses.length; index++) {
-      if(expenses[index].name != oldExpenses[index].name || expenses[index].amount != oldExpenses[index].amount){
+      if (expenses[index].name != oldExpenses[index].name || expenses[index].amount != oldExpenses[index].amount) {
         return this.newExpenses[member.id] = expenses
       }
     }
@@ -97,9 +99,7 @@ export class DashboardComponent implements OnInit  {
     this.apiService.addExpense(this.newExpenses[member.id]).subscribe({
       next: (res: any) => {
         this.newExpenses = []
-        member.expenses = res
-        oldMember.expenses = structuredClone(res)
-        this.updateStats()
+        this.getData()
       },
       error: (err: HttpErrorResponse) => {
         console.log(err)
@@ -109,7 +109,7 @@ export class DashboardComponent implements OnInit  {
 
   deleteExpense = (member: Member, oldMember: Member, expensePosition: number) => {
     const expense = member.expenses[expensePosition]
-    if(!expense.id || !expense.sally_id || !expense.member_id) {
+    if (!expense.id || !expense.sally_id || !expense.member_id) {
       member.expenses.splice(expensePosition, 1)
       return
     }
@@ -153,7 +153,7 @@ export class DashboardComponent implements OnInit  {
   updateSallyName = (name: string) => {
     this.apiService.updateSallyName(this.sally_id, name).subscribe({
       next: (res: any) => {
-        if(!this.sally || !this.sally_form) return
+        if (!this.sally || !this.sally_form) return
         this.sally_form.name = res[0].name
         this.sally.name = res[0].name
       },
@@ -164,17 +164,54 @@ export class DashboardComponent implements OnInit  {
   }
 
   updateStats = () => {
-    if(!this.sally) return
+    if (!this.sally) return
     var total = 0
     this.sally.members.forEach((member) => {
       member.expenses.forEach((expense) => {
-        total += expense.amount || 0 
+        total += expense.amount || 0
       })
     })
 
     this.totalExpenses = total
 
   }
+
+  expenseShared: any[] = []
+
+  excludeExpensesPopup(event: Event, expense: Expense) {
+    this.expenseShared = []
+    this.sally?.members.forEach(member => {
+      this.expenseShared.push({ id: member.id, name: member.name, included: true })
+    })
+    expense.excluded.forEach((excluded) => {
+      this.expenseShared.find((ex) => ex.id == excluded.member_id).included = false
+    })
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      accept: () => {
+        const excluded_members = this.expenseShared.filter((member) => member.included==false)
+        const expense_id = expense.id as string
+        this.excludeMembers(excluded_members, expense_id)
+      },
+      reject: () => {}
+    });
+  }
+
+  excludeMembers = (excluded_members: any, expense_id: string) => {
+    this.apiService.exludeMembers(excluded_members, expense_id).subscribe({
+      next: (res) => {
+        this.getData()
+      },
+      error: (err) => {
+        console.log(err)
+      }
+    })
+  }
+
+  modelChanges = () => {
+    console.log("check")
+  }
+
 
 
 

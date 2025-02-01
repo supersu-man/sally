@@ -16,7 +16,7 @@
     <div class="container">
         @for (member of sally_form.members; track member; let i = $index) {
             <div class="row justify-content-center">
-                <div class="col" style="max-width: 550px;">
+                <div class="col" style="max-width: 565px;">
                     <p-card styleClass="shadow-2">
                         <div class="flex mb-3">
                             <input type="text" pInputText [(ngModel)]="member.name" />
@@ -31,6 +31,9 @@
                             <div class="mb-3">
                                 <input class="mr-3" type="text" pInputText placeholder="What ?" [(ngModel)]="expense.name" (ngModelChange)="modelChange(member, sally.members[i])"/>
                                 <input class="mr-3" type="number" pInputText placeholder="How much ?" [(ngModel)]="expense.amount" (ngModelChange)="modelChange(member, sally.members[i])"/>
+                                @if (expense.id) {
+                                    <p-button variant="text" icon="pi pi-user" (click)="cp.onReject();excludeExpensesPopup($event, expense)"/>
+                                }
                                 <p-button variant="text" severity="danger" icon="pi pi-trash" (click)="deleteExpense(member, sally.members[i], j)"/>
                             </div>
                         }
@@ -64,8 +67,6 @@
         </div>
     </div>
 
-
-
 }
 
 @if (!spinner && !sally?.members) {
@@ -77,3 +78,33 @@
 @if (spinner) {
     <p-progressSpinner styleClass="w-4rem h-4rem" class="centered-axis-xy" strokeWidth="4" animationDuration=".9s"></p-progressSpinner>
 }
+
+<p-confirmPopup #cp>
+    <ng-template #headless let-message>
+        <div class="container-fluid p-3">
+            <div class="row">
+                <div class="col">
+                    <div>Share this expense</div>
+                </div>
+            </div>
+            @for (member of expenseShared; track $index) {
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <p-checkbox [(ngModel)]="member.included" binary="true" (ngModelChange)="modelChanges()"/>
+                    </div>
+                    <div class="col">
+                        <label class="ml-2">{{member.name}}</label>
+                    </div>
+                </div>
+            }
+            <div class="row">
+                <div class="col">
+                    <p-button styleClass="w-4rem" (onClick)="cp.onAccept()" [loading]="" label="Save" size="small" />
+                </div>
+                <div class="col">
+                    <p-button styleClass="w-4rem" (onClick)="cp.onReject()" label="Cancel" size="small" severity="danger" />
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-confirmPopup>
