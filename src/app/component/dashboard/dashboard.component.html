@@ -31,14 +31,12 @@
         <div class="row justify-content-center">
             <div class="col" style="max-width: 565px;">
                 <p-card styleClass="shadow-2">
-                    <div>
-                        Total Expenses - {{totalExpenses}}
-                    </div>
 
-                    <div>
-                        Average per head - {{totalExpenses/sally.members.length}}
-                    </div>
-
+                    @for (item of final; track $index) {
+                        <div>
+                            {{item.name}} {{item.amount > 0 ? 'overpaid' : 'underpaid'}} {{item.amount > 0 ? item.amount : -1 * item.amount}}
+                        </div>
+                    }
                 </p-card>
             </div>
         </div>
