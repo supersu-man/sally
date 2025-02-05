@@ -1,12 +1,12 @@
-@if (!spinner && sally_form && sally) {
+@if (!spinner && sally) {
     <div class="container">
         <div class="row">
             <div class="col">
                 <p-toolbar>
-                    <input class="mr-auto" type="text" pInputText [(ngModel)]="sally_form.name" />
-                    @if (sally_form.name != sally.name) {
-                        <p-button class="ml-2" label="Save name" variant="text" (click)="updateSallyName(sally_form.name)" [disabled]="sally_form.name==''"/>
-                        <p-button class="ml-2" label="Cancel" variant="text" severity="danger" (click)="sally_form.name = sally.name"/>
+                    <input class="mr-auto" type="text" pInputText [(ngModel)]="sallyName" />
+                    @if (sally.name != sallyName) {
+                        <p-button class="ml-2" label="Save name" variant="text" (click)="updateSallyName(sallyName)" [disabled]="sally.name==''"/>
+                        <p-button class="ml-2" label="Cancel" variant="text" severity="danger" (click)="sallyName = sally.name"/>
                     }
                 </p-toolbar>
             </div>
@@ -14,45 +14,22 @@
     </div>
 
     <div class="container">
-        @for (member of sally_form.members; track member; let i = $index) {
+        @for (member of sally.members; track member; let i = $index) {
             <div class="row justify-content-center">
                 <div class="col" style="max-width: 565px;">
-                    <p-card styleClass="shadow-2">
-                        <div class="flex mb-3">
-                            <input type="text" pInputText [(ngModel)]="member.name" />
-                            @if (sally.members[$index].name != member.name) {
-                                <p-button class="ml-2" label="Save name" variant="text" (click)="saveName(member, sally.members[$index])"/>
-                                <p-button class="ml-2" label="Cancel" variant="text" severity="danger" (click)="member.name = sally.members[$index].name"/>
-                            } @else {
-                                <p-button class="ml-auto" variant="text" severity="danger" icon="pi pi-trash" label="Delete person" (click)="deleteMember(member.id)"/>
-                            }
-                        </div>
-                        @for (expense of member.expenses; track expense; let j = $index) {
-                            <div class="mb-3">
-                                <input class="mr-3" type="text" pInputText placeholder="What ?" [(ngModel)]="expense.name" (ngModelChange)="modelChange(member, sally.members[i])"/>
-                                <input class="mr-3" type="number" pInputText placeholder="How much ?" [(ngModel)]="expense.amount" (ngModelChange)="modelChange(member, sally.members[i])"/>
-                                @if (expense.id) {
-                                    <p-button variant="text" icon="pi pi-user" (click)="cp.onReject();excludeExpensesPopup($event, expense)"/>
-                                }
-                                <p-button variant="text" severity="danger" icon="pi pi-trash" (click)="deleteExpense(member, sally.members[i], j)"/>
-                            </div>
-                        }
-                        <div>
-                            <p-button styleClass="w-full" label="Add Expense" (click)="addExpense(member)"/>
-                        </div>
-                        @if (newExpenses[member.id]) {
-                            <div class="mt-3 gap-3 w-full">
-                                <p-button styleClass="w-6" label="Save" (click)="saveExpense(member, sally.members[$index])"/>
-                                <p-button styleClass="w-6" severity="danger" label="Cancel" (click)="saveExpense(member, sally.members[$index])"/>
-                            </div>
-                        }
-                    </p-card>
+                    <app-member [member]="member" 
+                    (updateName)="updateMemberName($event, member)"
+                    (updateExpenses)="saveExpense($event)"
+                    (deleteExpense)="deleteExpense($event)"
+                    (deleteMember)="deleteMember($event)"
+                    (excludeExpensePopup)="excludeExpensesPopup($event)"
+                    ></app-member>
                 </div>
             </div>
         }
 
         <div class="row justify-content-center">
-            <div class="col" style="max-width: 550px;">
+            <div class="col" style="max-width: 565px;">
                 <p-card styleClass="shadow-2">
                     <div>
                         Total Expenses - {{totalExpenses}}
@@ -90,7 +67,7 @@
             @for (member of expenseShared; track $index) {
                 <div class="row align-items-center">
                     <div class="col-auto">
-                        <p-checkbox [(ngModel)]="member.included" binary="true" (ngModelChange)="modelChanges()"/>
+                        <p-checkbox [(ngModel)]="member.included" binary="true"/>
                     </div>
                     <div class="col">
                         <label class="ml-2">{{member.name}}</label>

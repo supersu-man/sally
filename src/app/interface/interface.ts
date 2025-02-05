@@ -15,8 +15,8 @@ export interface Expense {
     id: string | undefined
     amount: number | undefined
     name: string | undefined
-    sally_id: string | undefined
-    member_id: string | undefined,
+    sally_id: string
+    member_id: string,
     excluded: Excluded[]
 }
 

@@ -14,11 +14,12 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { CardModule } from 'primeng/card';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { CheckboxModule } from 'primeng/checkbox';
+import { MemberComponent } from "../common/member/member.component";
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ToolbarModule, ContextMenuModule, ButtonModule, ProgressSpinnerModule, DialogModule, FormsModule, RouterModule, InputTextModule, CardModule, ConfirmPopupModule, CheckboxModule],
+  imports: [ToolbarModule, ContextMenuModule, ButtonModule, ProgressSpinnerModule, DialogModule, FormsModule, RouterModule, InputTextModule, CardModule, ConfirmPopupModule, CheckboxModule, MemberComponent],
   templateUrl: './dashboard.component.html',
   styles: ``
 })
@@ -26,17 +27,12 @@ export class DashboardComponent implements OnInit {
 
   sally_id = this.route.snapshot.paramMap.get('sally_id') as string
   sally: Sally | undefined
-  sally_form: Sally | undefined
-
-  newExpenses: any = {}
+  sallyName = ''
 
   spinner = false
 
-  editSallyPopup = false
-  popupSpinner = false
-
   totalExpenses = 0
-
+ 
 
   constructor(private route: ActivatedRoute, private messageService: MessageService, private apiService: ApiService, private confirmationService: ConfirmationService) { }
 
@@ -50,7 +46,7 @@ export class DashboardComponent implements OnInit {
       next: (res: any) => {
         console.log(res)
         this.sally = res
-        this.sally_form = structuredClone(res)
+        this.sallyName = this.sally?.name as string
 
         this.updateStats()
 
@@ -58,94 +54,6 @@ export class DashboardComponent implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         this.spinner = false
-      }
-    })
-  }
-
-
-  addMember = () => {
-    this.sally && this.apiService.addMember(`Person ${this.sally.members.length}`, this.sally_id).subscribe({
-      next: (res: any) => {
-        this.getData()
-      },
-      error: (err: HttpErrorResponse) => {
-        console.log(err)
-      }
-    })
-  }
-
-  addExpense = (member: Member) => {
-    member.expenses.push({ id: undefined, name: undefined, amount: undefined, member_id: member.id, sally_id: this.sally_id, excluded: [] })
-  }
-
-  modelChange = (member: Member, oldMember: Member) => {
-    const expenses: Expense[] = []
-    member.expenses.forEach(element => {
-      if (element.name && element.amount) expenses.push(element)
-    });
-    const oldExpenses = oldMember.expenses
-    if (expenses.length != oldExpenses.length) {
-      return this.newExpenses[member.id] = expenses
-    }
-    for (let index = 0; index < expenses.length; index++) {
-      if (expenses[index].name != oldExpenses[index].name || expenses[index].amount != oldExpenses[index].amount) {
-        return this.newExpenses[member.id] = expenses
-      }
-    }
-    return delete this.newExpenses[member.id]
-  }
-
-  saveExpense = (member: Member, oldMember: Member) => {
-    this.apiService.addExpense(this.newExpenses[member.id]).subscribe({
-      next: (res: any) => {
-        this.newExpenses = []
-        this.getData()
-      },
-      error: (err: HttpErrorResponse) => {
-        console.log(err)
-      }
-    })
-  }
-
-  deleteExpense = (member: Member, oldMember: Member, expensePosition: number) => {
-    const expense = member.expenses[expensePosition]
-    if (!expense.id || !expense.sally_id || !expense.member_id) {
-      member.expenses.splice(expensePosition, 1)
-      return
-    }
-    this.apiService.deleteExpense(expense.sally_id, expense.member_id, expense.id).subscribe({
-      next: (res) => {
-        member.expenses = member.expenses.filter((exp) => { return exp.id != expense.id })
-        oldMember.expenses = oldMember.expenses.filter((exp) => { return exp.id != expense.id })
-        this.updateStats()
-        console.log(res)
-      },
-      error: (err: HttpErrorResponse) => {
-        console.log(err)
-      }
-    })
-  }
-
-  saveName = (member: Member, oldMember: Member) => {
-    const sally_id = this.sally_id
-    this.apiService.saveName(sally_id, member.id, member.name).subscribe({
-      next: (res: any) => {
-        oldMember.name = member.name
-      },
-      error: (err) => {
-        console.log(err)
-      }
-    })
-  }
-
-  deleteMember = (id: string) => {
-    this.apiService.deleteMember(this.sally_id, id).subscribe({
-      next: () => {
-        this.getData()
-        console.log("Deleted")
-      },
-      error: (err: HttpErrorResponse) => {
-        console.log(err)
       }
     })
   }
@@ -153,15 +61,84 @@ export class DashboardComponent implements OnInit {
   updateSallyName = (name: string) => {
     this.apiService.updateSallyName(this.sally_id, name).subscribe({
       next: (res: any) => {
-        if (!this.sally || !this.sally_form) return
-        this.sally_form.name = res[0].name
-        this.sally.name = res[0].name
+        if(this.sally) this.sally.name = res[0].name
+
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Updated Sally name' })
+      },
+      error: (err: HttpErrorResponse) => {
+        console.log(err)
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to update Sally name' })
+      }
+    })
+  }
+
+  addMember = () => {
+    this.sally && this.apiService.addMember(`Person ${this.sally.members.length + 1}`, this.sally_id).subscribe({
+      next: (res: any) => {
+        this.getData()
       },
       error: (err: HttpErrorResponse) => {
         console.log(err)
       }
     })
   }
+
+  updateMemberName = (member: Member, oldmember: Member) => {
+    console.log(oldmember.name)
+    console.log(member.name)
+    this.apiService.saveName(member.sally_id, member.id, member.name).subscribe({
+      next: (res: any) => {
+        oldmember.name = member.name
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Updated person name' })
+      },
+      error: (err) => {
+        console.log(err)
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to update person name' })
+      }
+    })
+  }
+
+  deleteMember = (member: Member) => {
+    this.apiService.deleteMember(member.sally_id, member.id).subscribe({
+      next: () => {
+        this.getData()
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Deleted person' })
+      },
+      error: (err: HttpErrorResponse) => {
+        console.log(err)
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to delete person' })
+      }
+    })
+  }
+
+
+  saveExpense = (expences: Expense[]) => {
+    this.apiService.addExpense(expences).subscribe({
+      next: (res: any) => {
+        this.getData()
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Saved expenses' })
+      },
+      error: (err: HttpErrorResponse) => {
+        console.log(err)
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to save expenses' })
+      }
+    })
+  }
+
+  deleteExpense = (expense: Expense) => {
+    this.apiService.deleteExpense(expense.sally_id, expense.member_id, expense.id as string).subscribe({
+      next: (res) => {
+        this.getData()
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Deleted expense' })
+      },
+      error: (err: HttpErrorResponse) => {
+        console.log(err)
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to delete expense' })
+      }
+    })
+  }
+
+  
 
   updateStats = () => {
     if (!this.sally) return
@@ -177,21 +154,19 @@ export class DashboardComponent implements OnInit {
   }
 
   expenseShared: any[] = []
-
-  excludeExpensesPopup(event: Event, expense: Expense) {
+  excludeExpensesPopup(event: {event: Event, excluded: Excluded[], expense_id: string}) {
     this.expenseShared = []
     this.sally?.members.forEach(member => {
       this.expenseShared.push({ id: member.id, name: member.name, included: true })
     })
-    expense.excluded.forEach((excluded) => {
-      this.expenseShared.find((ex) => ex.id == excluded.member_id).included = false
+    event.excluded.forEach((exclud) => {
+      this.expenseShared.find((ex) => ex.id == exclud.member_id).included = false
     })
     this.confirmationService.confirm({
-      target: event.target as EventTarget,
+      target: event.event.target as EventTarget,
       accept: () => {
         const excluded_members = this.expenseShared.filter((member) => member.included==false)
-        const expense_id = expense.id as string
-        this.excludeMembers(excluded_members, expense_id)
+        this.excludeMembers(excluded_members, event.expense_id)
       },
       reject: () => {}
     });
@@ -208,9 +183,6 @@ export class DashboardComponent implements OnInit {
     })
   }
 
-  modelChanges = () => {
-    console.log("check")
-  }
 
 
 
