@@ -16,7 +16,7 @@
     <div class="container">
         @for (member of sally.members; track member; let i = $index) {
             <div class="row justify-content-center">
-                <div class="col" style="max-width: 565px;">
+                <div class="col" style="max-width: 545px;">
                     <app-member [member]="member" 
                     (updateName)="updateMemberName($event, member)"
                     (updateExpenses)="saveExpense($event)"
@@ -29,7 +29,7 @@
         }
 
         <div class="row justify-content-center">
-            <div class="col" style="max-width: 565px;">
+            <div class="col" style="max-width: 545px;">
                 <p-card styleClass="shadow-2">
 
                     @for (item of final; track $index) {

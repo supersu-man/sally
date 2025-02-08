@@ -1,33 +1,41 @@
 <p-card styleClass="shadow-2">
-    <div class="flex mb-3">
-        <input type="text" pInputText [(ngModel)]="memberCopy.name" />
-        @if (member.name != memberCopy.name) {
-            <p-button class="ml-2" label="Save name" variant="text" (click)="saveName()"/>
-            <p-button class="ml-2" label="Cancel" variant="text" severity="danger" (click)="memberCopy.name = memberCopy.name"/>
+
+    <div class="flex flex-wrap align-items-center mb-2">
+        <input class="max-w-10rem mr-auto" type="text" pInputText [(ngModel)]="memberCopy.name" />
+        @if (memberCopy.name != member.name) {
+        <p-buttongroup>
+            <p-button label="Save name" variant="text" (click)="saveName()" />
+            <p-button label="Cancel" variant="text" severity="danger" (click)="memberCopy.name = member.name" />
+        </p-buttongroup>
         }
     </div>
+    
     @for (expense of memberCopy.expenses; track expense; let index = $index) {
-        <div class="mb-3">
-            <input class="mr-3" type="text" pInputText placeholder="What ?" [(ngModel)]="expense.name" (ngModelChange)="modelChange()"/>
-            <input class="mr-3" type="number" pInputText placeholder="How much ?" [(ngModel)]="expense.amount" (ngModelChange)="modelChange()"/>
+        <div class="flex flex-wrap align-items-center mb-2">
+            <input class="w-10rem mr-2" type="text" pInputText placeholder="What ?" [(ngModel)]="expense.name" (ngModelChange)="modelChange()"/>
+            <input class="w-7rem mr-auto" type="number" pInputText placeholder="Amount ?" [(ngModel)]="expense.amount" (ngModelChange)="modelChange()"/>
             @if (expense.id) {
                 <p-button variant="text" icon="pi pi-user" (click)="excludeExpensesPopup($event, expense.excluded, expense.id)"/>
             }
             <p-button variant="text" severity="danger" icon="pi pi-trash" (click)="deletetheExpense(index)"/>
         </div>
     }
-    <div class="row align-items-center">
-        <div class="col">
-            <p-button styleClass="w-full" label="Add Expense" (click)="addTheExpense()"/>
+    <div class="flex">
+        <div class="flex-grow-1 pr-1">
+            <p-button styleClass="w-full" icon="pi pi-plus" label="Add Expense" (click)="addTheExpense()"/>
         </div>
-        <div class="col-auto">
-            <p-button severity="danger" icon="pi pi-trash" label="Delete person" (click)="deleteTheMember()"/>
+        <div class="flex-none pl-1">
+            <p-button styleClass="w-full" severity="danger" icon="pi pi-trash" variant="outlined" label="Delete person" (click)="deleteTheMember()"/>
         </div>
     </div>
     @if (newExpenses.length > 0) {
-        <div class="mt-3 gap-3 w-full">
-            <p-button styleClass="w-6" label="Save" (click)="updateTheExpenses()"/>
-            <p-button styleClass="w-6" severity="danger" label="Cancel" (click)="cancelUpdateExpenses()"/>
+        <div class="flex mt-2">
+            <div class="flex-grow-1 pr-1">
+                <p-button styleClass="w-full" label="Save" (click)="updateTheExpenses()"/>
+            </div>
+            <div class="flex-none pl-1">
+                <p-button styleClass="w-full" severity="danger" label="Cancel" (click)="cancelUpdateExpenses()"/>
+            </div>
         </div>
     }
 </p-card>

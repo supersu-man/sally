@@ -4,10 +4,12 @@ import { Button } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { Excluded, Expense, Member } from 'src/app/interface/interface';
+import { ButtonGroupModule } from 'primeng/buttongroup';
+
 
 @Component({
   selector: 'app-member',
-  imports: [CardModule, Button, InputTextModule, FormsModule],
+  imports: [CardModule, Button, InputTextModule, FormsModule, ButtonGroupModule],
   templateUrl: './member.component.html',
   styles: ``
 })
@@ -69,7 +71,8 @@ export class MemberComponent implements OnInit {
   }
 
   cancelUpdateExpenses = () => {
-    this.memberCopy.expenses = [...this.memberCopy.expenses]
+    this.memberCopy.expenses = structuredClone(this.member.expenses)
+    this.newExpenses = []
   }
 
   excludeExpensesPopup(event: Event, excluded: Excluded[], expense_id: string) {
