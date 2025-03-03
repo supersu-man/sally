@@ -1,0 +1,85 @@
+@if (!spinner && sally) {
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <p-toolbar>
+                    <input class="mr-auto" type="text" pInputText [(ngModel)]="sallyName" />
+                    @if (sally.name != sallyName) {
+                        <p-button class="ml-2" label="Save name" variant="text" (click)="updateSallyName(sallyName)" [disabled]="sally.name==''"/>
+                        <p-button class="ml-2" label="Cancel" variant="text" severity="danger" (click)="sallyName = sally.name"/>
+                    }
+                </p-toolbar>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        @for (member of sally.members; track member; let i = $index) {
+            <div class="row justify-content-center">
+                <div class="col" style="max-width: 545px;">
+                    <app-member [member]="member" 
+                    (updateName)="updateMemberName($event, member)"
+                    (updateExpenses)="saveExpense($event)"
+                    (deleteExpense)="deleteExpense($event)"
+                    (deleteMember)="deleteMember($event)"
+                    (excludeExpensePopup)="excludeExpensesPopup($event)"
+                    ></app-member>
+                </div>
+            </div>
+        }
+
+        <div class="row justify-content-center">
+            <div class="col" style="max-width: 545px;">
+                <p-card styleClass="shadow-2">
+
+                    @for (item of final; track $index) {
+                        <div>
+                            {{item.name}} {{item.amount > 0 ? 'overpaid' : 'underpaid'}} {{item.amount > 0 ? item.amount : -1 * item.amount}}
+                        </div>
+                    }
+                </p-card>
+            </div>
+        </div>
+    </div>
+
+}
+
+@if (!spinner && !sally?.members) {
+    <div class="centered-axis-xy">Add Members to get started</div>
+}
+
+<p-button styleClass="p-button-rounded" class="fixed right-0 bottom-0 m-3" (click)="addMember()" icon="pi pi-plus" label="Add person"></p-button>
+
+@if (spinner) {
+    <p-progressSpinner styleClass="w-4rem h-4rem" class="centered-axis-xy" strokeWidth="4" animationDuration=".9s"></p-progressSpinner>
+}
+
+<p-confirmPopup #cp>
+    <ng-template #headless let-message>
+        <div class="container-fluid p-3">
+            <div class="row">
+                <div class="col">
+                    <div>Share this expense</div>
+                </div>
+            </div>
+            @for (member of expenseShared; track $index) {
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <p-checkbox [(ngModel)]="member.included" binary="true"/>
+                    </div>
+                    <div class="col">
+                        <label class="ml-2">{{member.name}}</label>
+                    </div>
+                </div>
+            }
+            <div class="row">
+                <div class="col">
+                    <p-button styleClass="w-4rem" (onClick)="cp.onAccept()" [loading]="" label="Save" size="small" />
+                </div>
+                <div class="col">
+                    <p-button styleClass="w-4rem" (onClick)="cp.onReject()" label="Cancel" size="small" severity="danger" />
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-confirmPopup>

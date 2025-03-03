@@ -25,3 +25,9 @@ export interface Excluded {
     expense_id: string,
     member_id: string
 }
+
+export interface Token {
+    accessToken: string,
+    random: string,
+    expiresAt: number
+}
