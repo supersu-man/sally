@@ -1,25 +1,29 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ApiService } from 'src/app/service/api.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [],
+  imports: [RouterModule],
   templateUrl: './dashboard.component.html',
   styles: ``
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
 
   spinner = false
   sallyForm = new FormGroup({
     title: new FormControl<string|null>(null)
   })
-
+  sallys: any[] = []
 
   constructor(private apiService: ApiService, private router: Router) {}
+
+  ngOnInit(): void {
+    this.getSallys()
+  }
 
   createSally = () => {
     const name = "Testing"
@@ -33,6 +37,18 @@ export class DashboardComponent {
       error: (err: HttpErrorResponse) => {
         console.log(err)
         this.spinner = false
+      }
+    })
+  }
+
+  getSallys = () => {
+    this.apiService.getSallys().subscribe({
+      next: (res: any) => {
+        this.sallys = res
+        console.log(res)
+      },
+      error: (err) => {
+        console.log(err)
       }
     })
   }

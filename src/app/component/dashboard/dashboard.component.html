@@ -1,0 +1,21 @@
+<div class="container">
+    <div class="row">
+        <div class="col text-3xl">
+            <div class="shadow-1 border-round-md px-3 py-2">
+                Dashboard
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        @for (item of sallys; track $index) {
+        <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
+            <div class="shadow-1 border-round-md cursor-pointer px-3 py-2" [routerLink]="'/sally/'+item.id">
+                {{item.name}}
+            </div>
+        </div>
+        }
+    </div>
+</div>

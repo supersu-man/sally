@@ -30,6 +30,10 @@ export class ApiService {
     return this.httpClient.get(environment.endpoint + '/sally', { params: { id } })
   }
 
+  getSallys = () => {
+    return this.httpClient.get(environment.endpoint + '/sally')
+  }
+
   updateSallyName = (id: string, name: string) => {
     return this.httpClient.patch(environment.endpoint + '/sally', { id, name })
   }
