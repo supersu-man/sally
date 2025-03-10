@@ -8,7 +8,7 @@ import { SallyComponent } from './component/sally/sally.component';
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'sally/:sally_id', component: SallyComponent },
+  { path: 'dashboard/:sally_id', component: SallyComponent },
   
   { path: 'policy', component: TermsComponent },
   { path: 'about', component: AboutComponent }

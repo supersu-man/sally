@@ -1,21 +1,36 @@
-<div class="container">
-    <div class="row">
-        <div class="col text-3xl">
-            <div class="shadow-1 border-round-md px-3 py-2">
-                Dashboard
+@if (!spinner) {
+    <div class="container-fluid p-3">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="text-3xl">
+                    Dashboard
+                </div>
+            </div>
+            <div class="col-auto">
+                <p-button icon="pi pi-plus" label="Create Sally" (click)="createSallyPopup = true"></p-button>
             </div>
         </div>
-    </div>
-</div>
-
-<div class="container">
-    <div class="row">
+        <div class="row">
         @for (item of sallys; track $index) {
-        <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
-            <div class="shadow-1 border-round-md cursor-pointer px-3 py-2" [routerLink]="'/sally/'+item.id">
-                {{item.name}}
+            <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
+                <div class="h-4rem border-1 border-round-md cursor-pointer px-3 py-2" [routerLink]="'/dashboard/'+item.id" style="background-color: rgb(238, 238, 238); border-color: gray;">
+                    {{item.name}}
+                </div>
             </div>
-        </div>
         }
+        </div>
     </div>
-</div>
+} @else {
+    <p-progressSpinner styleClass="w-4rem h-4rem" class="centered-axis-xy" strokeWidth="4" animationDuration=".9s"></p-progressSpinner>
+}
+
+<p-dialog header="Create Sally" [modal]="true" [(visible)]="createSallyPopup" [style]="{ width: '25rem' }" [formGroup]="sallyForm" (onHide)="sallyForm.reset()">
+    <div class="flex align-items-center gap-4 mb-4">
+        <label for="username" class="font-semibold w-24">Title</label>
+        <input pInputText id="username" class="flex-auto" autocomplete="off" formControlName="title" />
+    </div>
+    <div class="flex justify-content-end gap-2">
+        <p-button label="Cancel" severity="secondary" (click)="createSallyPopup = false" />
+        <p-button label="Create" [loading]="popupSpinner" (click)="createSally()" [disabled]="!sallyForm.valid"/>
+    </div>
+</p-dialog>
