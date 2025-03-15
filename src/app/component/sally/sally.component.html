@@ -1,31 +1,30 @@
-@if (!spinner && sally) {
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <p-toolbar>
-                    <input class="mr-auto" type="text" pInputText [(ngModel)]="sallyName" />
-                    @if (sally.name != sallyName) {
-                        <p-button class="ml-2" label="Save name" variant="text" (click)="updateSallyName(sallyName)" [disabled]="sally.name==''"/>
-                        <p-button class="ml-2" label="Cancel" variant="text" severity="danger" (click)="sallyName = sally.name"/>
-                    }
-                </p-toolbar>
+<div class="container p-3">
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="text-3xl">
+                {{sally?.name}}
             </div>
         </div>
+        <div class="col-auto">
+            <p-button icon="pi pi-pencil" label="Edit" (click)="editNamePopup=true"></p-button>
+        </div>
     </div>
+</div>
 
+@if(sally && sally.members) {
     <div class="container">
         @for (member of sally.members; track member; let i = $index) {
-            <div class="row justify-content-center">
-                <div class="col" style="max-width: 545px;">
-                    <app-member [member]="member" 
-                    (updateName)="updateMemberName($event, member)"
-                    (updateExpenses)="saveExpense($event)"
-                    (deleteExpense)="deleteExpense($event)"
-                    (deleteMember)="deleteMember($event)"
-                    (excludeExpensePopup)="excludeExpensesPopup($event)"
-                    ></app-member>
-                </div>
+        <div class="row justify-content-center">
+            <div class="col" style="max-width: 545px;">
+                <app-member [member]="member" 
+                (updateName)="updateMemberName($event, member)"
+                (updateExpenses)="saveExpense($event)"
+                (deleteExpense)="deleteExpense($event)"
+                (deleteMember)="deleteMember($event)"
+                (excludeExpensePopup)="excludeExpensesPopup($event)"
+                ></app-member>
             </div>
+        </div>
         }
 
         <div class="row justify-content-center">
@@ -41,20 +40,42 @@
             </div>
         </div>
     </div>
-
 }
 
-@if (!spinner && !sally?.members) {
+<p-button styleClass="p-button-rounded" class="fixed right-0 bottom-0 m-3" (click)="addPersonPopup = true" icon="pi pi-plus" label="Add person"></p-button>
+
+
+@if (sally && !sally.members) {
     <div class="centered-axis-xy">Add Members to get started</div>
 }
-
-<p-button styleClass="p-button-rounded" class="fixed right-0 bottom-0 m-3" (click)="addMember()" icon="pi pi-plus" label="Add person"></p-button>
 
 @if (spinner) {
     <p-progressSpinner styleClass="w-4rem h-4rem" class="centered-axis-xy" strokeWidth="4" animationDuration=".9s"></p-progressSpinner>
 }
 
-<p-confirmPopup #cp>
+<p-dialog header="Edit sally name" [modal]="true" [(visible)]="editNamePopup" [style]="{ width: '25rem' }" (onHide)="resetName()">
+    <div class="flex align-items-center gap-4 mb-4">
+        <label for="username" class="font-semibold w-24">Name</label>
+        <input pInputText id="username" class="flex-auto" autocomplete="off" [(ngModel)]="sallyName" />
+    </div>
+    <div class="flex justify-content-end gap-2">
+        <p-button label="Save" variant="text" (click)="updateSallyName(sallyName)" />
+        <p-button label="Cancel" variant="text" severity="danger" (click)="editNamePopup = false" />
+    </div>
+</p-dialog>
+
+<p-dialog header="Add a person" [modal]="true" [(visible)]="addPersonPopup" [style]="{ width: '25rem' }" (onHide)="personName=''">
+    <div class="flex align-items-center gap-4 mb-4">
+        <label for="username" class="font-semibold w-24">Name</label>
+        <input pInputText id="username" class="flex-auto" autocomplete="off" [(ngModel)]="personName" />
+    </div>
+    <div class="flex justify-content-end gap-2">
+        <p-button label="Save" variant="text" (click)="addMember(personName)" [disabled]="personName==''" />
+        <p-button label="Cancel" variant="text" severity="danger" (click)="addPersonPopup = false" />
+    </div>
+</p-dialog>
+
+<!-- <p-confirmPopup #cp>
     <ng-template #headless let-message>
         <div class="container-fluid p-3">
             <div class="row">
@@ -82,4 +103,4 @@
             </div>
         </div>
     </ng-template>
-</p-confirmPopup>
+</p-confirmPopup> -->

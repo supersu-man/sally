@@ -15,10 +15,11 @@ import { CardModule } from 'primeng/card';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MemberComponent } from "../common/member/member.component";
+import { ConfirmDialog } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-sally',
-  imports: [ToolbarModule, ContextMenuModule, ButtonModule, ProgressSpinnerModule, DialogModule, FormsModule, RouterModule, InputTextModule, CardModule, ConfirmPopupModule, CheckboxModule, MemberComponent],
+  imports: [ToolbarModule, ContextMenuModule, ButtonModule, ProgressSpinnerModule, DialogModule, FormsModule, RouterModule, InputTextModule, CardModule, ConfirmPopupModule, CheckboxModule, MemberComponent, ConfirmDialog],
   templateUrl: './sally.component.html',
   styles: ``
 })
@@ -27,10 +28,14 @@ export class SallyComponent implements OnInit {
   sally_id = this.route.snapshot.paramMap.get('sally_id') as string
   sally: Sally | undefined
   sallyName = ''
+  personName = ''
 
   spinner = false
 
   totalExpenses = 0
+
+  editNamePopup = false
+  addPersonPopup = false
 
 
   constructor(private route: ActivatedRoute, private messageService: MessageService, private apiService: ApiService, private confirmationService: ConfirmationService) { }
@@ -38,6 +43,35 @@ export class SallyComponent implements OnInit {
   ngOnInit(): void {
     this.getData()
   }
+
+  resetName = () => {
+    this.sallyName = this.sally?.name as string
+  }
+
+  confirm() {
+    this.confirmationService.confirm({
+      icon: 'pi pi-exclamation-circle',
+      rejectButtonProps: {
+        label: 'Cancel',
+        icon: 'pi pi-times',
+        outlined: true,
+        size: 'small'
+      },
+      acceptButtonProps: {
+        label: 'Save',
+        icon: 'pi pi-check',
+        size: 'small'
+      },
+      accept: () => {
+        this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
+      },
+      reject: () => {
+        this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+      }
+    });
+  }
+
+
 
   getData = () => {
     this.spinner = true
@@ -60,8 +94,8 @@ export class SallyComponent implements OnInit {
   updateSallyName = (name: string) => {
     this.apiService.updateSallyName(this.sally_id, name).subscribe({
       next: (res: any) => {
-        if(this.sally) this.sally.name = res[0].name
-
+        if (this.sally) this.sally.name = res[0].name
+        this.editNamePopup = false
         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Updated Sally name' })
       },
       error: (err: HttpErrorResponse) => {
@@ -71,9 +105,11 @@ export class SallyComponent implements OnInit {
     })
   }
 
-  addMember = () => {
-    this.sally && this.apiService.addMember(`Person ${this.sally.members.length + 1}`, this.sally_id).subscribe({
+  addMember = (name: string) => {
+    this.sally && this.apiService.addMember(name, this.sally_id).subscribe({
       next: (res: any) => {
+        this.personName = ''
+        this.addPersonPopup = false
         this.getData()
       },
       error: (err: HttpErrorResponse) => {
@@ -145,9 +181,9 @@ export class SallyComponent implements OnInit {
   updateStats = () => {
     this.sally?.members.forEach((member) => {
       this.names[member.id] = member.name
-      if(member.expenses.length == 0) this.paidAlready[member.id] = 0
+      if (member.expenses.length == 0) this.paidAlready[member.id] = 0
       member.expenses.forEach(expense => {
-        if(this.paidAlready[member.id]) this.paidAlready[member.id] += expense.amount
+        if (this.paidAlready[member.id]) this.paidAlready[member.id] += expense.amount
         else this.paidAlready[member.id] = expense.amount
 
         this.getExpenseSplitForExcept(expense.excluded, expense.amount || 0)
@@ -164,12 +200,12 @@ export class SallyComponent implements OnInit {
 
     this.sally?.members.forEach(member => {
       const found = excluded.find(ex => { return member.id == ex.member_id })
-      if(!found) temp.push(member.id)
+      if (!found) temp.push(member.id)
     })
 
     temp.forEach(id => {
-      if(this.toBePaid[id]) this.toBePaid[id] += amount/temp.length
-      else this.toBePaid[id] = amount/temp.length
+      if (this.toBePaid[id]) this.toBePaid[id] += amount / temp.length
+      else this.toBePaid[id] = amount / temp.length
     })
   }
 
@@ -186,7 +222,7 @@ export class SallyComponent implements OnInit {
   }
 
   expenseShared: any[] = []
-  excludeExpensesPopup(event: {event: Event, excluded: Excluded[], expense_id: string}) {
+  excludeExpensesPopup(event: { event: Event, excluded: Excluded[], expense_id: string }) {
     this.expenseShared = []
     this.sally?.members.forEach(member => {
       this.expenseShared.push({ id: member.id, name: member.name, included: true })
@@ -197,10 +233,10 @@ export class SallyComponent implements OnInit {
     this.confirmationService.confirm({
       target: event.event.target as EventTarget,
       accept: () => {
-        const excluded_members = this.expenseShared.filter((member) => member.included==false)
+        const excluded_members = this.expenseShared.filter((member) => member.included == false)
         this.excludeMembers(excluded_members, event.expense_id)
       },
-      reject: () => {}
+      reject: () => { }
     });
   }
 
