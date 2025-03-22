@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Excluded, Expense, Member, Sally } from 'src/app/interface/interface';
+import { Excluded, Expense, Member, NewExpense, Sally } from 'src/app/interface/interface';
 import { ApiService } from 'src/app/service/api.service';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { ButtonModule } from 'primeng/button';
@@ -15,11 +15,10 @@ import { CardModule } from 'primeng/card';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MemberComponent } from "../common/member/member.component";
-import { ConfirmDialog } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-sally',
-  imports: [ToolbarModule, ContextMenuModule, ButtonModule, ProgressSpinnerModule, DialogModule, FormsModule, RouterModule, InputTextModule, CardModule, ConfirmPopupModule, CheckboxModule, MemberComponent, ConfirmDialog],
+  imports: [ToolbarModule, ContextMenuModule, ButtonModule, ProgressSpinnerModule, DialogModule, FormsModule, RouterModule, InputTextModule, CardModule, ConfirmPopupModule, CheckboxModule, MemberComponent],
   templateUrl: './sally.component.html',
   styles: ``
 })
@@ -27,15 +26,15 @@ export class SallyComponent implements OnInit {
 
   sally_id = this.route.snapshot.paramMap.get('sally_id') as string
   sally: Sally | undefined
-  sallyName = ''
-  personName = ''
 
   spinner = false
 
   totalExpenses = 0
 
-  editNamePopup = false
-  addPersonPopup = false
+  
+  name = ''
+  namePopup = false
+  popupType : 'sally_name' | 'member_name' = 'sally_name'
 
 
   constructor(private route: ActivatedRoute, private messageService: MessageService, private apiService: ApiService, private confirmationService: ConfirmationService) { }
@@ -44,34 +43,16 @@ export class SallyComponent implements OnInit {
     this.getData()
   }
 
-  resetName = () => {
-    this.sallyName = this.sally?.name as string
+  openSallyNamePopup = () => {
+    this.name = this.sally?.name as string
+    this.popupType = 'sally_name'
+    this.namePopup = true
   }
 
-  confirm() {
-    this.confirmationService.confirm({
-      icon: 'pi pi-exclamation-circle',
-      rejectButtonProps: {
-        label: 'Cancel',
-        icon: 'pi pi-times',
-        outlined: true,
-        size: 'small'
-      },
-      acceptButtonProps: {
-        label: 'Save',
-        icon: 'pi pi-check',
-        size: 'small'
-      },
-      accept: () => {
-        this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
-      },
-      reject: () => {
-        this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-      }
-    });
+  openMemberNamePopup = () => {
+    this.popupType = 'member_name'
+    this.namePopup = true
   }
-
-
 
   getData = () => {
     this.spinner = true
@@ -79,10 +60,8 @@ export class SallyComponent implements OnInit {
       next: (res: any) => {
         console.log(res)
         this.sally = res
-        this.sallyName = this.sally?.name as string
 
         this.updateStats()
-
         this.spinner = false
       },
       error: (err: HttpErrorResponse) => {
@@ -95,7 +74,7 @@ export class SallyComponent implements OnInit {
     this.apiService.updateSallyName(this.sally_id, name).subscribe({
       next: (res: any) => {
         if (this.sally) this.sally.name = res[0].name
-        this.editNamePopup = false
+        this.namePopup = false
         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Updated Sally name' })
       },
       error: (err: HttpErrorResponse) => {
@@ -108,8 +87,7 @@ export class SallyComponent implements OnInit {
   addMember = (name: string) => {
     this.sally && this.apiService.addMember(name, this.sally_id).subscribe({
       next: (res: any) => {
-        this.personName = ''
-        this.addPersonPopup = false
+        this.namePopup = false
         this.getData()
       },
       error: (err: HttpErrorResponse) => {
@@ -117,62 +95,6 @@ export class SallyComponent implements OnInit {
       }
     })
   }
-
-  updateMemberName = (member: Member, oldmember: Member) => {
-    console.log(oldmember.name)
-    console.log(member.name)
-    this.apiService.saveName(member.sally_id, member.id, member.name).subscribe({
-      next: (res: any) => {
-        oldmember.name = member.name
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Updated person name' })
-      },
-      error: (err) => {
-        console.log(err)
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to update person name' })
-      }
-    })
-  }
-
-  deleteMember = (member: Member) => {
-    this.apiService.deleteMember(member.sally_id, member.id).subscribe({
-      next: () => {
-        this.getData()
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Deleted person' })
-      },
-      error: (err: HttpErrorResponse) => {
-        console.log(err)
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to delete person' })
-      }
-    })
-  }
-
-
-  saveExpense = (expences: Expense[]) => {
-    this.apiService.addExpense(expences).subscribe({
-      next: (res: any) => {
-        this.getData()
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Saved expenses' })
-      },
-      error: (err: HttpErrorResponse) => {
-        console.log(err)
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to save expenses' })
-      }
-    })
-  }
-
-  deleteExpense = (expense: Expense) => {
-    this.apiService.deleteExpense(expense.sally_id, expense.member_id, expense.id as string).subscribe({
-      next: (res) => {
-        this.getData()
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Deleted expense' })
-      },
-      error: (err: HttpErrorResponse) => {
-        console.log(err)
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to delete expense' })
-      }
-    })
-  }
-
 
   toBePaid: any = {}
   paidAlready: any = {}
@@ -212,6 +134,7 @@ export class SallyComponent implements OnInit {
   final: any = []
 
   doTheDifference() {
+    this.final = []
     Object.keys(this.toBePaid).forEach(obj => {
       this.paidAlready[obj] -= this.toBePaid[obj]
     })
@@ -223,6 +146,7 @@ export class SallyComponent implements OnInit {
 
   expenseShared: any[] = []
   excludeExpensesPopup(event: { event: Event, excluded: Excluded[], expense_id: string }) {
+    console.log()
     this.expenseShared = []
     this.sally?.members.forEach(member => {
       this.expenseShared.push({ id: member.id, name: member.name, included: true })

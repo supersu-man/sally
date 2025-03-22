@@ -1,41 +1,52 @@
-<p-card styleClass="shadow-2">
+<div class="border-1 border-round-lg p-3">
 
     <div class="flex flex-wrap align-items-center mb-2">
-        <input class="max-w-10rem mr-auto" type="text" pInputText [(ngModel)]="memberCopy.name" />
+        <div class="max-w-10rem mr-auto">{{memberCopy.name}}</div>
         @if (memberCopy.name != member.name) {
         <p-buttongroup>
-            <p-button label="Save name" variant="text" (click)="saveName()" />
+            <p-button label="Save name" variant="text" />
             <p-button label="Cancel" variant="text" severity="danger" (click)="memberCopy.name = member.name" />
         </p-buttongroup>
+        } @else {
+        <div class="flex-none pl-1">
+            <p-button styleClass="w-full" severity="danger" icon="pi pi-trash" variant="outlined" label="Delete person" (click)="deleteMember(member.id)"/>
+        </div>
         }
     </div>
     
     @for (expense of memberCopy.expenses; track expense; let index = $index) {
-        <div class="flex flex-wrap align-items-center mb-2">
-            <input class="w-10rem mr-2" type="text" pInputText placeholder="What ?" [(ngModel)]="expense.name" (ngModelChange)="modelChange()"/>
-            <input class="w-7rem mr-auto" type="number" pInputText placeholder="Amount ?" [(ngModel)]="expense.amount" (ngModelChange)="modelChange()"/>
-            @if (expense.id) {
-                <p-button variant="text" icon="pi pi-user" (click)="excludeExpensesPopup($event, expense.excluded, expense.id)"/>
-            }
-            <p-button variant="text" severity="danger" icon="pi pi-trash" (click)="deletetheExpense(index)"/>
+        <div class="flex flex-wrap align-items-center border-1 border-round-lg mb-2 px-2">
+            <div class="w-10rem mr-2">
+                {{expense.name}}
+            </div>
+            <div class="w-7rem mr-auto">
+                {{expense.amount}}
+            </div>
+            <p-button variant="text" icon="pi pi-pencil" (click)="openEditPopup(expense)"/>
+            
+            <p-button variant="text" icon="pi pi-user" (click)="excludeExpensesPopup($event, expense.excluded, expense.id)"/>
+            
+            <p-button variant="text" severity="danger" icon="pi pi-trash" (click)="deleteExpense(expense.id)"/>
         </div>
     }
     <div class="flex">
         <div class="flex-grow-1 pr-1">
-            <p-button styleClass="w-full" icon="pi pi-plus" label="Add Expense" (click)="addTheExpense()"/>
-        </div>
-        <div class="flex-none pl-1">
-            <p-button styleClass="w-full" severity="danger" icon="pi pi-trash" variant="outlined" label="Delete person" (click)="deleteTheMember()"/>
+            <p-button styleClass="w-full" icon="pi pi-plus" label="Add Expense" (click)="expensePopup = true"/>
         </div>
     </div>
-    @if (newExpenses.length > 0) {
-        <div class="flex mt-2">
-            <div class="flex-grow-1 pr-1">
-                <p-button styleClass="w-full" label="Save" (click)="updateTheExpenses()"/>
-            </div>
-            <div class="flex-none pl-1">
-                <p-button styleClass="w-full" severity="danger" label="Cancel" (click)="cancelUpdateExpenses()"/>
-            </div>
-        </div>
-    }
-</p-card>
+</div>
+
+<p-dialog [header]="popupMode=='add' ? 'Add a new expense': 'Edit expense'" [modal]="true" [(visible)]="expensePopup" [style]="{ width: '25rem' }" (onHide)="resetNewExpense();">
+    <div class="flex align-items-center gap-4 mb-4">
+        <label class="font-semibold w-5rem">What ?</label>
+        <input pInputText class="flex-auto" autocomplete="off" [(ngModel)]="expense.name" />
+    </div>
+    <div class="flex align-items-center gap-4 mb-4">
+        <label class="font-semibold w-5rem">Amount ?</label>
+        <input pInputText type="number" class="flex-auto" autocomplete="off" [(ngModel)]="expense.amount" />
+    </div>
+    <div class="flex justify-content-end gap-2">
+        <p-button [label]="popupMode=='add' ? 'Add' : 'Save'" variant="text" (click)=" popupMode=='add' ?  addExpense(expense) : updateExpense(expense)" [disabled]="!expense.name || !expense.amount" />
+        <p-button label="Cancel" variant="text" severity="danger" (click)="expensePopup = false" />
+    </div>
+</p-dialog>

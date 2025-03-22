@@ -12,10 +12,9 @@ export interface Member {
 }
 
 export interface Expense {
-    id: string | undefined
-    amount: number | undefined
-    name: string | undefined
-    sally_id: string
+    id: string
+    amount: number
+    name: string
     member_id: string,
     excluded: Excluded[]
 }
@@ -30,4 +29,10 @@ export interface Token {
     accessToken: string,
     random: string,
     expiresAt: number
+}
+
+export interface NewExpense {
+    amount: number,
+    name: string,
+    member_id: string
 }

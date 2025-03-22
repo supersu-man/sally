@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Expense, Sally } from '../interface/interface';
+import { Expense, NewExpense, Sally } from '../interface/interface';
 
 @Injectable({
   providedIn: 'root'
@@ -42,20 +42,25 @@ export class ApiService {
     return this.httpClient.post(environment.endpoint + '/member', { name, sally_id })
   }
 
-  saveName = (sally_id: string, id: string, name: string) => {
-    return this.httpClient.patch(environment.endpoint + '/member', { id, name, sally_id })
+  updateMemberName = (memberName: string, memeberId: string) => {
+    return this.httpClient.patch(environment.endpoint + '/member', { id: memeberId, name: memberName })
   }
 
-  deleteMember = (sally_id: string, id: string) => {
-    return this.httpClient.delete(environment.endpoint + '/member', { body: { sally_id, id } })
+  deleteMember = (id: string) => {
+    return this.httpClient.delete(environment.endpoint + '/member', { body: { id } })
   }
 
-  addExpense = (expenses: Expense[]) => {
+  addExpense = (expenses: NewExpense) => {
     return this.httpClient.post(environment.endpoint + '/expense', expenses)
   }
 
-  deleteExpense = (sally_id: string, member_id: string, id: string) => {
-    return this.httpClient.delete(environment.endpoint + '/expense', { body: { sally_id, member_id, id } })
+  updateExpense = (expense: Expense) => {
+    return this.httpClient.patch(environment.endpoint + '/expense', expense)
+
+  }
+
+  deleteExpense = (id: string) => {
+    return this.httpClient.delete(environment.endpoint + '/expense', { body: { id } })
   }
 
   exludeMembers = (excluded_members: any, expense_id: string) => {
