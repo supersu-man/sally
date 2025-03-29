@@ -32,7 +32,7 @@
                         <div class="flex align-items-center">
                             <span>{{item.from}}</span>
                             <i class="pi pi-arrow-right mx-4"></i>
-                            <span>{{item.to}}, {{item.amount}}</span>
+                            <span>{{item.to}}, {{item.amount | number: '1.2-2'}}</span>
                         </div>
                     }
                 </p-card>

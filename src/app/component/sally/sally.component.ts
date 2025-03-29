@@ -15,12 +15,13 @@ import { CardModule } from 'primeng/card';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MemberComponent } from "../common/member/member.component";
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-sally',
-  imports: [ToolbarModule, ContextMenuModule, ButtonModule, ProgressSpinnerModule, DialogModule, FormsModule, RouterModule, InputTextModule, CardModule, ConfirmPopupModule, CheckboxModule, MemberComponent],
+  imports: [ToolbarModule, ContextMenuModule, ButtonModule, ProgressSpinnerModule, DialogModule, FormsModule, RouterModule, InputTextModule, CardModule, ConfirmPopupModule, CheckboxModule, MemberComponent, DecimalPipe],
   templateUrl: './sally.component.html',
-  styles: ``
+  styles: ``,
 })
 export class SallyComponent implements OnInit {
 

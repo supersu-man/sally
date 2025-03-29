@@ -21,9 +21,6 @@ declare const google: any;
 })
 export class HomeComponent {
 
-
-  client_id ='433285191781-0aldo2uov77tsbdv31itrpvqkn1g002m.apps.googleusercontent.com'
-
   constructor(private router: Router, private apiService: ApiService, private httpClient: HttpClient, private confirmationService: ConfirmationService, private tokenService: TokenService){}
 
   ngOnInit(): void {
