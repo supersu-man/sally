@@ -29,8 +29,10 @@
                 <p-card styleClass="shadow-2">
 
                     @for (item of stats; track $index) {
-                        <div>
-                            {{item.from}} to {{item.to}}, Amount: {{item.amount}}
+                        <div class="flex align-items-center">
+                            <span>{{item.from}}</span>
+                            <i class="pi pi-arrow-right mx-4"></i>
+                            <span>{{item.to}}, {{item.amount}}</span>
                         </div>
                     }
                 </p-card>
