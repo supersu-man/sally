@@ -26,6 +26,7 @@ export class SallyComponent implements OnInit {
 
   sally_id = this.route.snapshot.paramMap.get('sally_id') as string
   sally: Sally | undefined
+  stats: any
 
   spinner = false
 
@@ -59,9 +60,9 @@ export class SallyComponent implements OnInit {
     this.apiService.getSally(this.sally_id).subscribe({
       next: (res: any) => {
         console.log(res)
-        this.sally = res
+        this.sally = res.sally
+        this.stats = res.stats
 
-        this.updateStats()
         this.spinner = false
       },
       error: (err: HttpErrorResponse) => {
@@ -96,54 +97,6 @@ export class SallyComponent implements OnInit {
     })
   }
 
-  toBePaid: any = {}
-  paidAlready: any = {}
-  names: any = {}
-
-  updateStats = () => {
-    this.sally?.members.forEach((member) => {
-      this.names[member.id] = member.name
-      if (member.expenses.length == 0) this.paidAlready[member.id] = 0
-      member.expenses.forEach(expense => {
-        if (this.paidAlready[member.id]) this.paidAlready[member.id] += expense.amount
-        else this.paidAlready[member.id] = expense.amount
-
-        this.getExpenseSplitForExcept(expense.excluded, expense.amount || 0)
-      })
-    })
-
-    this.doTheDifference()
-    console.log(this.paidAlready)
-    console.log(this.toBePaid)
-  }
-
-  getExpenseSplitForExcept(excluded: Excluded[], amount: number) {
-    const temp: string[] = []
-
-    this.sally?.members.forEach(member => {
-      const found = excluded.find(ex => { return member.id == ex.member_id })
-      if (!found) temp.push(member.id)
-    })
-
-    temp.forEach(id => {
-      if (this.toBePaid[id]) this.toBePaid[id] += amount / temp.length
-      else this.toBePaid[id] = amount / temp.length
-    })
-  }
-
-  final: any = []
-
-  doTheDifference() {
-    this.final = []
-    Object.keys(this.toBePaid).forEach(obj => {
-      this.paidAlready[obj] -= this.toBePaid[obj]
-    })
-
-    Object.keys(this.paidAlready).forEach(id => {
-      this.final.push({ name: this.names[id], amount: this.paidAlready[id] })
-    })
-  }
-
   expenseShared: any[] = []
   excludeExpensesPopup(event: { event: Event, excluded: Excluded[], expense_id: string }) {
     console.log()
@@ -174,7 +127,5 @@ export class SallyComponent implements OnInit {
       }
     })
   }
-
-
 
 }

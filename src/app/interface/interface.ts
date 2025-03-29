@@ -15,7 +15,8 @@ export interface Expense {
     id: string
     amount: number
     name: string
-    member_id: string,
+    paid_by: string,
+    sally_id: string
     excluded: Excluded[]
 }
 
@@ -34,5 +35,6 @@ export interface Token {
 export interface NewExpense {
     amount: number,
     name: string,
-    member_id: string
+    paid_by: string,
+    sally_id: string
 }

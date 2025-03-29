@@ -28,9 +28,9 @@
             <div class="col" style="max-width: 545px;">
                 <p-card styleClass="shadow-2">
 
-                    @for (item of final; track $index) {
+                    @for (item of stats; track $index) {
                         <div>
-                            {{item.name}} {{item.amount > 0 ? 'overpaid' : 'underpaid'}} {{item.amount > 0 ? item.amount : -1 * item.amount}}
+                            {{item.from}} to {{item.to}}, Amount: {{item.amount}}
                         </div>
                     }
                 </p-card>
@@ -42,7 +42,7 @@
 <p-button styleClass="p-button-rounded" class="fixed right-0 bottom-0 m-3" (click)="openMemberNamePopup()" icon="pi pi-plus" label="Add person"></p-button>
 
 
-@if (sally && !sally.members) {
+@if (sally && !sally.members && !spinner) {
     <div class="centered-axis-xy">Add Members to get started</div>
 }
 

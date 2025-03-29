@@ -81,7 +81,8 @@ export class MemberComponent implements OnInit {
   }
 
   addExpense = (expense: Expense) => {
-    expense.member_id = this.member.id
+    expense.paid_by = this.member.id
+    expense.sally_id = this.member.sally_id
     this.apiService.addExpense(expense).subscribe({
       next: (res: any) => {
         this.expensePopup = false
