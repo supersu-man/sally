@@ -37,6 +37,10 @@ export class ApiService {
   updateSallyName = (id: string, name: string) => {
     return this.httpClient.patch(environment.endpoint + '/sally', { id, name })
   }
+
+  deleteSally = (id: string) => {
+    return this.httpClient.delete(environment.endpoint + '/sally', { body: { id }})
+  }
   
   addMember = (name: string, sally_id: string) => {
     return this.httpClient.post(environment.endpoint + '/member', { name, sally_id })

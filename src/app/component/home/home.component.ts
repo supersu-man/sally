@@ -35,7 +35,7 @@ export class HomeComponent {
     
     google.accounts.id.renderButton(
       document.getElementById("googleLoginButton"),
-      { theme: "outline", size: "large", text: "sign_in_with" }
+      { size: "large", text: "signin" }
     );
   }
 

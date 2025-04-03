@@ -10,8 +10,9 @@
 body, html {
     height: 100%;
     font-family: 'rubik';
-    margin: 0px;
     font-size: 15px;
+    padding: 0px;
+    margin: 0px;
 }
 
 .p-toast-message-content {

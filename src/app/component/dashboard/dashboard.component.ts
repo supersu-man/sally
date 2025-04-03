@@ -7,6 +7,7 @@ import { ApiService } from 'src/app/service/api.service';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-dashboard',
@@ -26,7 +27,7 @@ export class DashboardComponent implements OnInit {
   createSallyPopup = false
   popupSpinner = false
 
-  constructor(private apiService: ApiService, private router: Router) {}
+  constructor(private apiService: ApiService, private router: Router, private messageService: MessageService) {}
 
   ngOnInit(): void {
     this.getSallys()
@@ -39,15 +40,14 @@ export class DashboardComponent implements OnInit {
     this.popupSpinner = true
     this.apiService.createSally(title).subscribe({
       next: (res: any) => {
-        console.log(res)
         this.popupSpinner = false
         this.createSallyPopup = false
-        this.getSallys()
-        // this.router.navigate([res[0].id])
+        this.router.navigate(['dashboard/'+res[0].id])
       },
       error: (err: HttpErrorResponse) => {
         console.log(err)
         this.popupSpinner = false
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to create sally' })
       }
     })
   }
@@ -62,6 +62,7 @@ export class DashboardComponent implements OnInit {
       error: (err) => {
         console.log(err)
         this.spinner = false
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to get sallys' })
       }
     })
   }

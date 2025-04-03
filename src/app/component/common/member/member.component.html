@@ -9,7 +9,7 @@
         </p-buttongroup>
         } @else {
         <div class="flex-none pl-1">
-            <p-button styleClass="w-full" severity="danger" icon="pi pi-trash" variant="outlined" label="Delete person" (click)="deleteMember(member.id)"/>
+            <p-button styleClass="w-full" severity="danger" icon="pi pi-trash" variant="outlined" label="Delete person" (click)="deleteMemberPopup($event, member.id)"/>
         </div>
         }
     </div>
@@ -26,7 +26,7 @@
             
             <p-button variant="text" icon="pi pi-user" (click)="excludeExpensesPopup($event, expense.excluded, expense.id)"/>
             
-            <p-button variant="text" severity="danger" icon="pi pi-trash" (click)="deleteExpense(expense.id)"/>
+            <p-button variant="text" severity="danger" icon="pi pi-trash" (click)="deleteExpensePopup($event, expense.id)"/>
         </div>
     }
     <div class="flex">

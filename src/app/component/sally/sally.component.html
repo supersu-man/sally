@@ -1,51 +1,74 @@
-<div class="container p-3">
+<div class="container py-2 pb-5">
     <div class="row align-items-center">
+        <div class="col-auto">
+            <p-button icon="pi pi-plus" variant="outlined" icon="pi pi-angle-left" routerLink="/dashboard"></p-button>
+        </div>
         <div class="col">
-            <div class="text-3xl">
-                {{sally?.name}}
-            </div>
+            <div class="text-3xl">{{sally?.name}}</div>
         </div>
         <div class="col-auto">
-            <p-button icon="pi pi-pencil" variant="outlined" label="Edit name" (click)="openSallyNamePopup()" />
+            <div class="flex gap-2">
+                <p-button icon="pi pi-pencil" variant="outlined" (click)="openSallyNamePopup()" />
+                <p-button icon="pi pi-trash" variant="outlined" severity="danger" (click)="deleteSallyConfirmPopup($event)" />
+            </div>
         </div>
     </div>
-</div>
 
-@if(sally && sally.members && !spinner) {
-    <div class="container p-3">
+    @if (sally && sally.members && sally.members.length) {
+        <div class="row justify-content-center text-lg">
+            <div class="col" style="max-width: 645px;">
+                <div>Members</div>
+            </div>
+        </div>
         @for (member of sally.members; track member; let i = $index) {
         <div class="row justify-content-center">
-            <div class="col" style="max-width: 545px;">
+            <div class="col" style="max-width: 645px;">
                 <app-member [member]="member"
                 (onUpdateRequest)="getData()"
-                (excludeExpensePopup)="excludeExpensesPopup($event)"
+                (excludeExpensePopup)="openSharedExpensesPopup($event)"
                 ></app-member>
             </div>
         </div>
         }
+    }
 
-        <div class="row justify-content-center">
-            <div class="col" style="max-width: 545px;">
-                <p-card styleClass="shadow-2">
-
-                    @for (item of stats; track $index) {
-                        <div class="flex align-items-center">
-                            <span>{{item.from}}</span>
-                            <i class="pi pi-arrow-right mx-4"></i>
-                            <span>{{item.to}}, {{item.amount | number: '1.2-2'}}</span>
-                        </div>
-                    }
-                </p-card>
+    @if(stats && stats.length) {
+    <div class="row justify-content-center">
+        <div class="col" style="max-width: 645px;">
+            <div class="row justify-content-center text-lg">
+                <div class="col">
+                    <div>Settlements</div>
+                </div>
+            </div>
+            <div class="border-1 border-round-lg p-3">
+                @for (item of stats; track $index) {
+                <div class="row">
+                    <div class="col">
+                        {{item.from}}
+                    </div>
+                    <div class="col">
+                        <i class="pi pi-arrow-right mx-4"></i>
+                    </div>
+                    <div class="col">
+                        {{item.to}}
+                    </div>
+                    <div class="col">
+                        {{item.amount | number: '1.2-2'}}
+                    </div>
+                </div>
+                }
             </div>
         </div>
     </div>
-}
+    }
+</div>
+
 
 <p-button styleClass="p-button-rounded" class="fixed right-0 bottom-0 m-3" (click)="openMemberNamePopup()" icon="pi pi-plus" label="Add person"></p-button>
 
 
-@if (sally && !sally.members && !spinner) {
-    <div class="centered-axis-xy">Add Members to get started</div>
+@if (sally && !sally.members.length && !spinner) {
+    <div class="centered-axis-xy">Add people to get started</div>
 }
 
 @if (spinner) {
@@ -58,37 +81,31 @@
         <input pInputText id="username" class="flex-auto" autocomplete="off" [(ngModel)]="name" />
     </div>
     <div class="flex justify-content-end gap-2">
-        <p-button label="Save" variant="text" (click)="popupType=='sally_name' ? updateSallyName(name) : addMember(name)" />
+        <p-button label="Save" variant="text" [disabled]="name == sally?.name || name == ''" (click)="popupType=='sally_name' ? updateSallyName(name) : addMember(name)" />
         <p-button label="Cancel" variant="text" severity="danger" (click)="namePopup = false" />
     </div>
 </p-dialog>
 
-<p-confirmPopup #cp>
-    <ng-template #headless let-message>
-        <div class="container-fluid p-3">
-            <div class="row">
-                <div class="col">
-                    <div>Share this expense</div>
-                </div>
+<p-dialog header="Expense shared" [modal]="true" [style]="{ width: '20rem' }" [(visible)]="expenseSharedPopup">
+
+    <div class="container">
+        @for (member of expenseShared; track $index) {
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <p-checkbox [(ngModel)]="member.included" binary="true" [disabled]="expenseShared.length == 1" (ngModelChange)="sharedExpensesOnModelChange()"/>
             </div>
-            @for (member of expenseShared; track $index) {
-            <div class="row align-items-center">
-                <div class="col-auto">
-                    <p-checkbox [(ngModel)]="member.included" binary="true"/>
-                </div>
-                <div class="col">
-                    <label class="ml-2">{{member.name}}</label>
-                </div>
-            </div>
-            }
-            <div class="row">
-                <div class="col">
-                    <p-button styleClass="w-4rem" (onClick)="cp.onAccept()" [loading]="" label="Save" size="small" />
-                </div>
-                <div class="col">
-                    <p-button styleClass="w-4rem" (onClick)="cp.onReject()" label="Cancel" size="small" severity="danger" />
-                </div>
+            <div class="col">
+                <label class="ml-2">{{member.name}}</label>
             </div>
         </div>
+        }
+    </div>
+
+    <ng-template #footer>
+        <p-button label="Cancel" [text]="true" severity="danger"  />
+        <p-button label="Save" [text]="true" (click)="excludeMembers(expenseShared, expense_id)" [disabled]="!expenseSharedPopupButtonEnabled" />
     </ng-template>
-</p-confirmPopup>
+
+</p-dialog>
+
+<p-confirmdialog />

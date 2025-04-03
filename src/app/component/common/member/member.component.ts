@@ -9,6 +9,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ApiService } from 'src/app/service/api.service';
 import { MessageService } from 'primeng/api';
 import { HttpErrorResponse } from '@angular/common/http';
+import { UtilService } from 'src/app/service/util.service';
 
 
 @Component({
@@ -32,7 +33,9 @@ export class MemberComponent implements OnInit {
 
   expense: any = { amount: 0, name: '', member_id: '' }
 
-  constructor(private apiService: ApiService, private messageService: MessageService) {}
+  constructor(private apiService: ApiService, 
+    private messageService: MessageService,
+    private utilService: UtilService) {}
 
   ngOnInit(): void {
     if(this.member)
@@ -67,7 +70,7 @@ export class MemberComponent implements OnInit {
     })
   }
 
-  deleteMember = (id: string) => {
+  private deleteMember = (id: string) => {
     this.apiService.deleteMember(id).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Deleted person' })
@@ -110,7 +113,7 @@ export class MemberComponent implements OnInit {
     })
   }
 
-  deleteExpense = (expenseId: string) => {
+  private deleteExpense = (expenseId: string) => {
     this.apiService.deleteExpense(expenseId).subscribe({
       next: (res) => {
         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Deleted expense' })
@@ -125,6 +128,24 @@ export class MemberComponent implements OnInit {
 
   excludeExpensesPopup(event: Event, excluded: Excluded[], expense_id: string) {
     this.excludeExpensePopup.emit({event, excluded, expense_id})
+  }
+
+  deleteMemberPopup = (event: Event, id: string) => {
+    this.utilService.confirmDialog(
+      event,
+      "Delete member?",
+      "Are you sure you want to delete the member?",
+      () => { this.deleteMember(id) }
+    )
+  }
+
+  deleteExpensePopup = (event: Event, id: string) => {
+    this.utilService.confirmDialog(
+      event,
+      "Delete expense?",
+      "Are you sure you want to delete the expense?",
+      () => { this.deleteExpense(id) }
+    )
   }
 
 }

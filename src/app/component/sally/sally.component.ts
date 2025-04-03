@@ -8,7 +8,7 @@ import { ContextMenuModule } from 'primeng/contextmenu';
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogModule } from 'primeng/dialog';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToolbarModule } from 'primeng/toolbar';
 import { CardModule } from 'primeng/card';
@@ -16,10 +16,12 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MemberComponent } from "../common/member/member.component";
 import { DecimalPipe } from '@angular/common';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { UtilService } from 'src/app/service/util.service';
 
 @Component({
   selector: 'app-sally',
-  imports: [ToolbarModule, ContextMenuModule, ButtonModule, ProgressSpinnerModule, DialogModule, FormsModule, RouterModule, InputTextModule, CardModule, ConfirmPopupModule, CheckboxModule, MemberComponent, DecimalPipe],
+  imports: [ToolbarModule, ContextMenuModule,ConfirmDialogModule, ButtonModule, ProgressSpinnerModule, DialogModule, FormsModule, RouterModule, InputTextModule, CardModule, ConfirmPopupModule, CheckboxModule, MemberComponent, DecimalPipe],
   templateUrl: './sally.component.html',
   styles: ``,
 })
@@ -38,8 +40,16 @@ export class SallyComponent implements OnInit {
   namePopup = false
   popupType : 'sally_name' | 'member_name' = 'sally_name'
 
+  expenseSharedPopup = false
+  expenseSharedPopupButtonEnabled = true
+  expenseShared: any[] = []
+  expense_id: string = ''
 
-  constructor(private route: ActivatedRoute, private messageService: MessageService, private apiService: ApiService, private confirmationService: ConfirmationService) { }
+  constructor(private route: ActivatedRoute, 
+    private messageService: MessageService, 
+    private apiService: ApiService, 
+    private router: Router, 
+    private utilService: UtilService) { }
 
   ngOnInit(): void {
     this.getData()
@@ -72,6 +82,18 @@ export class SallyComponent implements OnInit {
     })
   }
 
+  private deleteSally = () => {
+    this.apiService.deleteSally(this.sally?.id as string).subscribe({
+      next: (res) => {
+        this.router.navigate(["/dashboard"])
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Successfully deleted sally' })
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to delete sally' })
+      }
+    })
+  }
+
   updateSallyName = (name: string) => {
     this.apiService.updateSallyName(this.sally_id, name).subscribe({
       next: (res: any) => {
@@ -98,35 +120,43 @@ export class SallyComponent implements OnInit {
     })
   }
 
-  expenseShared: any[] = []
-  excludeExpensesPopup(event: { event: Event, excluded: Excluded[], expense_id: string }) {
-    console.log()
-    this.expenseShared = []
-    this.sally?.members.forEach(member => {
-      this.expenseShared.push({ id: member.id, name: member.name, included: true })
-    })
+  openSharedExpensesPopup(event: { event: Event, excluded: Excluded[], expense_id: string }) {
+    if(!this.sally) return
+    this.expense_id = event.expense_id
+    const s: any[] = this.sally.members.map((m) => { return { ...m, included: true} })
     event.excluded.forEach((exclud) => {
-      this.expenseShared.find((ex) => ex.id == exclud.member_id).included = false
+      s.find((ex) => ex.id == exclud.member_id).included = false
     })
-    this.confirmationService.confirm({
-      target: event.event.target as EventTarget,
-      accept: () => {
-        const excluded_members = this.expenseShared.filter((member) => member.included == false)
-        this.excludeMembers(excluded_members, event.expense_id)
-      },
-      reject: () => { }
-    });
+    this.expenseShared = s
+    this.expenseSharedPopup = true
+  }
+
+  sharedExpensesOnModelChange = () => {
+    const included = this.expenseShared.filter((x) => x.included == true)
+    this.expenseSharedPopupButtonEnabled = included.length > 1
   }
 
   excludeMembers = (excluded_members: any, expense_id: string) => {
-    this.apiService.exludeMembers(excluded_members, expense_id).subscribe({
+    let s = excluded_members.filter((m: any) => m.included == false)
+    s = s.map((m: any) => { return m.id })
+    this.apiService.exludeMembers(s, expense_id).subscribe({
       next: (res) => {
+        this.expenseSharedPopup = false
         this.getData()
       },
       error: (err) => {
         console.log(err)
       }
     })
+  }
+
+  deleteSallyConfirmPopup(event: Event) {
+    this.utilService.confirmDialog(
+      event,
+      "Delete sally?",
+      "Are you sure you want to delete the sally?",
+      this.deleteSally
+    )
   }
 
 }
