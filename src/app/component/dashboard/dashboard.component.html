@@ -2,12 +2,10 @@
     <div class="container">
         <div class="row align-items-center py-2">
             <div class="col">
-                <div class="text-3xl">
-                    Dashboard
-                </div>
+                <div class="text-3xl">Dashboard</div>
             </div>
             <div class="col-auto">
-                <p-button icon="pi pi-plus" label="Create Sally" (click)="createSallyPopup = true"></p-button>
+                <p-button icon="pi pi-plus" label="Create Sally" (click)="openSallyPopup()"></p-button>
             </div>
         </div>
         <div class="row">
@@ -24,13 +22,53 @@
     <p-progressSpinner styleClass="w-4rem h-4rem" class="centered-axis-xy" strokeWidth="4" animationDuration=".9s"></p-progressSpinner>
 }
 
-<p-dialog header="Create Sally" [modal]="true" [(visible)]="createSallyPopup" [style]="{ width: '25rem' }" [formGroup]="sallyForm" (onHide)="sallyForm.reset()">
-    <div class="flex align-items-center gap-4 mb-4">
-        <label for="username" class="font-semibold w-24">Title</label>
-        <input pInputText id="username" class="flex-auto" autocomplete="off" formControlName="title" />
-    </div>
-    <div class="flex justify-content-end gap-2">
-        <p-button label="Cancel" severity="secondary" (click)="createSallyPopup = false" />
-        <p-button label="Create" [loading]="popupSpinner" (click)="createSally()" [disabled]="!sallyForm.valid"/>
-    </div>
+<p-dialog header="Create Sally" [modal]="true" [draggable]="false" [(visible)]="sallyPopupProps.showPopup" [style]="{ width: '25rem' }" (onHide)="sallyPopupProps.sallyForm.reset()">
+    <p-stepper [value]="sallyPopupProps.page" [linear]="true" class="w-full mb-4">
+        <p-step-list>
+            <p-step [value]="1"></p-step>
+            <p-step [value]="2"></p-step>
+        </p-step-list>
+        <p-step-panels>
+            <p-step-panel [value]="1" [formGroup]="sallyPopupProps.sallyForm">
+                <ng-template #content>
+                    <div class="flex flex-column gap-2 mb-3">
+                        <label>Title</label>
+                        <input pInputText formControlName="title" autocomplete="off"/>
+                    </div>
+                    <div class="flex flex-column gap-2">
+                        <label>Headcount</label>
+                        <input pInputText formControlName="headcount" autocomplete="off"/>
+                        @if (sallyPopupProps.sallyForm.controls.headcount.value && sallyPopupProps.sallyForm.controls.headcount.value > 30) {
+                            <small style="color: red;">It can't be more than 30</small>
+                        }
+                    </div>
+                </ng-template>
+            </p-step-panel>
+            <p-step-panel [value]="2" [formGroup]="sallyPopupProps.memberForm">
+                <ng-template #content >
+                    <div formArrayName="members">
+                        @for (item of this.sallyPopupProps.memberForm.controls.members.controls; track $index) {
+                            <div class="flex flex-column gap-2 mb-3">
+                                <input pInputText [formControlName]="$index" autocomplete="off" [placeholder]="'Member '+ ($index + 1)"/>
+                            </div>
+                            }
+                    </div>
+                </ng-template>
+            </p-step-panel>
+        </p-step-panels>
+    </p-stepper>
+
+    @if(sallyPopupProps.page == 1) {
+        <div class="flex justify-content-end gap-2">
+            <p-button label="Cancel" severity="secondary" (click)="sallyPopupProps.showPopup = false" />
+            <p-button label="Next" [loading]="sallyPopupProps.showPopopSpinner" (click)="createMembersForm()" [disabled]="!sallyPopupProps.sallyForm.valid"/>
+        </div>
+    } @else {
+        <div class="flex gap-2">
+            <p-button label="Back" severity="secondary" (click)="sallyPopupProps.page = 1" class="mr-auto"/>
+            <p-button label="Cancel" severity="secondary" (click)="sallyPopupProps.showPopup= false" />
+            <p-button label="Create" [loading]="sallyPopupProps.showPopopSpinner" (click)="createSally()" [disabled]="!sallyPopupProps.memberForm.valid"/>
+        </div>
+    }
+    
 </p-dialog>

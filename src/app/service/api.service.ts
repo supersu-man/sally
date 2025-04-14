@@ -22,8 +22,8 @@ export class ApiService {
     return this.httpClient.post(environment.endpoint + "/user/token", { accessToken: oldToken })
   }
 
-  createSally = (name: string) => {
-    return this.httpClient.post(environment.endpoint + '/sally', { name })
+  createSally = (payload: { members: (String | null)[]; title: string | null; headcount: number | null }) => {
+    return this.httpClient.post(environment.endpoint + '/sally', payload)
   }
 
   getSally = (id: string) => {
