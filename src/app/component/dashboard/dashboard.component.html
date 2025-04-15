@@ -41,6 +41,9 @@
                         @if (sallyPopupProps.sallyForm.controls.headcount.value && sallyPopupProps.sallyForm.controls.headcount.value > 30) {
                             <small style="color: red;">It can't be more than 30</small>
                         }
+                        @if (sallyPopupProps.sallyForm.controls.headcount.value && sallyPopupProps.sallyForm.controls.headcount.value < 2) {
+                            <small style="color: red;">It can't be less than 2</small>
+                        }
                     </div>
                 </ng-template>
             </p-step-panel>

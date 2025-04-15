@@ -23,7 +23,7 @@ export class DashboardComponent implements OnInit {
   sallys: any[] = []
 
   sallyPopupProps = {
-    showPopup: true,
+    showPopup: false,
     showPopopSpinner: false,
     page: 1,
     memberForm: new FormGroup({ members: new FormArray<FormControl<String|null>>([]) }),
