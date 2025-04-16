@@ -15,4 +15,8 @@ export class TokenService {
     return localStorage.getItem("accessToken") as string
   }
 
+  removeToken = () => {
+    localStorage.removeItem("accessToken")
+  }
+
 }

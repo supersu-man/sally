@@ -9,6 +9,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { MessageService } from 'primeng/api';
 import { StepperModule } from 'primeng/stepper';
+import { TokenService } from 'src/app/service/token.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -33,7 +34,7 @@ export class DashboardComponent implements OnInit {
     })
   }
 
-  constructor(private apiService: ApiService, private router: Router, private messageService: MessageService) {}
+  constructor(private apiService: ApiService, private router: Router, private messageService: MessageService, private tokenService: TokenService) {}
 
   ngOnInit(): void {
     this.getSallys()
@@ -90,6 +91,11 @@ export class DashboardComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to get sallys' })
       }
     })
+  }
+
+  logout = () => {
+    this.tokenService.removeToken()
+    this.router.navigate(['/'])
   }
 
 }
