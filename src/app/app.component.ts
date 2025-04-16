@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SupabaseService } from './service/supabase.service';
 import { ToastModule } from 'primeng/toast';
 
 @Component({
@@ -11,14 +10,6 @@ import { ToastModule } from 'primeng/toast';
 })
 export class AppComponent {
   title = 'sally';
-  constructor(public supabaseService: SupabaseService) {
-
-    this.supabaseService.supabaseClient.auth.onAuthStateChange((event, session) => {
-      if (event == 'TOKEN_REFRESHED') {
-        localStorage.setItem('accessToken', session?.access_token as string)
-      }
-    })
-    
-  }
+  constructor() {}
 
 }
