@@ -6,17 +6,14 @@
             </div>
             <div class="col-auto">
                 <div class="flex gap-2">
-                    <p-button icon="pi pi-plus" label="Sally" (click)="openSallyPopup()"></p-button>
-                    <p-button label="Logout" severity="danger" (click)="logout()"></p-button>
+                    <p-button icon="pi pi-sign-out" severity="danger" (click)="logout()"></p-button>
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row g-0 grid-container">
         @for (item of sallys; track $index) {
-            <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
-                <div class="h-4rem border-1 border-round-md cursor-pointer px-3 py-2" [routerLink]="'/dashboard/'+item.id" style="background-color: rgb(238, 238, 238); border-color: gray;">
-                    {{item.name}}
-                </div>
+            <div class="grid-item h-4rem shadow-1 border-round-md cursor-pointer p-2" [routerLink]="'/dashboard/'+item.id" style="background-color: white">
+                {{item.name}}
             </div>
         }
         </div>
@@ -24,6 +21,8 @@
 } @else {
     <p-progressSpinner styleClass="w-4rem h-4rem" class="centered-axis-xy" strokeWidth="4" animationDuration=".9s"></p-progressSpinner>
 }
+
+<p-button styleClass="p-button-rounded" class="fixed right-0 bottom-0 m-3" (click)="openSallyPopup()" icon="pi pi-plus" label="Add Sally"></p-button>
 
 <p-dialog header="Create Sally" [modal]="true" [draggable]="false" [(visible)]="sallyPopupProps.showPopup" [style]="{ width: '25rem' }" (onHide)="sallyPopupProps.sallyForm.reset()">
     <p-stepper [value]="sallyPopupProps.page" [linear]="true" class="w-full mb-4">

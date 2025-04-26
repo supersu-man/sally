@@ -1,4 +1,4 @@
-<div class="border-1 border-round-lg p-3">
+<div class="shadow-1 border-round-md p-3" style="background-color: white;">
 
     <div class="flex flex-wrap align-items-center mb-2">
         <div class="max-w-10rem mr-auto">{{memberCopy.name}}</div>
@@ -9,31 +9,31 @@
         </p-buttongroup>
         } @else {
         <div class="flex-none pl-1">
-            <p-button styleClass="w-full" severity="danger" icon="pi pi-trash" variant="outlined" label="Delete person" (click)="deleteMemberPopup($event, member.id)"/>
+            <p-button severity="danger" icon="pi pi-trash" (click)="deleteMemberPopup($event, member.id)"/>
         </div>
         }
     </div>
-    
-    @for (expense of memberCopy.expenses; track expense; let index = $index) {
-        <div class="flex flex-wrap align-items-center border-1 border-round-lg mb-2 px-2">
-            <div class="w-10rem mr-2">
-                {{expense.name}}
-            </div>
-            <div class="w-7rem mr-auto">
-                {{expense.amount}}
-            </div>
-            <p-button variant="text" icon="pi pi-pencil" (click)="openEditPopup(expense)"/>
-            
-            <p-button variant="text" icon="pi pi-user" (click)="excludeExpensesPopup($event, expense.excluded, expense.id)"/>
-            
-            <p-button variant="text" severity="danger" icon="pi pi-trash" (click)="deleteExpensePopup($event, expense.id)"/>
-        </div>
-    }
-    <div class="flex">
-        <div class="flex-grow-1 pr-1">
-            <p-button styleClass="w-full" icon="pi pi-plus" label="Add Expense" (click)="expensePopup = true"/>
-        </div>
-    </div>
+
+    <p-table [value]="memberCopy.expenses">
+        <ng-template #body let-expense>
+            <tr>
+                <td>{{ expense.name }}</td>
+                <td>{{ expense.amount }}</td>
+                <td style="width:0px;" class="px-0">
+                    <p-button variant="text" icon="pi pi-pencil" (click)="openEditPopup(expense)"/>
+                </td>
+                <td style="width:0px;" class="px-0">
+                    <p-button variant="text" icon="pi pi-user" (click)="excludeExpensesPopup($event, expense.excluded, expense.id)"/>
+                </td>
+                <td style="width:0px;" class="px-0">
+                    <p-button variant="text" severity="danger" icon="pi pi-trash" (click)="deleteExpensePopup($event, expense.id)"/>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <p-button styleClass="w-full mt-2" icon="pi pi-plus" label="Add Expense" (click)="expensePopup = true"/>
+
 </div>
 
 <p-dialog [header]="popupMode=='add' ? 'Add a new expense': 'Edit expense'" [modal]="true" [(visible)]="expensePopup" [style]="{ width: '25rem' }" (onHide)="resetNewExpense();">

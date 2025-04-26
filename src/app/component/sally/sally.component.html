@@ -1,4 +1,6 @@
 <div class="container py-2 pb-5">
+
+    <!-- Top app bar -->
     <div class="row align-items-center">
         <div class="col-auto">
             <p-button icon="pi pi-plus" variant="outlined" icon="pi pi-angle-left" routerLink="/dashboard"></p-button>
@@ -14,6 +16,7 @@
         </div>
     </div>
 
+    <!-- Members cards -->
     @if (sally && sally.members && sally.members.length) {
         <div class="row justify-content-center text-lg">
             <div class="col" style="max-width: 645px;">
@@ -32,6 +35,7 @@
         }
     }
 
+    <!-- Settlements -->
     @if(stats && stats.length) {
     <div class="row justify-content-center">
         <div class="col" style="max-width: 645px;">
@@ -40,27 +44,24 @@
                     <div>Settlements</div>
                 </div>
             </div>
-            <div class="border-1 border-round-lg p-3">
-                @for (item of stats; track $index) {
-                <div class="row">
-                    <div class="col">
-                        {{item.from}}
-                    </div>
-                    <div class="col">
-                        <i class="pi pi-arrow-right mx-4"></i>
-                    </div>
-                    <div class="col">
-                        {{item.to}}
-                    </div>
-                    <div class="col">
-                        {{item.amount | number: '1.2-2'}}
-                    </div>
-                </div>
-                }
+            <div class="shadow-1 border-round-md p-3" style="background-color: white;">
+                <p-table [value]="stats">
+                    <ng-template #body let-stat>
+                        <tr>
+                            <td>{{ stat.from }}</td>
+                            <td class="px-0" style="width: 0px;"><i class="pi pi-arrow-right mx-4"></i></td>
+                            <td>{{ stat.to }}</td>
+                            <td style="width:0px;" class="px-0">
+                                {{stat.amount | number: '1.2-2'}}
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
             </div>
         </div>
     </div>
     }
+    
 </div>
 
 

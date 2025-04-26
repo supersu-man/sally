@@ -18,10 +18,11 @@ import { MemberComponent } from "../common/member/member.component";
 import { DecimalPipe } from '@angular/common';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { UtilService } from 'src/app/service/util.service';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-sally',
-  imports: [ToolbarModule, ContextMenuModule,ConfirmDialogModule, ButtonModule, ProgressSpinnerModule, DialogModule, FormsModule, RouterModule, InputTextModule, CardModule, ConfirmPopupModule, CheckboxModule, MemberComponent, DecimalPipe],
+  imports: [ToolbarModule, ContextMenuModule,ConfirmDialogModule, ButtonModule, ProgressSpinnerModule, DialogModule, FormsModule, RouterModule, InputTextModule, CardModule, ConfirmPopupModule, CheckboxModule, MemberComponent, DecimalPipe, TableModule],
   templateUrl: './sally.component.html',
   styles: ``,
 })

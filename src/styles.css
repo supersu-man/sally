@@ -13,6 +13,7 @@ body, html {
     font-size: 15px;
     padding: 0px;
     margin: 0px;
+    background-color:#F8F9FA;
 }
 
 .p-toast-message-content {
@@ -36,4 +37,16 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px; /* Space between the grid items */
+  width: 100%; /* Ensures the container spans the parent width */
+}
+
+.grid-item {
+  max-width: 380px; /* Max width for each child */
+  margin: 0 auto; /* Centers items if they're smaller than the parent's width */
 }

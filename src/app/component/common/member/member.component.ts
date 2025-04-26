@@ -10,11 +10,11 @@ import { ApiService } from 'src/app/service/api.service';
 import { MessageService } from 'primeng/api';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UtilService } from 'src/app/service/util.service';
-
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-member',
-  imports: [CardModule, Button, InputTextModule, FormsModule, ButtonGroupModule, DialogModule],
+  imports: [CardModule, Button, InputTextModule, FormsModule, ButtonGroupModule, DialogModule, TableModule],
   templateUrl: './member.component.html',
   styles: ``
 })
