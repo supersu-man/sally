@@ -41,12 +41,7 @@ input[type=number] {
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 10px; /* Space between the grid items */
-  width: 100%; /* Ensures the container spans the parent width */
-}
-
-.grid-item {
-  max-width: 380px; /* Max width for each child */
-  margin: 0 auto; /* Centers items if they're smaller than the parent's width */
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+  justify-content: center;
+  gap: 1rem;
 }
