@@ -47,7 +47,8 @@ export class DashboardComponent implements OnInit {
 
   createMembersForm = () => {
     const headCount = this.sallyPopupProps.sallyForm.getRawValue().headcount
-    if(!headCount) return
+    if(!headCount) return;
+    (this.sallyPopupProps.memberForm.get('members') as FormArray).clear();
     for (let index = 0; index < headCount; index++) {
       this.sallyPopupProps.memberForm.controls.members.push(
         new FormControl(null, Validators.required)
