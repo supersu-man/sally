@@ -39,7 +39,7 @@
                     </div>
                     <div class="flex flex-column gap-2">
                         <label>Headcount</label>
-                        <input pInputText formControlName="headcount" autocomplete="off"/>
+                        <input pInputText type="number" formControlName="headcount" autocomplete="off"/>
                         @if (sallyPopupProps.sallyForm.controls.headcount.value && sallyPopupProps.sallyForm.controls.headcount.value > 30) {
                             <small style="color: red;">It can't be more than 30</small>
                         }
