@@ -10,6 +10,7 @@
         </div>
         <div class="col-auto">
             <div class="flex gap-2">
+                <p-button icon="pi pi-cog" variant="outlined" (click)="openSharePopup()" />
                 <p-button icon="pi pi-pencil" variant="outlined" (click)="openSallyNamePopup()" />
                 <p-button icon="pi pi-trash" variant="outlined" severity="danger" (click)="deleteSallyConfirmPopup($event)" />
             </div>
@@ -107,6 +108,27 @@
         <p-button label="Save" [text]="true" (click)="excludeMembers(expenseShared, expense_id)" [disabled]="!expenseSharedPopupButtonEnabled" />
     </ng-template>
 
+</p-dialog>
+
+<p-dialog header="Preferences" [modal]="true" [(visible)]="sharePopup.visible" >
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <p-inputgroup>
+                    <input pInputText [value]="sharePopup.currentPageUrl" readonly />
+                    <p-button label="Copy" (click)="copyPageUrl()"/>
+                </p-inputgroup>
+            </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col">
+                Private Sally
+            </div>
+            <div class="col-auto">
+                <p-toggleswitch [(ngModel)]="sharePopup.privateSally" (onChange)="togglePrivacy($event.checked)" />
+            </div>
+        </div>
+    </div>
 </p-dialog>
 
 <p-confirmdialog />

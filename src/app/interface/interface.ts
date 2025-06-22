@@ -1,6 +1,7 @@
 export interface Sally {
     id: string
     name: string
+    private: boolean
     members: Member[]
 }
 

@@ -38,6 +38,10 @@ export class ApiService {
     return this.httpClient.patch(environment.endpoint + '/sally', { id, name })
   }
 
+  togglePrivacy = (id: string, checked: boolean) => {
+    return this.httpClient.patch(environment.endpoint + '/sally/private', { id, private: checked } )
+  }
+
   deleteSally = (id: string) => {
     return this.httpClient.delete(environment.endpoint + '/sally', { body: { id }})
   }

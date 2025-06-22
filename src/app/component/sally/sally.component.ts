@@ -19,10 +19,30 @@ import { DecimalPipe } from '@angular/common';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { UtilService } from 'src/app/service/util.service';
 import { TableModule } from 'primeng/table';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
 @Component({
   selector: 'app-sally',
-  imports: [ToolbarModule, ContextMenuModule,ConfirmDialogModule, ButtonModule, ProgressSpinnerModule, DialogModule, FormsModule, RouterModule, InputTextModule, CardModule, ConfirmPopupModule, CheckboxModule, MemberComponent, DecimalPipe, TableModule],
+  imports: [
+    ToolbarModule, 
+    ContextMenuModule,
+    ConfirmDialogModule, 
+    ButtonModule, 
+    ProgressSpinnerModule, 
+    DialogModule, 
+    FormsModule, 
+    RouterModule, 
+    InputTextModule, 
+    CardModule, 
+    ConfirmPopupModule, 
+    CheckboxModule, 
+    MemberComponent, 
+    DecimalPipe, 
+    TableModule, 
+    InputGroupModule,
+    ToggleSwitchModule
+  ],
   templateUrl: './sally.component.html',
   styles: ``,
 })
@@ -46,6 +66,12 @@ export class SallyComponent implements OnInit {
   expenseShared: any[] = []
   expense_id: string = ''
 
+  sharePopup = {
+    visible: false,
+    currentPageUrl: window.location.href,
+    privateSally: true
+  }
+
   constructor(private route: ActivatedRoute, 
     private messageService: MessageService, 
     private apiService: ApiService, 
@@ -62,6 +88,10 @@ export class SallyComponent implements OnInit {
     this.namePopup = true
   }
 
+  openSharePopup = () => {
+    this.sharePopup.visible = true
+  }
+
   openMemberNamePopup = () => {
     this.popupType = 'member_name'
     this.namePopup = true
@@ -74,6 +104,10 @@ export class SallyComponent implements OnInit {
         console.log(res)
         this.sally = res.sally
         this.stats = res.stats
+        console.log(this.sally)
+        this.sharePopup.privateSally = this.sally?.private == true ? true : false
+
+        console.log(this.sharePopup)
 
         this.spinner = false
       },
@@ -158,6 +192,23 @@ export class SallyComponent implements OnInit {
       "Are you sure you want to delete the sally?",
       this.deleteSally
     )
+  }
+
+  copyPageUrl = () => {
+    navigator.clipboard.writeText(this.sharePopup.currentPageUrl);
+    // Send "copied" notification
+  }
+
+  togglePrivacy = (checked: any) => {
+    console.log(checked)
+    this.apiService.togglePrivacy(this.sally_id, checked).subscribe({
+      next: () => {
+        console.log("Success")
+      }, 
+      error: (err) => {
+        console.log(err)
+      }
+    })
   }
 
 }
