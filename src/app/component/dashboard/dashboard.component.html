@@ -1,26 +1,29 @@
-@if (!spinner) {
-    <div class="container">
-        <div class="row align-items-center py-2">
-            <div class="col">
-                <div class="text-3xl">Dashboard</div>
-            </div>
-            <div class="col-auto">
-                <div class="flex gap-2">
-                    <p-button icon="pi pi-sign-out" severity="danger" (click)="logout()"></p-button>
-                </div>
-            </div>
+<div class="container">
+    <div class="row align-items-center py-2">
+        <div class="col">
+            <div class="text-3xl">Dashboard</div>
         </div>
-        <div class="row g-0 grid-container">
-        @for (item of sallys; track $index) {
-            <div class="grid-item h-4rem shadow-1 border-round-md cursor-pointer p-2" [routerLink]="'/dashboard/'+item.id" style="background-color: white">
-                {{item.name}}
+        <div class="col-auto">
+            <div class="flex gap-2">
+                <p-button icon="pi pi-sign-out" severity="danger" (click)="logout()"></p-button>
             </div>
-        }
         </div>
     </div>
-} @else {
-    <p-progressSpinner styleClass="w-4rem h-4rem" class="centered-axis-xy" strokeWidth="4" animationDuration=".9s"></p-progressSpinner>
-}
+    @if (sallys.length && !spinner) {
+        <div class="row g-0 grid-container">
+            @for (item of sallys; track $index) {
+                <div class="grid-item h-4rem shadow-1 border-round-md cursor-pointer p-2" [routerLink]="'/dashboard/'+item.id" style="background-color: white">
+                    {{item.name}}
+                </div>
+            }
+        </div>
+    } @else if(!sallys.length && !spinner) {
+        <div class="centered-axis-xy">Add Sally to get started</div>
+    } @else {
+        <p-progressSpinner styleClass="w-4rem h-4rem" class="centered-axis-xy" strokeWidth="4" animationDuration=".9s"></p-progressSpinner>
+    }
+</div>
+
 
 <p-button styleClass="p-button-rounded" class="fixed right-0 bottom-0 m-3" (click)="openSallyPopup()" icon="pi pi-plus" label="Add Sally"></p-button>
 
