@@ -196,16 +196,18 @@ export class SallyComponent implements OnInit {
 
   copyPageUrl = () => {
     navigator.clipboard.writeText(this.sharePopup.currentPageUrl);
-    // Send "copied" notification
+    this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Link copied' })
   }
 
   togglePrivacy = (checked: any) => {
     console.log(checked)
     this.apiService.togglePrivacy(this.sally_id, checked).subscribe({
       next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Successful', detail: `Sally is  ${checked == true ? 'Private' : 'Public'}` })
         console.log("Success")
       }, 
       error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to toggle' })
         console.log(err)
       }
     })
