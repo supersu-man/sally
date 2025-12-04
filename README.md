@@ -1,28 +1,75 @@
 # Sally
 
-Sally is a personal trip expenses calculator app which splits expenditure money between members of a sally and shows the satistics of memebers who overpaid and underpaid.
+Sally is a simple, lightweight trip expense splitter that helps groups fairly divide shared costs. Add members, track expenses, and instantly see who overpaid, who owes money, and how to settle up — all stored securely in your browser using Local Storage.
+
+No login.
+No backend.
+Just fast, private, offline expense management.
 
 ## Features
-- Google Authentication
-- Adding / Deleting Sallys
-- Adding / Deleting Expenses
-- Enable / Disable sharing of a sally
-- Stats of overpaid and underpaid members
 
-## Tools used
+🔐 Zero Authentication
+- No sign-in or accounts
+- 100% offline — data stays on your device
 
-#### Frontend
+🧾 Manage Groups
+- Create and delete multiple groups
+- Each group stores its own members and expenses
+
+👥 Members
+- Add and remove members
+- Automatically calculates per-member share
+- Exclusion support: exclude members from specific expenses
+
+💸 Expenses
+- Add / edit / delete expenses
+- Track expense contributors
+- Real-time balance calculations
+
+📊 Statistics
+
+- Instantly view:
+    - Who overpaid
+    - Who underpaid
+    - Final settlement amounts
+
+🔒 Local Storage Based
+
+- All data stored locally in your browser
+- No cloud, backend, or external APIs
+- Works offline
+
+
+## Tech Stack
+
 ![Angular](https://img.shields.io/badge/angular-%23DD0031.svg?style=for-the-badge&logo=angular&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
 
-#### Backend
-![DigitalOcean](https://img.shields.io/badge/DigitalOcean-%230167ff.svg?style=for-the-badge&logo=digitalOcean&logoColor=white)
-![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)
-![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
-![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)
-![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
-![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
-![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+
+## Installation & Setup
+
+1. Clone the repository
+```
+git clone https://github.com/supersu-man/sally.git
+cd sally
+```
+
+2. Install dependencies
+```
+npm install
+```
+3. Run the development server
+```
+ng serve
+```
+4. Build for production
+```
+ng build --configuration production
+```
+
+## Contributing
+Contributions, bug reports, and feature requests are welcome!
+Feel free to open an issue or submit a pull request.
