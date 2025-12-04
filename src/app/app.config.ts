@@ -1,4 +1,3 @@
-import { provideHttpClient, withInterceptors } from "@angular/common/http";
 import { ApplicationConfig } from "@angular/core";
 import { provideRouter } from "@angular/router";
 import { ConfirmationService, MessageService } from "primeng/api";
@@ -7,7 +6,6 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import Aura from '@primeng/themes/aura';
 import { providePrimeNG } from "primeng/config";
 import { definePreset } from "@primeng/themes";
-import { refreshTokenInterceptor, sendTokenInterceptor, saveTokenInterceptor } from "./service/interceptor.service";
 
 const MyPreset = definePreset(Aura, {
   semantic: {
@@ -30,7 +28,6 @@ const MyPreset = definePreset(Aura, {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(withInterceptors([sendTokenInterceptor, saveTokenInterceptor, refreshTokenInterceptor])),
     provideAnimations(), 
     providePrimeNG({
       theme: { preset: MyPreset , options: { darkModeSelector: false }} 

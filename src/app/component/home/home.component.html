@@ -1,57 +1,48 @@
-<div class="flex flex-column h-full">
+<div class="container mx-auto px-4">
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col">
-                <div class="text-3xl">
-                    Sally
-                </div>
-                <div class="text-lg">
-                    Expenses Splitter
-                </div>
-            </div>
-            <div class="col-auto my-auto">
-                <div id="googleLoginButton"></div>
-            </div>
+    <div class="flex items-center gap-3 py-5">
+        <img src="assets/logo.png" width="28" alt="Sally Logo" class="logo" />
+        <div class="text-xl">Sally</div>
+        <p-button class="ml-auto" routerLink="/dashboard" label="Go to Dashboard"></p-button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-10 gap-4">
+        <div class="flex flex-col lg:col-span-5 gap-3 py-5">
+            <div class="text-5xl">Splitting expenses, simplified.</div>
+            <div>Effortlessly track group expenses, managemembers, and settle up with ease. Your Shared finances, finally organized.</div>
+            <p-button routerLink="/dashboard" label="Go to Dashboard"></p-button>
+        </div>
+        <div class="flex flex-col lg:col-span-5 py-5">
+            <div class="h-60 max-w-150 w-full bg-[url(assets/group_people.png)] bg-center bg-cover rounded-lg m-auto"></div>
         </div>
     </div>
 
-    <div class="container-fluid h-full">
-        <div class="row align-items-center h-full">
-            <div class="col-12 col-lg-6">
-                <div class="flex flex-column border-round-2xl h-full text-center justify-content-center gap-4 p-4" style="background-color: #D7E5FD;">
-                    <div class="text-xl font-semibold">
-                        Divide expenses for group activities.
-                    </div>
-                    <div class="text-lg">
-                        We'll let you know who owes what and guide you on how to clear the debts within the group.
-                    </div>
-                    <div class="max-h-20rem max-w-20rem mx-auto">
-                        <img class="h-full w-full border-round-2xl" src="assets/group_people.png" alt="">
-                    </div>
-                    <div>
-                        Track expenses on the go!
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-lg-6 text-center py-5 relative">
-                <div class="text-xl font-semibold mt-auto mb-3">
-                    Why Sally?
-                </div>
-                <div class="text-lg mb-3">
-                    Calculating the exact amounts each person owes and the necessary transactions to settle shared expenses can be a complex and tedious task, often requiring spreadsheets. This complexity increases when some community expenses are not shared by everyone.
-                </div>
-                <div class="text-lg mb-auto">
-                    That's why we created Sally, offering an easy, free, fast, and reliable solution to divide group expenses after holidays, parties, shared gifts, festivals, vacations, trips, weddings, road trips, clubs, shared apartments, and more.
-                </div>
-                <div class="flex absolute right-0 bottom-0 p-3 gap-3">
-                    <a class="text-black-alpha-90" routerLink="/policy">Privacy</a>
-                    <a class="text-black-alpha-90" routerLink="/about">About</a>
-                </div>
-            </div>
+    <div class="flex flex-col py-5 gap-3">
+        <div class="text-xl">About Us</div>
+        <div>We created Sally to solve the universal headache of sharing costs. Whether you're splitting bills with roommates, planning a trip with friends, or managing family expensses, our mission is to make financial transparency simple and stress-free for everyone in your group.</div>
+    </div>
+
+    <div class="flex flex-col py-5 gap-3">
+        <div class="text-4xl">Everything you need to manage group finances</div>
+        <div>Our powerful features are designed to take the complexity out of shared expenses, so you can focus on what matters.</div>
+    </div>
+
+    <div class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(250px,1fr))] pb-4">
+        <div class="rounded-lg bg-surface-0 border border-gray-300 overflow-hidden p-4 flex flex-col">
+            <i class="pi pi-receipt text-primary" style="font-size: 1.5rem"></i>
+            <div class="text-xl mt-3">Easy Expense Splitting</div>
+            <div class="text-gray-500 mt-2">Quickly add new expenses and choose how to split them - equally, by percentage, or by specific amounts.</div>
+        </div>
+        <div class="rounded-lg bg-surface-0 border border-gray-300 overflow-hidden p-4 flex flex-col">
+            <i class="pi pi-users text-primary" style="font-size: 1.5rem"></i>
+            <div class="text-xl mt-3">Simple Group Management</div>
+            <div class="text-gray-500 mt-2">Create groups for any occassion, add members and keep all the shared costs in one organized place.</div>
+        </div>
+        <div class="rounded-lg bg-surface-0 border border-gray-300 overflow-hidden p-4 flex flex-col">
+            <i class="pi pi-hourglass text-primary" style="font-size: 1.5rem"></i>
+            <div class="text-xl mt-3">Clear and Fair Settlements</div>
+            <div class="text-gray-500 mt-2">See a clear summary of who owes who at any time. Settle up balances with a single click to keep things fair and square.</div>
         </div>
     </div>
 
 </div>
-
-<p-confirmDialog></p-confirmDialog>
