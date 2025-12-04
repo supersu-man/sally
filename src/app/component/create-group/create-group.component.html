@@ -17,7 +17,16 @@
             <p-autocomplete formControlName="members" inputId="multiple-ac-2" multiple fluid [typeahead]="false" placeholder="Enter names" />
         </div>
 
-        <div class="w-full border-top border-gray-300"></div>
+        <div class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(140px,1fr))] mt-3">
+            @for (thumbnail of thumbnails; track $index) {
+            <div [class]="groupForm.controls.thumbnail.value==thumbnail ? 'border-primary' : 'border-gray-300'"
+                class="h-30 bg-center bg-cover rounded-lg border-2"
+                [style]="'background-image: url(assets/thumbnails/'+thumbnail+')'"
+                (click)="groupForm.patchValue({thumbnail: thumbnail})"></div>
+            }
+        </div>
+
+        <div class="w-full border-t border-gray-300 mt-3"></div>
 
         <div class="flex justify-end mt-3">
             <p-button label="Cancel" variant="text" class="mr-2" routerLink="/dashboard" />

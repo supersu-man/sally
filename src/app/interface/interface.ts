@@ -1,6 +1,7 @@
 export interface Group {
     id: string
     name: string
+    thumbnail: string
     members: Member[]
 }
 
