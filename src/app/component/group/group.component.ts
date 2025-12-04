@@ -2,15 +2,16 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Group } from 'src/app/interface/interface';
 import { ApiService } from 'src/app/service/api.service';
-import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
 import { DecimalPipe } from '@angular/common';
 import { UtilService } from 'src/app/service/util.service';
+import { DialogModule } from 'primeng/dialog';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-group',
-  imports: [BreadcrumbModule, RouterLink, ButtonModule, TableModule, DecimalPipe],
+  imports: [RouterLink, ButtonModule, DecimalPipe, DialogModule, InputTextModule, ReactiveFormsModule],
   templateUrl: './group.component.html',
   styles: ``
 })
@@ -27,6 +28,12 @@ export class GroupComponent {
   deleteExpenseId: string = ''
   deleteMemberId: string = ''
 
+  memberDialog = false
+  memberForm = new FormGroup({
+    id: new FormControl<string | null>(null),
+    name: new FormControl<string | null>(null, Validators.required)
+  })
+
   constructor() {
     this.group = this.apiService.getGroup(this.groupId)
     this.stats = this.apiService.getSettlements(this.group)
@@ -35,7 +42,6 @@ export class GroupComponent {
   getData = () => {
     this.group = this.apiService.getGroup(this.groupId)
     this.stats = this.apiService.getSettlements(this.group)
-    console.log(this.group)
   }
 
   deleteExpenseConfirmPopup(event: Event, expenseId: string, memberId: string) {
@@ -49,8 +55,32 @@ export class GroupComponent {
     )
   }
 
+  deleteMemberConfirmPopup(event: Event, memberId: string) {
+    this.deleteMemberId = memberId
+    this.utilService.confirmDialog(
+      event,
+      "Delete member?",
+      "Are you sure you want to delete the member?",
+      this.deleteMember
+    )
+  }
+
+  saveMember = () => {
+    const form = this.memberForm.getRawValue()
+    if (!form.name) return
+    if (!form.id) this.apiService.addMember(form.name, this.groupId)
+    else this.apiService.updateMemberName(form.name, this.groupId, form.id)
+    this.getData()
+    this.memberDialog = false
+  }
+
   private deleteExpense = () => {
     this.apiService.deleteExpense(this.deleteExpenseId, this.groupId, this.deleteMemberId)
+    this.getData()
+  }
+
+  private deleteMember = () => {
+    this.apiService.deleteMember(this.deleteMemberId, this.groupId)
     this.getData()
   }
 

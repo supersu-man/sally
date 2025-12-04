@@ -3,14 +3,14 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
-import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
 import { Expense } from 'src/app/interface/interface';
 import { ApiService } from 'src/app/service/api.service';
 
 @Component({
   selector: 'app-expense',
-  imports: [InputTextModule, DropdownModule, FormsModule, CheckboxModule, ButtonModule, RouterLink, ReactiveFormsModule],
+  imports: [InputTextModule, SelectModule, FormsModule, CheckboxModule, ButtonModule, RouterLink, ReactiveFormsModule],
   templateUrl: './expense.component.html',
   styles: ``
 })

@@ -1,12 +1,12 @@
 <div class="container mx-auto p-4">
 
-    <div class="flex py-5 gap-2">
+    <div class="flex gap-2 pb-4">
         <div class="cursor-pointer text-gray-500" routerLink="/dashboard">Groups</div>
         <div class="text-gray-500">/</div>
         <div>{{group.name}}</div>
     </div>
 
-    <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center justify-between pb-4">
         <div class="text-2xl">{{group.name}}</div>
         <p-button icon="pi pi-plus" label="Add Expense" [routerLink]="'/dashboard/'+groupId+'/add-expense'" />
     </div>
@@ -29,7 +29,21 @@
             </div>
         </div>
         <div class="flex flex-col lg:col-span-4">
-            <div class="text-xl">Settlements</div>
+            <div class="flex justify-between items-center">
+                <div class="text-xl">Members</div>
+                <p-button icon="pi pi-plus" [rounded]="true" [text]="true" (click)="memberDialog=true" />
+            </div>
+            <div class="rounded-lg bg-surface-0 border border-gray-300 p-3 mt-3">
+                @for (member of group.members; track $index) {
+                <div class="flex items-center">
+                    <span class="mr-auto">{{ member.name }}</span>
+                    <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (click)="memberForm.patchValue({ id: member.id, name: member.name }); memberDialog=true" />
+                    <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [text]="true" (click)="deleteMemberConfirmPopup($event, member.id)" />
+                </div>
+                }
+            </div>
+
+            <div class="text-xl mt-3">Settlements</div>
             <div class="rounded-lg bg-surface-0 border border-gray-300 p-3 mt-3">
                 @for (item of stats; track $index) {
                 <div class="flex items-center">
@@ -44,3 +58,19 @@
     </div>
 
 </div>
+
+<p-dialog [header]="memberForm.controls.id.value ? 'Edit Member' : 'Add New Member'" [modal]="true" [(visible)]="memberDialog" [style]="{ width: '25rem' }" (onHide)="memberForm.reset()" [formGroup]="memberForm">
+    @if(memberForm.controls.id.value) {
+        <span class="block mb-8">Edit person in your expense group.</span>
+    } @else {
+        <span class="block mb-8">Add a new person to your expense group.</span>
+    }
+    <div class="flex items-center gap-4 mb-4">
+        <label class="w-24">Name</label>
+        <input pInputText class="flex-auto" autocomplete="off" formControlName="name" />
+    </div>
+    <div class="flex justify-end gap-2">
+        <p-button label="Cancel" severity="secondary" (click)="memberDialog = false" />
+        <p-button label="Save" [disabled]="memberForm.invalid" (click)="saveMember()" />
+    </div>
+</p-dialog>
