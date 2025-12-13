@@ -22,7 +22,7 @@ export class GroupComponent {
   utilService = inject(UtilService)
 
   groupId = this.route.snapshot.paramMap.get('groupId') as string
-  group: Group
+  group: Group | undefined
   stats: {from: string, to: string, amount: number}[] = []
 
   deleteExpenseId: string = ''
@@ -33,7 +33,11 @@ export class GroupComponent {
     name: new FormControl<string | null>(null, Validators.required)
   })
 
-  constructor() {
+  ngOnInit(): void {
+    this.getData()
+  }
+
+  getData = () => {
     this.group = this.apiService.getGroup(this.groupId)
     const namemap = {} as {[key: string]: string}
     this.group.members.forEach(member => namemap[member.id] = member.name)
@@ -42,11 +46,6 @@ export class GroupComponent {
       settlement.from = namemap[settlement.from]
       settlement.to = namemap[settlement.to]
     })
-  }
-
-  getData = () => {
-    this.group = this.apiService.getGroup(this.groupId)
-    this.stats = this.apiService.getSettlements(this.group)
   }
 
   deleteExpenseConfirmPopup(event: Event, expenseId: string) {
