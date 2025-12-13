@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Expense, Group } from '../interface/interface';
+import { Expense, Group, Member } from '../interface/interface';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
@@ -15,9 +15,9 @@ export class ApiService {
     return JSON.parse(localStorage.getItem('groups') || '[]')
   }
 
-  createGroup = (payload: any) => {
+  createGroup = (payload: Group) => {
     payload.id = uuidv4()
-    payload.members = payload.members.map((member: any) => ({ ...member, id: uuidv4() }))
+    payload.members = payload.members.map((member: Member) => ({ ...member, id: uuidv4() }))
     const groups = this.getGroups()
     groups.push(payload)
     this.saveGroups(groups)
@@ -42,13 +42,6 @@ export class ApiService {
     this.saveGroups(groups)
   }
 
-  addMember = (name: string, groupId: string) => {
-    const groups = this.getGroups()
-    const index = groups.findIndex(group => group.id === groupId)
-    groups[index].members.push({ id: uuidv4(), name, expenses: [] })
-    this.saveGroups(groups)
-  }
-
   updateMemberName = (memberName: string, groupId: string, memberId: string) => {
     const groups = this.getGroups()
     const groupIndex = groups.findIndex(group => group.id === groupId)
@@ -57,88 +50,63 @@ export class ApiService {
     this.saveGroups(groups)
   }
 
-  deleteMember = (id: string, groupId: string) => {
+  addExpense = (expense: Expense, groupId: string) => {
     const groups = this.getGroups()
     const groupIndex = groups.findIndex(group => group.id === groupId)
-    groups[groupIndex].members.splice(groups[groupIndex].members.findIndex(member => member.id === id), 1)
+    expense.id = uuidv4()
+    groups[groupIndex].expenses.push(expense)
     this.saveGroups(groups)
   }
 
-  addExpense = (expense: Expense, groupId: string, memberId: string) => {
+  getExpense = (groupId: string, expenseId: string): Expense => {
     const groups = this.getGroups()
     const groupIndex = groups.findIndex(group => group.id === groupId)
-    const memberIndex = groups[groupIndex].members.findIndex(member => member.id === memberId)
-    groups[groupIndex].members[memberIndex].expenses.push({ ...expense, id: uuidv4() })
+    return groups[groupIndex].expenses.find(expense => expense.id === expenseId)!
+  }
+
+  updateExpense = (expense: Expense, groupId: string) => {
+    const groups = this.getGroups()
+    const groupIndex = groups.findIndex(group => group.id === groupId)
+    const expenseIndex = groups[groupIndex].expenses.findIndex(exp => exp.id === expense.id)
+    groups[groupIndex].expenses[expenseIndex] = expense
     this.saveGroups(groups)
   }
 
-  updateExpense = (expense: Expense, groupId: string, memberId: string) => {
+  deleteExpense = (id: string, groupId: string) => {
     const groups = this.getGroups()
     const groupIndex = groups.findIndex(group => group.id === groupId)
-    const memberIndex = groups[groupIndex].members.findIndex(member => member.id === memberId)
-    const expenseIndex = groups[groupIndex].members[memberIndex].expenses.findIndex(exp => exp.id === expense.id)
-    groups[groupIndex].members[memberIndex].expenses[expenseIndex] = expense
-    this.saveGroups(groups)
-  }
-
-  deleteExpense = (id: string, groupId: string, memberId: string) => {
-    const groups = this.getGroups()
-    const groupIndex = groups.findIndex(group => group.id === groupId)
-    const memberIndex = groups[groupIndex].members.findIndex(member => member.id === memberId)
-    const expenseIndex = groups[groupIndex].members[memberIndex].expenses.findIndex(exp => exp.id === id)
-    groups[groupIndex].members[memberIndex].expenses.splice(expenseIndex, 1)
-    this.saveGroups(groups)
-  }
-
-  excludeMembers = (excluded_members: string[], groupId: string, memberId: string, expenseId: string,) => {
-    const groups = this.getGroups()
-    const groupIndex = groups.findIndex(group => group.id === groupId)
-    const memberIndex = groups[groupIndex].members.findIndex(member => member.id === memberId)
-    const expenseIndex = groups[groupIndex].members[memberIndex].expenses.findIndex(exp => exp.id === expenseId)
-    groups[groupIndex].members[memberIndex].expenses[expenseIndex].excluded = excluded_members
+    const expenseIndex = groups[groupIndex].expenses.findIndex(exp => exp.id === id)
+    groups[groupIndex].expenses.splice(expenseIndex, 1)
     this.saveGroups(groups)
   }
 
   getSettlements = (group: Group) => {
-    const memberObjs: { [key: string]: { name: string, totalPaid: number, totalShare: number } } = {}
+    const settlements = {} as { [key: string]: number }
     group.members.forEach(member => {
-      if (!memberObjs[member.id]) memberObjs[member.id] = { name: member.name, totalPaid: 0, totalShare: 0 }
-      member.expenses.forEach(expense => {
-        memberObjs[member.id].totalPaid += expense.amount
-        const includedMembers = group.members.filter(m => !expense.excluded.includes(m.id))
-        const share = expense.amount / includedMembers.length
-        includedMembers.forEach(m => {
-          if (!memberObjs[m.id]) memberObjs[m.id] = { name: m.name, totalPaid: 0, totalShare: 0 }
-          memberObjs[m.id].totalShare += share
-        })
+      settlements[member.id] = 0
+    })
+    group.expenses.forEach(expense => {
+      settlements[expense.paidBy] += expense.amount
+      expense.shares.forEach(share => {
+        settlements[share.id] -= share.amount
       })
     })
-    const settlements: { from: string, to: string, amount: number }[] = []
-    const paidMore: { memberId: string; amount: number; }[] = []
-    const paidLess: { memberId: string; amount: number; }[] = []
-    Object.keys(memberObjs).forEach(key => {
-      const net = parseFloat((memberObjs[key].totalPaid - memberObjs[key].totalShare).toFixed(2))
-      if (net > 0) {
-        paidMore.push({ memberId: key, amount: net })
-      } else if (net < 0) {
-        paidLess.push({ memberId: key, amount: -net })
-      }
-    })
-    while (paidMore.length > 0 && paidLess.length > 0) {
-      const more = paidMore[0]
-      const less = paidLess[0]
-      const transferAmount = Math.min(more.amount, less.amount)
-      settlements.push({ from: memberObjs[less.memberId].name, to: memberObjs[more.memberId].name, amount: transferAmount })
-      more.amount -= transferAmount
-      less.amount -= transferAmount
-      if (more.amount == 0) {
-        paidMore.shift()
-      }
-      if (less.amount == 0) {
-        paidLess.shift()
-      }
+    const paidMoreThanOwed = Object.entries(settlements).filter(([_, amount]) => amount > 0)
+    const owedMoreThanPaid = Object.entries(settlements).filter(([_, amount]) => amount < 0)
+    let i = 0
+    let j = 0
+    const finalSettlements = [] as { from: string, to: string, amount: number }[]
+    while (i < paidMoreThanOwed.length && j < owedMoreThanPaid.length) {
+      const [toId, toAmount] = paidMoreThanOwed[i]
+      const [fromId, fromAmount] = owedMoreThanPaid[j] 
+      const settlementAmount = Math.min(toAmount, -fromAmount)
+      finalSettlements.push({ from: fromId, to: toId, amount: settlementAmount })
+      paidMoreThanOwed[i][1] -= settlementAmount
+      owedMoreThanPaid[j][1] += settlementAmount
+      if (paidMoreThanOwed[i][1] === 0) i++
+      if (owedMoreThanPaid[j][1] === 0) j++
     }
-    return settlements
+    return finalSettlements
   }
 
 }

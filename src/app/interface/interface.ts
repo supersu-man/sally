@@ -3,17 +3,19 @@ export interface Group {
     name: string
     thumbnail: string
     members: Member[]
+    expenses: Expense[]
 }
 
 export interface Member {
     id: string
     name: string
-    expenses: Expense[]
 }
 
 export interface Expense {
     id: string
     amount: number
     description: string
-    excluded: string[]
+    paidBy: string,
+    date: Date,
+    shares: { id: string, amount: number, share: number, fixed: boolean }[]
 }

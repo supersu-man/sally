@@ -23,20 +23,25 @@ export class GroupComponent {
 
   groupId = this.route.snapshot.paramMap.get('groupId') as string
   group: Group
-  stats: any
+  stats: {from: string, to: string, amount: number}[] = []
 
   deleteExpenseId: string = ''
-  deleteMemberId: string = ''
 
-  memberDialog = false
+  memberDialog: boolean = false
   memberForm = new FormGroup({
-    id: new FormControl<string | null>(null),
+    id: new FormControl<string | null>(null, Validators.required),
     name: new FormControl<string | null>(null, Validators.required)
   })
 
   constructor() {
     this.group = this.apiService.getGroup(this.groupId)
+    const namemap = {} as {[key: string]: string}
+    this.group.members.forEach(member => namemap[member.id] = member.name)
     this.stats = this.apiService.getSettlements(this.group)
+    this.stats.forEach(settlement => {
+      settlement.from = namemap[settlement.from]
+      settlement.to = namemap[settlement.to]
+    })
   }
 
   getData = () => {
@@ -44,9 +49,8 @@ export class GroupComponent {
     this.stats = this.apiService.getSettlements(this.group)
   }
 
-  deleteExpenseConfirmPopup(event: Event, expenseId: string, memberId: string) {
+  deleteExpenseConfirmPopup(event: Event, expenseId: string) {
     this.deleteExpenseId = expenseId
-    this.deleteMemberId = memberId
     this.utilService.confirmDialog(
       event,
       "Delete expense?",
@@ -55,32 +59,16 @@ export class GroupComponent {
     )
   }
 
-  deleteMemberConfirmPopup(event: Event, memberId: string) {
-    this.deleteMemberId = memberId
-    this.utilService.confirmDialog(
-      event,
-      "Delete member?",
-      "Are you sure you want to delete the member?",
-      this.deleteMember
-    )
-  }
-
   saveMember = () => {
+    if (this.memberForm.invalid) return
     const form = this.memberForm.getRawValue()
-    if (!form.name) return
-    if (!form.id) this.apiService.addMember(form.name, this.groupId)
-    else this.apiService.updateMemberName(form.name, this.groupId, form.id)
+    this.apiService.updateMemberName(form.name || '', this.groupId, form.id || '')
     this.getData()
     this.memberDialog = false
   }
 
   private deleteExpense = () => {
-    this.apiService.deleteExpense(this.deleteExpenseId, this.groupId, this.deleteMemberId)
-    this.getData()
-  }
-
-  private deleteMember = () => {
-    this.apiService.deleteMember(this.deleteMemberId, this.groupId)
+    this.apiService.deleteExpense(this.deleteExpenseId, this.groupId)
     this.getData()
   }
 

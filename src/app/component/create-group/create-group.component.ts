@@ -27,20 +27,18 @@ export class CreateGroupComponent {
   ]
 
   groupForm = new FormGroup({
-    title: new FormControl<string | null>(null, Validators.required),
-    members: new FormControl<string[]> ([]),
+    name: new FormControl<string | null>(null, Validators.required),
+    members: new FormControl<string[]>([]),
     thumbnail: new FormControl<string | null>(null, Validators.required)
   })
 
   createGroup = () => {
-    if(this.groupForm.invalid) {
+    if (this.groupForm.invalid) {
       return
     }
-    const formValue = this.groupForm.getRawValue() as { title: string, members: string[], thumbnail: string }
-    formValue.members = formValue.members.map(m => m.trim()).filter(name => name !== '')
-    const members = formValue.members.map(name => ({ name, expenses: [] }))
-    const payload = { name: formValue.title, members: members, thumbnail: formValue.thumbnail }
-    const id = this.apiService.createGroup(payload)
+    const payload = this.groupForm.getRawValue() as { name: string, members: string[], thumbnail: string }
+    const members = payload.members.map(m => { return { id: '', name: m.trim() } }).filter(member => member.name !== '')
+    const id = this.apiService.createGroup({ ...payload, members, id: '', expenses: [] })
     this.router.navigate(['/dashboard', id])
   }
 

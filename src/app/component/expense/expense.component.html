@@ -1,35 +1,41 @@
 <div class="container mx-auto p-4" [formGroup]="expenseForm">
 
-    <div class="flex flex-col py-5">
+    <div class="flex flex-col mb-4">
         <div class="text-2xl">{{expenseId? 'Edit the expense' : 'Add a new expense'}}</div>
         <div class="text-gray-500">Enter the details of the expense and select who to split it with.</div>
     </div>
 
-    <div class="flex flex-col rounded-lg bg-surface-0 border border-gray-300 p-4 mb-5">
+    <div class="flex flex-col rounded-lg bg-surface-0 border border-gray-300 p-4 mb-4">
         <div class="flex flex-col gap-2 mb-4">
             <label>Description</label>
             <input pInputText placeholder="e.g., Dinner with friends" formControlName="description" />
         </div>
-        <div class="flex flex-col gap-2">
-            <label>Amount</label>
-            <input pInputText type="number" placeholder="0" formControlName="amount" />
+        <div class="flex gap-2 grid grid-cols-1 lg:grid-cols-10">
+            <div class="flex flex-col lg:col-span-5 gap-2 w-full">
+                <label>Amount</label>
+                <input pInputText type="number" placeholder="0" formControlName="amount" (input)="updateAmounts()" />
+            </div>
+            <div class="flex flex-col lg:col-span-5 gap-2 w-full">
+                <label>Date</label>
+                <p-datepicker inputId="calendar-12h" formControlName="date" [showTime]="true" hourFormat="12" />
+            </div>
         </div>
     </div>
 
-    <div class="flex flex-col rounded-lg bg-surface-0 border border-gray-300 p-4 mb-5">
+    <div class="flex flex-col rounded-lg bg-surface-0 border border-gray-300 p-4 mb-4">
         <div class="flex flex-col gap-2 mb-4">
             <label>Paid by</label>
-            <p-select [options]="members" optionLabel="name" optionValue="id" placeholder="Select member" formControlName="member_id"></p-select>
+            <p-select [options]="members" optionLabel="name" optionValue="id" placeholder="Select member" formControlName="paidBy"></p-select>
         </div>
         <div class="flex flex-col gap-2">
             <div class="flex justify-between">
                 <label>Split between</label>
                 <div class="text-primary cursor-pointer" (click)="selectAll()">Select all</div>
             </div>
-            <div class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(200px,1fr))]">
+            <div class="grid gap-2 grid-cols-[repeat(auto-fill,minmax(200px,1fr))]">
                 @for (member of members; track $index) {
-                <div class="flex items-center rounded-lg border gap-2 p-2 px-3" [class]="member.included ? 'bg-primary-100 border-primary' : 'border-gray-300'">
-                    <p-checkbox class="mb-1" [binary]="true" [(ngModel)]="member.included" [ngModelOptions]="{standalone: true}" />
+                <div class="flex items-center rounded-lg border gap-2 p-2 px-3 cursor-pointer" (click)="member.included = !member.included; setShares()" [class]="member.included ? 'bg-primary-100 border-primary' : 'border-gray-300'">
+                    <p-checkbox class="mt-1" [binary]="true" [(ngModel)]="member.included" [ngModelOptions]="{standalone: true}" (onChange)="setShares()" (click)="$event.stopPropagation()" />
                     <div>{{member.name}}</div>
                 </div>
                 }
@@ -37,7 +43,27 @@
         </div>
     </div>
 
-    <div class="flex justify-end gap-2 pb-4">
+    <div class="flex flex-col rounded-lg bg-surface-0 border border-gray-300 p-4 mb-4" formArrayName="shares">
+        <div class="flex flex-col gap-2">
+            <label>Shares</label>
+
+            @for (share of shares.controls; track $index) {
+                <div class="grid grid-cols-1 lg:grid-cols-10 gap-4 rounded-lg border border-gray-300 p-3" [formGroupName]="$index">
+                    <div class="flex items-center justify-between lg:col-span-6">
+                        <div>{{memberNameMap.get(share.value.id || '')}}</div>
+                        <div>{{share.value.amount | number: '1.2-2'}}</div>
+                    </div>
+                    <div class="flex items-center lg:col-span-4 gap-4">
+                        <div class="w-30">{{share.value.share | number: '2.2-2'}} %</div>
+                        <p-slider formControlName="share" class="w-full" (onChange)="updateShares($index)" [disabled]="share.value.fixed || false"/>
+                        <p-checkbox class="mb-1" [binary]="true" formControlName="fixed" [disabled]="isFixedCheckboxDisabled($index)" />
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="flex justify-end gap-2">
         <p-button [routerLink]="'/dashboard/'+groupId" variant="text" label="Cancel"></p-button>
         <p-button (click)="addExpense()" [label]="expenseId? 'Save expense' : 'Add expense'" [disabled]="expenseForm.invalid || !atleastOneMemberIncluded()"></p-button>
     </div>
