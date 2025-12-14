@@ -28,7 +28,7 @@ export class CreateGroupComponent {
 
   groupForm = new FormGroup({
     name: new FormControl<string | null>(null, Validators.required),
-    members: new FormControl<string[]>([]),
+    members: new FormControl<string[]>([], [Validators.required, Validators.minLength(2)]),
     thumbnail: new FormControl<string | null>(null, Validators.required)
   })
 
