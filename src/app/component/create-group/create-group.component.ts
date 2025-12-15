@@ -5,10 +5,11 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
 import { Router, RouterLink } from "@angular/router";
 import { ApiService } from 'src/app/service/api.service';
+import { ChipModule } from 'primeng/chip';
 
 @Component({
   selector: 'app-create-group',
-  imports: [InputTextModule, AutoCompleteModule, ButtonModule, ReactiveFormsModule, RouterLink],
+  imports: [InputTextModule, ButtonModule, ReactiveFormsModule, RouterLink, ChipModule],
   templateUrl: './create-group.component.html',
   styles: ``
 })
@@ -40,6 +41,21 @@ export class CreateGroupComponent {
     const members = payload.members.map(m => { return { id: '', name: m.trim() } }).filter(member => member.name !== '')
     const id = this.apiService.createGroup({ ...payload, members, id: '', expenses: [] })
     this.router.navigate(['/dashboard', id])
+  }
+
+  onInput(event: any) {
+    const name = event.target.value.replace(',', '').trim()
+    if((event.data === ',' || event.data === ', ') && name) {
+      const currentMembers = this.groupForm.value.members || []
+      this.groupForm.controls.members.setValue([...currentMembers, name])
+      event.target.value = ''
+    }
+  }
+
+  removeMember(name: string) {
+    console.log('removing', name);
+    const current = this.groupForm.controls.members.value ?? [];
+    this.groupForm.controls.members.setValue(current.filter(m => m !== name), { emitEvent: false });
   }
 
 }

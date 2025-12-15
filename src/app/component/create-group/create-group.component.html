@@ -14,8 +14,15 @@
 
         <div class="flex flex-col gap-2 mt-3">
             <label>Add Members</label>
-            <p-autocomplete formControlName="members" inputId="multiple-ac-2" multiple fluid [typeahead]="false" placeholder="Enter names" separator="," />
-            <small class="text-gray-500">Use commas to seperate</small>
+            <div class="flex flex-wrap gap-2">
+                @for (item of groupForm.value.members; track $index) {
+                <p-chip [label]="item"> 
+                    <span class="pi pi-times-circle cursor-pointer" (click)="removeMember(item)"></span>
+                </p-chip>
+                }
+            </div>
+            <input type="text" pInputText placeholder="Enter names" (input)="onInput($event)"/>
+            <small class="text-gray-500">Use comma to seperate</small>
         </div>
 
         <div class="flex mt-3">
