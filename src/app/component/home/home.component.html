@@ -3,7 +3,12 @@
     <div class="flex items-center gap-3 pb-4 h-14">
         <img src="assets/logo.png" width="28" alt="Sally Logo" class="logo" />
         <div class="text-xl">Sally</div>
-        <p-button class="ml-auto" routerLink="/dashboard" variant="text" label="Go to Dashboard"></p-button>
+        <div class="ml-auto flex items-center gap-2">
+            <a href="https://github.com/supersu-man/sally" target="_blank" rel="noopener noreferrer">
+                <p-button icon="pi pi-github" variant="text" severity="secondary" rounded></p-button>
+            </a>
+            <p-button routerLink="/dashboard" variant="text" label="Go to Dashboard"></p-button>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-10 gap-4 py-4">
