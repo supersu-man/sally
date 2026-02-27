@@ -16,11 +16,16 @@
             <div class="text-xl">Expenses</div>
             <div class="flex flex-col gap-2 mt-3">
                 @for(expense of group!.expenses; track expense.id) {
-                <div class="rounded-lg bg-surface-0 border border-gray-300 flex items-center gap-2 py-1 px-3">
-                    <div class="mr-auto">{{expense.description}}</div>
-                    <div>{{expense.amount | number: '1.2-2'}}</div>
-                    <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" [routerLink]="'/dashboard/'+groupId+'/'+expense.id" />
-                    <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [text]="true" (click)="deleteExpenseConfirmPopup($event, expense.id)" />
+                <div class="rounded-lg bg-surface-0 border border-gray-300 py-1 px-3">
+                    <div class="flex">
+                        <div class="mr-auto">{{expense.description}}</div>
+                        <div>{{expense.amount | number: '1.2-2'}}</div>
+                    </div>
+                    <div class="flex items-center">
+                        <small class="mr-auto text-gray-500">Paid by {{memberMap[expense.paidBy]}} &middot; Split between {{expense.shares.length}}</small>
+                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" [routerLink]="'/dashboard/'+groupId+'/'+expense.id" />
+                        <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [text]="true" (click)="deleteExpenseConfirmPopup($event, expense.id)" />
+                    </div>
                 </div>
                 }
             </div>

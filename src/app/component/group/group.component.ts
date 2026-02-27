@@ -23,7 +23,8 @@ export class GroupComponent {
 
   groupId = this.route.snapshot.paramMap.get('groupId') as string
   group: Group | undefined
-  stats: {from: string, to: string, amount: number}[] = []
+  stats: { from: string, to: string, amount: number }[] = []
+  memberMap: { [key: string]: string } = {}
 
   deleteExpenseId: string = ''
 
@@ -39,12 +40,12 @@ export class GroupComponent {
 
   getData = () => {
     this.group = this.apiService.getGroup(this.groupId)
-    const namemap = {} as {[key: string]: string}
-    this.group.members.forEach(member => namemap[member.id] = member.name)
+    this.memberMap = {}
+    this.group.members.forEach(member => this.memberMap[member.id] = member.name)
     this.stats = this.apiService.getSettlements(this.group)
     this.stats.forEach(settlement => {
-      settlement.from = namemap[settlement.from]
-      settlement.to = namemap[settlement.to]
+      settlement.from = this.memberMap[settlement.from]
+      settlement.to = this.memberMap[settlement.to]
     })
   }
 
